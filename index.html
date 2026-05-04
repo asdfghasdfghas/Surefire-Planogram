@@ -132,6 +132,53 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--black);disp
 .door-total{font-size:8px;color:var(--gray-dark);text-align:center;padding:3px 6px;border-top:0.5px solid var(--border);font-family:var(--mono)}
 .door-edit-panel{display:none;padding:6px;border-top:0.5px solid var(--border);background:var(--gray)}
 .door-edit-panel.open{display:block}
+#mgr-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);align-items:center;justify-content:center;}
+#mgr-overlay.open{display:flex}
+#mgr-box{background:#111;border:1px solid #2a2a2a;border-radius:16px;padding:32px;width:300px;box-shadow:0 24px 64px rgba(0,0,0,.7)}
+#mgr-label{font-size:10px;font-weight:600;letter-spacing:.1em;color:#555;text-transform:uppercase;margin-bottom:8px}
+#mgr-title{font-size:20px;font-weight:300;color:#fff;margin-bottom:4px}
+#mgr-sub{font-size:12px;color:#555;margin-bottom:20px}
+#mgr-input{width:100%;font-size:18px;padding:10px 14px;border-radius:9px;border:1px solid #2a2a2a;background:#1a1a1a;color:#fff;font-family:var(--mono);letter-spacing:.25em;outline:none;margin-bottom:8px}
+#mgr-input:focus{border-color:var(--green-mid)}
+#mgr-err{font-size:11px;color:#c0392b;min-height:16px;margin-bottom:14px}
+#mgr-btns{display:flex;gap:8px}
+#mgr-cancel{flex:1;padding:9px;border-radius:8px;border:1px solid #2a2a2a;background:none;color:#888;font-size:12px;cursor:pointer;font-family:var(--font)}
+#mgr-submit{flex:1;padding:9px;border-radius:8px;border:none;background:var(--green);color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)}
+#mgr-submit:hover{background:var(--green-mid)}
+.mgr-only{display:none!important}
+body.manager-mode .mgr-only{display:flex!important}
+/* ── VENDOR PAGE ── */
+.vendor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.vendor-card{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.vendor-card-head{padding:14px 18px 10px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.vendor-card-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.vendor-card-name{font-size:14px;font-weight:600;color:var(--black);flex:1}
+.vendor-card-body{padding:14px 18px}
+.vendor-info-row{display:flex;gap:8px;margin-bottom:6px;font-size:12px;align-items:baseline}
+.vendor-info-label{color:var(--gray-dark);font-weight:500;min-width:64px;flex-shrink:0}
+.vendor-info-val{color:var(--black)}
+.vendor-info-input{font-size:12px;padding:3px 7px;border-radius:6px;border:1px solid var(--border);background:var(--white);color:var(--black);font-family:var(--font);width:100%}
+.vendor-info-input:focus{outline:2px solid var(--green);border-color:transparent}
+.vendor-products{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.vendor-products-label{font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--gray-dark);text-transform:uppercase;margin-bottom:7px}
+.vendor-tag-list{display:flex;flex-wrap:wrap;gap:5px}
+.vendor-tag-pill{font-size:10px;padding:2px 9px;border-radius:20px;background:var(--gray);color:var(--black);border:1px solid var(--border)}
+/* ── INVOICE PAGE ── */
+.invoice-upload-area{border:2px dashed var(--border);border-radius:14px;padding:48px 28px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;margin-bottom:20px}
+.invoice-upload-area:hover,.invoice-upload-area.drag-over{border-color:var(--green-mid);background:var(--green-light)}
+.invoice-upload-icon{font-size:36px;margin-bottom:10px}
+.invoice-upload-text{font-size:14px;font-weight:500;color:var(--black);margin-bottom:4px}
+.invoice-upload-sub{font-size:12px;color:var(--gray-dark)}
+.invoice-list{display:flex;flex-direction:column;gap:8px}
+.invoice-item{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.invoice-file-icon{font-size:22px;flex-shrink:0}
+.invoice-info{flex:1;min-width:0}
+.invoice-name{font-size:13px;font-weight:500;color:var(--black);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.invoice-meta{font-size:11px;color:var(--gray-dark);margin-top:2px}
+.invoice-badge{font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;background:var(--green-light);color:var(--green)}
+.invoice-del{font-size:11px;color:#A32D2D;cursor:pointer;padding:4px 8px;border-radius:6px;border:1px solid #F5BBBB;background:none;font-family:var(--font)}
+.invoice-del:hover{background:#fff0f0}
+.invoice-empty{text-align:center;padding:40px;color:var(--gray-dark);font-size:13px}
 </style>
 </head>
 <body>
@@ -146,16 +193,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--black);disp
         <span class="nav-arrow"><svg viewBox="0 0 10 10"><polyline points="2,3 5,7 8,3"/></svg></span>
       </button>
       <div class="dropdown-menu" id="dropdownMenu">
-        <div class="dropdown-section">Planograms</div>
-        <a class="dropdown-item" onclick="switchCooler(0);closeDropdown()"><span class="dropdown-item-dot"></span>Cooler 1 — Turbo Air</a>
-        <a class="dropdown-item" onclick="switchCooler(1);closeDropdown()"><span class="dropdown-item-dot"></span>Cooler 2 — Glass Door (Coca-Cola)</a>
-        <a class="dropdown-item" onclick="switchCooler(2);closeDropdown()"><span class="dropdown-item-dot"></span>Cooler 3 — Glass Door (Choice)</a>
-        <a class="dropdown-item" onclick="switchCooler(3);closeDropdown()"><span class="dropdown-item-dot"></span>Cooler 4 — Beer 12-Packs</a>
-        <a class="dropdown-item" onclick="switchCooler(4);closeDropdown()"><span class="dropdown-item-dot"></span>Cooler 5 — Singles & Craft</a>
-        <div class="dropdown-divider"></div>
-        <div class="dropdown-section">Coming Soon</div>
-        <a class="dropdown-item" style="opacity:.4;cursor:default"><span class="dropdown-item-dot" style="background:#555"></span>Dry Goods</a>
-        <a class="dropdown-item" style="opacity:.4;cursor:default"><span class="dropdown-item-dot" style="background:#555"></span>Snack Wall</a>
+        <a class="dropdown-item" onclick="showPage('planograms');closeDropdown()"><span class="dropdown-item-dot"></span>Planograms</a>
+        <a class="dropdown-item" onclick="showPage('vendors');closeDropdown()"><span class="dropdown-item-dot"></span>Vendors</a>
+        <a class="dropdown-item" onclick="showPage('invoices');closeDropdown()"><span class="dropdown-item-dot"></span>Invoices</a>
       </div>
     </div>
     <a class="nav-link" href="#">Inventory</a>
@@ -165,12 +205,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--black);disp
 
 <div class="main">
   <div class="page-header">
-    <div class="page-breadcrumb">Retail <span>›</span> Planograms</div>
-    <div class="page-title">Surefire Market <strong>Planograms</strong></div>
+    <div class="page-breadcrumb" id="pageBreadcrumb">Retail <span>›</span> Planograms</div>
+    <div class="page-title" id="pageTitle">Surefire Market <strong>Planograms</strong></div>
     <div class="page-subtitle" id="pageSubtitle">5 coolers · vendor color coded · click any product to edit</div>
   </div>
 
-  <div class="content">
+  <div class="content" id="page-planograms">
     <div class="cooler-tabs" id="coolerTabs">
       <button class="cooler-tab active" onclick="switchCooler(0)">Cooler 1</button>
       <button class="cooler-tab" onclick="switchCooler(1)">Cooler 2</button>
@@ -184,12 +224,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--black);disp
       <div class="plano-card">
         <div class="plano-card-header"><div class="plano-card-title"><h2>Cooler 1 — Turbo Air Open-Face</h2><span>ACTIVE</span></div></div>
         <div class="plano-inner">
-          <div class="legend-box" id="c1-legend"></div>
-          <div class="stats-row" id="c1-sum"></div>
-          <div class="toolbar">
-            <button class="tb-btn pri" onclick="c1AddBrand(c1data.shelves[0].id)">+ add brand</button>
-            <button class="tb-btn" id="c1-undo" onclick="c1Undo()" disabled>↩ undo</button>
-            <button class="tb-btn" onclick="c1Export()">↗ export</button>
+          <div class="legend-box mgr-only" id="c1-legend"></div>
+          <div class="stats-row mgr-only" id="c1-sum"></div>
+          <div class="toolbar mgr-only">
+            <button class="tb-btn pri" onclick="requireManager(()=>c1AddBrand(c1data.shelves[0].id))">+ add brand</button>
+            <button class="tb-btn" id="c1-undo" onclick="requireManager(()=>c1Undo())" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="requireManager(()=>c1Export())">↗ export</button>
           </div>
           <div class="cooler"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Turbo Air — Surefire Market</span></div><small>width = shelf space · vendor color coded</small></div><div class="shelf-wrap" id="c1-sw"></div></div>
         </div>
@@ -201,12 +241,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--black);disp
       <div class="plano-card">
         <div class="plano-card-header"><div class="plano-card-title"><h2>Cooler 2 — Glass Door (Coca-Cola)</h2><span>ACTIVE</span></div></div>
         <div class="plano-inner">
-          <div class="legend-box" id="c2-legend"></div>
-          <div class="stats-row" id="c2-sum"></div>
-          <div class="toolbar">
-            <button class="tb-btn pri" onclick="c2AddBrand(c2data.shelves[0].id)">+ add brand</button>
-            <button class="tb-btn" id="c2-undo" onclick="c2Undo()" disabled>↩ undo</button>
-            <button class="tb-btn" onclick="c2Export()">↗ export</button>
+          <div class="legend-box mgr-only" id="c2-legend"></div>
+          <div class="stats-row mgr-only" id="c2-sum"></div>
+          <div class="toolbar mgr-only">
+            <button class="tb-btn pri" onclick="requireManager(()=>c2AddBrand(c2data.shelves[0].id))">+ add brand</button>
+            <button class="tb-btn" id="c2-undo" onclick="requireManager(()=>c2Undo())" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="requireManager(()=>c2Export())">↗ export</button>
           </div>
           <div class="cooler"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Glass Door Cooler 2 — Surefire Market</span></div><small>color = vendor · click flavor to edit</small></div><div class="shelf-wrap" id="c2-sw"></div></div>
         </div>
@@ -218,12 +258,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--black);disp
       <div class="plano-card">
         <div class="plano-card-header"><div class="plano-card-title"><h2>Cooler 3 — Glass Door (Choice Beverage)</h2><span>ACTIVE</span></div></div>
         <div class="plano-inner">
-          <div class="legend-box" id="c3-legend"></div>
-          <div class="stats-row" id="c3-sum"></div>
-          <div class="toolbar">
-            <button class="tb-btn pri" onclick="c3AddBrand(c3data.shelves[0].id)">+ add brand</button>
-            <button class="tb-btn" id="c3-undo" onclick="c3Undo()" disabled>↩ undo</button>
-            <button class="tb-btn" onclick="c3Export()">↗ export</button>
+          <div class="legend-box mgr-only" id="c3-legend"></div>
+          <div class="stats-row mgr-only" id="c3-sum"></div>
+          <div class="toolbar mgr-only">
+            <button class="tb-btn pri" onclick="requireManager(()=>c3AddBrand(c3data.shelves[0].id))">+ add brand</button>
+            <button class="tb-btn" id="c3-undo" onclick="requireManager(()=>c3Undo())" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="requireManager(()=>c3Export())">↗ export</button>
           </div>
           <div class="cooler"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Glass Door Cooler 3 — Surefire Market</span></div><small>vendor: Choice Beverage · click to edit</small></div><div class="shelf-wrap" id="c3-sw"></div></div>
         </div>
@@ -235,12 +275,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--black);disp
       <div class="plano-card">
         <div class="plano-card-header"><div class="plano-card-title"><h2>Cooler 4 — Beer 12-Packs</h2><span>ACTIVE</span></div></div>
         <div class="plano-inner">
-          <div class="legend-box" id="c4-legend"></div>
-          <div class="stats-row" id="c4-sum"></div>
-          <div class="toolbar">
-            <button class="tb-btn pri" onclick="c4AddBrand(c4data.shelves[0].id)">+ add brand</button>
-            <button class="tb-btn" id="c4-undo" onclick="c4Undo()" disabled>↩ undo</button>
-            <button class="tb-btn" onclick="c4Export()">↗ export</button>
+          <div class="legend-box mgr-only" id="c4-legend"></div>
+          <div class="stats-row mgr-only" id="c4-sum"></div>
+          <div class="toolbar mgr-only">
+            <button class="tb-btn pri" onclick="requireManager(()=>c4AddBrand(c4data.shelves[0].id))">+ add brand</button>
+            <button class="tb-btn" id="c4-undo" onclick="requireManager(()=>c4Undo())" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="requireManager(()=>c4Export())">↗ export</button>
           </div>
           <div class="cooler"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Beer Cooler 4 — Surefire Market</span></div><small>organized by price tier · click to edit</small></div><div class="shelf-wrap" id="c4-sw"></div></div>
         </div>
@@ -252,12 +292,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--black);disp
       <div class="plano-card">
         <div class="plano-card-header"><div class="plano-card-title"><h2>Cooler 5 — Singles & Craft</h2><span>ACTIVE</span></div></div>
         <div class="plano-inner">
-          <div class="legend-box" id="c5-legend"></div>
-          <div class="stats-row" id="c5-sum"></div>
-          <div class="toolbar">
-            <button class="tb-btn pri" onclick="c5AddBrand(c5data.shelves[0].id)">+ add brand</button>
-            <button class="tb-btn" id="c5-undo" onclick="c5Undo()" disabled>↩ undo</button>
-            <button class="tb-btn" onclick="c5Export()">↗ export</button>
+          <div class="legend-box mgr-only" id="c5-legend"></div>
+          <div class="stats-row mgr-only" id="c5-sum"></div>
+          <div class="toolbar mgr-only">
+            <button class="tb-btn pri" onclick="requireManager(()=>c5AddBrand(c5data.shelves[0].id))">+ add brand</button>
+            <button class="tb-btn" id="c5-undo" onclick="requireManager(()=>c5Undo())" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="requireManager(()=>c5Export())">↗ export</button>
           </div>
           <div class="cooler" id="c5-cooler"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Cooler 5 — Singles & Craft</span></div><small>color = vendor · click to edit</small></div>
           <div class="door-section">
@@ -270,9 +310,46 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--black);disp
     </div>
 
   </div>
+
+  <!-- VENDORS PAGE -->
+  <div id="page-vendors" style="display:none;padding:28px;max-width:1600px;margin:0 auto">
+    <div class="vendor-grid" id="vendor-grid"></div>
+  </div>
+
+  <!-- INVOICES PAGE -->
+  <div id="page-invoices" style="display:none;padding:28px;max-width:900px;margin:0 auto">
+    <div class="invoice-upload-area" id="invoice-drop" onclick="document.getElementById('invoice-file-input').click()">
+      <input type="file" id="invoice-file-input" multiple accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xls,.csv" style="display:none" onchange="handleInvoiceFiles(this.files)"/>
+      <div class="invoice-upload-icon">📄</div>
+      <div class="invoice-upload-text">Click to upload invoices</div>
+      <div class="invoice-upload-sub">PDF, image, or spreadsheet files</div>
+    </div>
+    <div class="invoice-list" id="invoice-list"></div>
+  </div>
+
+</div>
+
+<div id="mgr-overlay">
+  <div id="mgr-box">
+    <div id="mgr-label">Manager Access</div>
+    <div id="mgr-title">Enter passcode</div>
+    <div id="mgr-sub">Required to edit planogram data</div>
+    <input id="mgr-input" type="password" placeholder="••••" maxlength="10" onkeydown="if(event.key==='Enter')mgrSubmit()"/>
+    <div id="mgr-err"></div>
+    <div id="mgr-btns">
+      <button id="mgr-cancel" onclick="mgrCancel()">Cancel</button>
+      <button id="mgr-submit" onclick="mgrSubmit()">Unlock</button>
+    </div>
+  </div>
 </div>
 
 <script>
+// ── MANAGER AUTH ─────────────────────────────────────────────────
+let managerUnlocked=false,mgrCallback=null;
+function requireManager(fn){if(managerUnlocked){fn();return;}mgrCallback=fn;document.getElementById('mgr-overlay').classList.add('open');document.getElementById('mgr-input').value='';document.getElementById('mgr-err').textContent='';setTimeout(()=>document.getElementById('mgr-input').focus(),50);}
+function mgrSubmit(){if(document.getElementById('mgr-input').value==='6304'){managerUnlocked=true;document.body.classList.add('manager-mode');document.getElementById('mgr-overlay').classList.remove('open');if(mgrCallback){mgrCallback();mgrCallback=null;}}else{document.getElementById('mgr-err').textContent='Incorrect passcode';document.getElementById('mgr-input').value='';document.getElementById('mgr-input').focus();}}
+function mgrCancel(){document.getElementById('mgr-overlay').classList.remove('open');mgrCallback=null;}
+
 // ── NAV ──────────────────────────────────────────────────────────
 function toggleDropdown(){const btn=document.getElementById('retailBtn');const menu=document.getElementById('dropdownMenu');btn.classList.toggle('open');menu.classList.toggle('open');}
 function closeDropdown(){document.getElementById('retailBtn').classList.remove('open');document.getElementById('dropdownMenu').classList.remove('open');}
@@ -356,7 +433,7 @@ function c1Render(){
   c1data.shelves.forEach(sh=>{
     const total=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
     const sd=document.createElement('div');sd.className='shelf';
-    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c1-row-${sh.id}"></div><div class="add-row"><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c1AddFlavor('${sh.id}')">+ add flavor</button><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c1AddBrand('${sh.id}')">+ add brand</button></div>`;
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c1-row-${sh.id}"></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c1-row-'+sh.id);
     sh.brands.forEach(b=>{
@@ -369,7 +446,7 @@ function c1Render(){
       b.flavors.forEach(f=>{
         const h=C1_H[f.id]||52;const isSel=c1Sel===f.id;
         const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
-        fb.onclick=(e)=>{e.stopPropagation();c1Sel=c1Sel===f.id?null:f.id;c1Render();};
+        fb.onclick=(e)=>{e.stopPropagation();requireManager(()=>{c1Sel=c1Sel===f.id?null:f.id;c1Render();});};
         const pct=Math.round((f.facings/total)*100);
         const imgTag=f.img?`<img src="${f.img}" onerror="this.style.display='none'"/>`:'';
         const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:${h}px">${imgTag}<span>${f.img?'':b.name.split(' ')[0]}</span></div>`).join('');
@@ -426,7 +503,7 @@ function c2Render(){
   c2data.shelves.forEach(sh=>{
     const total=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
     const sd=document.createElement('div');sd.className='shelf';
-    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c2-row-${sh.id}"></div><div class="add-row"><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c2AddFlavor('${sh.id}')">+ add flavor</button><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c2AddBrand('${sh.id}')">+ add brand</button></div>`;
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c2-row-${sh.id}"></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c2-row-'+sh.id);
     sh.brands.forEach(b=>{
@@ -439,7 +516,7 @@ function c2Render(){
       b.flavors.forEach(f=>{
         const isSel=c2Sel===f.id;
         const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
-        fb.onclick=(e)=>{e.stopPropagation();c2Sel=c2Sel===f.id?null:f.id;c2Render();};
+        fb.onclick=(e)=>{e.stopPropagation();requireManager(()=>{c2Sel=c2Sel===f.id?null:f.id;c2Render();});};
         const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:56px">${b.name.split(' ')[0]}</div>`).join('');
         fb.innerHTML=`<div class="facings">${fDivs}</div>${mkFoot(f,c,vendor,sh.id,b.id,f.id,c2Sel)}<div class="dp${isSel?' open':''}">${mkFields(f,b,sh.id,b.id,'c2')}</div>`;
         flRow.appendChild(fb);
@@ -495,7 +572,7 @@ function c3Render(){
   c3data.shelves.forEach(sh=>{
     const total=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
     const sd=document.createElement('div');sd.className='shelf';
-    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c3-row-${sh.id}"></div><div class="add-row"><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c3AddFlavor('${sh.id}')">+ add flavor</button><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c3AddBrand('${sh.id}')">+ add brand</button></div>`;
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c3-row-${sh.id}"></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c3-row-'+sh.id);
     sh.brands.forEach(b=>{
@@ -508,7 +585,7 @@ function c3Render(){
       b.flavors.forEach(f=>{
         const isSel=c3Sel===f.id;
         const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
-        fb.onclick=(e)=>{e.stopPropagation();c3Sel=c3Sel===f.id?null:f.id;c3Render();};
+        fb.onclick=(e)=>{e.stopPropagation();requireManager(()=>{c3Sel=c3Sel===f.id?null:f.id;c3Render();});};
         const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:56px">${b.name.split(' ')[0]}</div>`).join('');
         fb.innerHTML=`<div class="facings">${fDivs}</div>${mkFoot(f,c,vendor,sh.id,b.id,f.id,c3Sel)}<div class="dp${isSel?' open':''}">${mkFields(f,b,sh.id,b.id,'c3')}</div>`;
         flRow.appendChild(fb);
@@ -553,7 +630,7 @@ function c4Render(){
     const pf=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
     const total=pf+(isS4?1:0);
     const sd=document.createElement('div');sd.className='shelf';
-    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c4-row-${sh.id}"></div><div class="add-row"><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c4AddBrand('${sh.id}')">+ add brand</button></div>`;
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c4-row-${sh.id}"></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c4-row-'+sh.id);
     if(isS4){
@@ -561,7 +638,7 @@ function c4Render(){
       es.className='empty-slot'+(c4EmptyOpen?' open':'');
       es.style.flex='1';
       es.innerHTML=`<div class="empty-top"><div class="empty-icon">${c4EmptySlot.name?'📦':'＋'}</div><div class="empty-label">${c4EmptySlot.name||'open slot\nclick to fill'}</div>${c4EmptySlot.price?`<div class="empty-price">${c4EmptySlot.price}</div>`:''}</div><div class="empty-form${c4EmptyOpen?' open':''}"><div class="dgrid"><div class="dfield"><label>Brand</label><input id="c4-es-name" value="${c4EmptySlot.name}" placeholder="e.g. Coors Light"/></div><div class="dfield"><label>Price</label><input id="c4-es-price" value="${c4EmptySlot.price}" placeholder="$23.99"/></div><div class="dfield"><label>Pack Size</label><input id="c4-es-oz" value="${c4EmptySlot.oz}" placeholder="12pk bottle"/></div></div><div class="dact"><button class="tb-btn" style="font-size:10px;height:24px" onclick="c4ClearEmpty()">clear</button><button class="tb-btn pri" style="font-size:10px;height:24px" onclick="c4SaveEmpty()">done</button></div></div>`;
-      es.querySelector('.empty-top').addEventListener('click',()=>{c4EmptyOpen=!c4EmptyOpen;c4Sel=null;c4Render();});
+      es.querySelector('.empty-top').addEventListener('click',()=>{requireManager(()=>{c4EmptyOpen=!c4EmptyOpen;c4Sel=null;c4Render();});});
       row.appendChild(es);
     }
     sh.brands.forEach(b=>{
@@ -574,7 +651,7 @@ function c4Render(){
       b.flavors.forEach(f=>{
         const isSel=c4Sel===f.id;
         const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
-        fb.onclick=(e)=>{e.stopPropagation();c4Sel=c4Sel===f.id?null:f.id;c4EmptyOpen=false;c4Render();};
+        fb.onclick=(e)=>{e.stopPropagation();requireManager(()=>{c4Sel=c4Sel===f.id?null:f.id;c4EmptyOpen=false;c4Render();});};
         const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:68px">${b.name.split(' ')[0]}</div>`).join('');
         fb.innerHTML=`<div class="facings">${fDivs}</div>${mkFoot(f,c,vendor,sh.id,b.id,f.id,c4Sel)}<div class="dp${isSel?' open':''}">${mkFields(f,b,sh.id,b.id,'c4')}</div>`;
         flRow.appendChild(fb);
@@ -653,7 +730,7 @@ function c5RenderDoor(){
       const idx=ri*5+i;const div=document.createElement('div');
       div.className='door-face'+(slot.open?' sel':'');div.style.background=slot.open?'#4527A0':'#7B1FA2';
       div.innerHTML=`<div class="door-face-name">${slot.name}</div><div class="door-face-oz">${slot.oz}</div><div class="door-face-price">${slot.price}</div>`;
-      div.addEventListener('click',()=>{buzzSlots.forEach((_,j)=>{buzzSlots[j].open=j===idx&&!buzzSlots[idx].open;});c5RenderDoor();});
+      div.addEventListener('click',()=>{requireManager(()=>{buzzSlots.forEach((_,j)=>{buzzSlots[j].open=j===idx&&!buzzSlots[idx].open;});c5RenderDoor();});});
       row.appendChild(div);
     });
   });
@@ -663,7 +740,7 @@ function c5RenderDoor(){
   oasisSlots.forEach((slot,i)=>{
     const div=document.createElement('div');div.className='door-face'+(slot.open?' sel':'');div.style.background=slot.open?'#1B5E20':'#388E3C';
     div.innerHTML=`<div class="door-face-name">${slot.name}</div><div class="door-face-oz">${slot.oz}</div><div class="door-face-price">${slot.price}</div>`;
-    div.addEventListener('click',()=>{oasisSlots.forEach((_,j)=>{oasisSlots[j].open=j===i&&!oasisSlots[i].open;});c5RenderDoor();});
+    div.addEventListener('click',()=>{requireManager(()=>{oasisSlots.forEach((_,j)=>{oasisSlots[j].open=j===i&&!oasisSlots[i].open;});c5RenderDoor();});});
     oaRow.appendChild(div);
   });
   const oaPanel=document.getElementById('oa-edit-panel');const openOa=oasisSlots.find(s=>s.open);
@@ -675,7 +752,7 @@ function c5Render(){
     const pf=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
     const ef=sh.id==='s3'?1:0;
     const sd=document.createElement('div');sd.className='shelf';
-    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${pf+ef} faces</span></div><div class="shelf-row" id="c5-row-${sh.id}"></div><div class="add-row"><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c5AddFlavor('${sh.id}')">+ add flavor</button><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c5AddBrand('${sh.id}')">+ add brand</button></div>`;
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${pf+ef} faces</span></div><div class="shelf-row" id="c5-row-${sh.id}"></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c5-row-'+sh.id);
     sh.brands.forEach(b=>{
@@ -688,7 +765,7 @@ function c5Render(){
       b.flavors.forEach(f=>{
         const isSel=c5Sel===f.id;
         const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
-        fb.onclick=(e)=>{e.stopPropagation();c5Sel=c5Sel===f.id?null:f.id;c5S3Open=false;c5Render();};
+        fb.onclick=(e)=>{e.stopPropagation();requireManager(()=>{c5Sel=c5Sel===f.id?null:f.id;c5S3Open=false;c5Render();});};
         const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:52px">${b.name.split(' ')[0]}</div>`).join('');
         fb.innerHTML=`<div class="facings">${fDivs}</div>${mkFoot(f,c,vendor,sh.id,b.id,f.id,c5Sel)}<div class="dp${isSel?' open':''}">${mkFields(f,b,sh.id,b.id,'c5')}</div>`;
         flRow.appendChild(fb);
@@ -697,7 +774,7 @@ function c5Render(){
     if(sh.id==='s3'){
       const es=document.createElement('div');es.className='empty-slot'+(c5S3Open?' open':'');es.style.flex='1';
       es.innerHTML=`<div class="empty-top"><div class="empty-icon">${c5S3Slot.name?'📦':'＋'}</div><div class="empty-label">${c5S3Slot.name||'open slot\nclick to fill'}</div>${c5S3Slot.price?`<div class="empty-price">${c5S3Slot.price}</div>`:''}</div><div class="empty-form${c5S3Open?' open':''}"><div class="dgrid"><div class="dfield"><label>Brand</label><input id="c5-s3-name" value="${c5S3Slot.name}" placeholder="e.g. Yuengling"/></div><div class="dfield"><label>Price</label><input id="c5-s3-price" value="${c5S3Slot.price}" placeholder="$3.99"/></div><div class="dfield"><label>Size</label><input id="c5-s3-oz" value="${c5S3Slot.oz||''}" placeholder="12oz bottle"/></div></div><div class="dact"><button class="tb-btn" style="font-size:10px;height:24px" onclick="c5ClearS3()">clear</button><button class="tb-btn pri" style="font-size:10px;height:24px" onclick="c5SaveS3()">done</button></div></div>`;
-      es.querySelector('.empty-top').addEventListener('click',()=>{c5S3Open=!c5S3Open;c5Sel=null;c5Render();});
+      es.querySelector('.empty-top').addEventListener('click',()=>{requireManager(()=>{c5S3Open=!c5S3Open;c5Sel=null;c5Render();});});
       row.appendChild(es);
     }
   });
@@ -710,6 +787,141 @@ function c5Render(){
   const vendors=[...new Set(c5data.shelves.flatMap(s=>s.brands.map(b=>c5Vendor(b.name))))].length;
   document.getElementById('c5-sum').innerHTML=`<div class="stat-pill"><strong>${vendors}</strong>vendors</div><div class="stat-pill"><strong>${c5data.shelves.flatMap(s=>s.brands).length}</strong>brands</div><div class="stat-pill"><strong>${allF.length}</strong>flavors</div><div class="stat-pill"><strong>${allF.reduce((n,f)=>n+f.facings,0)+1}</strong>shelf faces</div>`;
 }
+
+// ── PAGE SWITCHING ────────────────────────────────────────────────
+const PAGE_HEADERS={
+  planograms:{breadcrumb:'Retail › Planograms',title:'Surefire Market <strong>Planograms</strong>',sub:'5 coolers · vendor color coded · click any product to edit'},
+  vendors:{breadcrumb:'Retail › Vendors',title:'Surefire Market <strong>Vendors</strong>',sub:'vendor contacts & purchased items'},
+  invoices:{breadcrumb:'Retail › Invoices',title:'Surefire Market <strong>Invoices</strong>',sub:'upload and manage incoming invoices'},
+};
+function showPage(name){
+  ['planograms','vendors','invoices'].forEach(p=>{
+    const el=document.getElementById('page-'+p);
+    if(el)el.style.display=p===name?(p==='planograms'?'block':'block'):'none';
+  });
+  const h=PAGE_HEADERS[name]||PAGE_HEADERS.planograms;
+  document.getElementById('pageBreadcrumb').innerHTML=h.breadcrumb.replace('›','<span>›</span>');
+  document.getElementById('pageTitle').innerHTML=h.title;
+  document.getElementById('pageSubtitle').textContent=h.sub;
+  if(name==='planograms')switchCooler(currentCooler);
+  if(name==='vendors')renderVendors();
+  if(name==='invoices'){initDropArea();renderInvoices();}
+}
+
+// ── VENDORS ───────────────────────────────────────────────────────
+const VENDOR_DATA=[
+  {name:'Pepsi',color:'#004B93',products:['Poppi','Alani Nu','Gatorade','Good2Grow']},
+  {name:'Coca-Cola',color:'#B71C1C',products:['Topo Chico','Smart Water','Gold Peak','Mexican Sprite','Mexican Coca-Cola','Vitamin Water','Fanta','Minute Maid','Diet Coke','Dr Pepper','Sprite']},
+  {name:'Choice Beverage',color:'#E65100',products:['Electrolit','Cheerwine','Bloom Energy','La Colombe','Snapple','Canada Dry','A&W','Nehi','Tahitian Treat','Sunkist','Sun Drop','Core Water','Aloevine']},
+  {name:'Adams Beverage',color:'#2E7D32',products:['Liquid Death','Calypso','NoDa','White Claw','Blue Moon','Stella Artois','Michelob Ultra','Bold Rock','Clubtails','Happy Dad','Bud Light','Budweiser']},
+  {name:'United Carolina Beverage',color:'#1B5E20',products:['Corona Extra','Fat Tire','Heineken','Modelo Especial','Miller High Life','Voodoo Ranger','Lagunitas','Coors Light','Guinness','Pabst Blue Ribbon']},
+  {name:'Johnston Brothers',color:'#5E35B1',products:['BuzzBallz','Sabe']},
+  {name:'Empire Distributors',color:'#B71C1C',products:['Jack Daniels']},
+  {name:'Herbal Oasis',color:'#2E7D32',products:['Oasis']},
+  {name:'HopFly',color:'#E65100',products:['HopFly']},
+  {name:'US Foods',color:'#F57F17',products:['Acqua Panna','Saratoga Still','Jarritos']},
+  {name:"Sam's Club",color:'#007DC6',products:['Red Bull']},
+  {name:'Restaurant Depot',color:'#6A1B9A',products:['Saratoga Sparkling']},
+];
+const VENDOR_DEFAULTS={
+  'Coca-Cola':{rep:'Michael',phone:'7044412381',email:'',terms:'Net 20',orderDay:'Every Friday',deliveryDay:'Every Tuesday',account:'',minOrder:'',notes:'',orderUrl:'https://www.my-coke.com'},
+};
+let vendorContacts=JSON.parse(localStorage.getItem('sm-vendor-contacts')||'{}');
+Object.entries(VENDOR_DEFAULTS).forEach(([name,data])=>{
+  if(!vendorContacts[name])vendorContacts[name]=data;
+  else vendorContacts[name]={...data,...vendorContacts[name]};
+});
+function saveVendorContacts(){localStorage.setItem('sm-vendor-contacts',JSON.stringify(vendorContacts));}
+function vField(vname,field,val,placeholder){
+  const safe=val||'';
+  if(managerUnlocked){
+    const vSafe=vname.replace(/'/g,"\\'");
+    return `<input class="vendor-info-input" placeholder="${placeholder}" value="${safe}" onchange="updateVendorContact('${vSafe}','${field}',this.value)"/>`;
+  }
+  return `<span class="vendor-info-val">${safe||`<span style="color:var(--gray-mid);font-style:italic">—</span>`}</span>`;
+}
+function renderVendors(){
+  const grid=document.getElementById('vendor-grid');
+  grid.innerHTML=VENDOR_DATA.map(v=>{
+    const c=vendorContacts[v.name]||{};
+    return `<div class="vendor-card">
+      <div class="vendor-card-head">
+        <div class="vendor-card-dot" style="background:${v.color}"></div>
+        <div class="vendor-card-name">${v.name}</div>
+        ${managerUnlocked?'<span style="font-size:10px;padding:2px 8px;border-radius:20px;background:var(--green-light);color:var(--green);font-weight:600">editing</span>':''}
+      </div>
+      <div class="vendor-card-body">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--gray-dark);text-transform:uppercase;margin-bottom:8px">Contact</div>
+        <div class="vendor-info-row"><span class="vendor-info-label">Rep</span>${vField(v.name,'rep',c.rep,'Rep name')}</div>
+        <div class="vendor-info-row"><span class="vendor-info-label">Phone</span>${vField(v.name,'phone',c.phone,'Phone number')}</div>
+        <div class="vendor-info-row"><span class="vendor-info-label">Email</span>${vField(v.name,'email',c.email,'Email address')}</div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--gray-dark);text-transform:uppercase;margin:12px 0 8px">Schedule</div>
+        <div class="vendor-info-row"><span class="vendor-info-label">Order Day</span>${vField(v.name,'orderDay',c.orderDay,'e.g. Every Friday')}</div>
+        <div class="vendor-info-row"><span class="vendor-info-label">Delivery</span>${vField(v.name,'deliveryDay',c.deliveryDay,'e.g. Every Tuesday')}</div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--gray-dark);text-transform:uppercase;margin:12px 0 8px">Account</div>
+        <div class="vendor-info-row"><span class="vendor-info-label">Terms</span>${vField(v.name,'terms',c.terms,'e.g. Net 30')}</div>
+        <div class="vendor-info-row"><span class="vendor-info-label">Account #</span>${vField(v.name,'account',c.account,'Account number')}</div>
+        <div class="vendor-info-row"><span class="vendor-info-label">Min Order</span>${vField(v.name,'minOrder',c.minOrder,'e.g. $250')}</div>
+        <div class="vendor-info-row"><span class="vendor-info-label">Notes</span>${vField(v.name,'notes',c.notes,'Any notes...')}</div>
+        ${managerUnlocked?`<div class="vendor-info-row"><span class="vendor-info-label">Order Site</span><div style="display:flex;flex-direction:column;gap:4px;flex:1">${c.orderUrl?`<a href="${c.orderUrl}" target="_blank" style="font-size:12px;color:var(--green-mid);text-decoration:none;font-weight:500">${c.orderUrl}</a>`:''}<input class="vendor-info-input" placeholder="https://..." value="${c.orderUrl||''}" onchange="updateVendorContact('${v.name.replace(/'/g,"\\'")}','orderUrl',this.value);renderVendors()"/></div></div>`:''}
+        <div class="vendor-products">
+          <div class="vendor-products-label">Items Ordered</div>
+          <div class="vendor-tag-list">${v.products.map(p=>`<span class="vendor-tag-pill">${p}</span>`).join('')}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function updateVendorContact(vendor,field,val){
+  if(!vendorContacts[vendor])vendorContacts[vendor]={};
+  vendorContacts[vendor][field]=val;
+  saveVendorContacts();
+}
+
+// ── INVOICES ──────────────────────────────────────────────────────
+let invoiceFiles=[];
+let invoiceMeta=JSON.parse(localStorage.getItem('sm-invoices')||'[]');
+function handleInvoiceFiles(files){
+  Array.from(files).forEach(file=>{
+    const id='inv-'+Date.now()+'-'+Math.random().toString(36).slice(2);
+    const meta={id,name:file.name,size:file.size,type:file.type,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})};
+    invoiceMeta.unshift(meta);
+    invoiceFiles.push({id,file});
+  });
+  localStorage.setItem('sm-invoices',JSON.stringify(invoiceMeta));
+  renderInvoices();
+}
+function deleteInvoice(id){
+  invoiceMeta=invoiceMeta.filter(m=>m.id!==id);
+  invoiceFiles=invoiceFiles.filter(f=>f.id!==id);
+  localStorage.setItem('sm-invoices',JSON.stringify(invoiceMeta));
+  renderInvoices();
+}
+function downloadInvoice(id){
+  const f=invoiceFiles.find(x=>x.id===id);
+  if(!f)return;
+  const a=document.createElement('a');a.href=URL.createObjectURL(f.file);a.download=f.file.name;a.click();
+}
+function fmtSize(b){if(b<1024)return b+'B';if(b<1048576)return (b/1024).toFixed(1)+'KB';return (b/1048576).toFixed(1)+'MB';}
+function fileIcon(type){if(type.includes('pdf'))return '📋';if(type.includes('image'))return '🖼️';return '📊';}
+function renderInvoices(){
+  const list=document.getElementById('invoice-list');
+  if(!invoiceMeta.length){list.innerHTML='<div class="invoice-empty">No invoices uploaded yet</div>';return;}
+  list.innerHTML=invoiceMeta.map(m=>{
+    const canDownload=invoiceFiles.some(f=>f.id===m.id);
+    return `<div class="invoice-item">
+      <div class="invoice-file-icon">${fileIcon(m.type)}</div>
+      <div class="invoice-info">
+        <div class="invoice-name" title="${m.name}">${m.name}</div>
+        <div class="invoice-meta">${m.date} · ${fmtSize(m.size)}</div>
+      </div>
+      ${canDownload?`<span class="invoice-badge">Ready</span>`:''}
+      ${canDownload?`<button class="invoice-del" onclick="downloadInvoice('${m.id}')">↓ download</button>`:''}
+      <button class="invoice-del" onclick="deleteInvoice('${m.id}')">remove</button>
+    </div>`;
+  }).join('');
+}
+function initDropArea(){const dropArea=document.getElementById('invoice-drop');if(!dropArea||dropArea._init)return;dropArea._init=true;dropArea.addEventListener('dragover',e=>{e.preventDefault();dropArea.classList.add('drag-over');});dropArea.addEventListener('dragleave',()=>dropArea.classList.remove('drag-over'));dropArea.addEventListener('drop',e=>{e.preventDefault();dropArea.classList.remove('drag-over');handleInvoiceFiles(e.dataTransfer.files);});}
 
 // ── INIT ─────────────────────────────────────────────────────────
 c1Render();
