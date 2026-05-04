@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Surefire Market — Retail Planograms</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#0A0A0A;--white:#FAFAF8;--green:#1A6B45;--green-light:#E8F3ED;
+  --green-mid:#2E9E6B;--gray:#F2F1EE;--gray-mid:#D8D6D0;--gray-dark:#6B6860;
+  --border:#E2E0DA;--font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+}
+html,body{height:100%;background:var(--white);color:var(--black);font-family:var(--font)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--black);display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:56px;border-bottom:1px solid #222;}
+.nav-logo{font-size:13px;font-weight:600;letter-spacing:.08em;color:var(--white);text-transform:uppercase;display:flex;align-items:center;gap:10px;}
+.nav-logo-dot{width:8px;height:8px;border-radius:50%;background:var(--green-mid)}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-link{font-size:12px;font-weight:500;color:#888;padding:6px 14px;border-radius:6px;cursor:pointer;text-decoration:none;transition:color .15s,background .15s;letter-spacing:.02em;}
+.nav-link:hover{color:var(--white);background:#1a1a1a}
+.nav-dropdown{position:relative}
+.nav-dropdown-btn{font-size:12px;font-weight:500;color:#888;padding:6px 14px;border-radius:6px;cursor:pointer;background:none;border:none;display:flex;align-items:center;gap:6px;transition:color .15s,background .15s;letter-spacing:.02em;font-family:var(--font);}
+.nav-dropdown-btn:hover,.nav-dropdown-btn.open{color:var(--white);background:#1a1a1a}
+.nav-dropdown-btn.open .nav-arrow{transform:rotate(180deg)}
+.nav-arrow{width:12px;height:12px;transition:transform .2s;display:flex;align-items:center;justify-content:center;}
+.nav-arrow svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2}
+.dropdown-menu{position:absolute;top:calc(100% + 8px);left:0;background:var(--black);border:1px solid #2a2a2a;border-radius:10px;min-width:200px;overflow:hidden;opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity .15s,transform .15s;box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.dropdown-menu.open{opacity:1;pointer-events:all;transform:translateY(0)}
+.dropdown-section{font-size:10px;font-weight:600;letter-spacing:.1em;color:#555;text-transform:uppercase;padding:10px 14px 4px;}
+.dropdown-item{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:400;color:#aaa;padding:8px 14px;cursor:pointer;transition:background .1s,color .1s;}
+.dropdown-item:hover,.dropdown-item.active{background:#151515;color:var(--white)}
+.dropdown-item-dot{width:6px;height:6px;border-radius:50%;background:var(--green-mid);flex-shrink:0}
+.dropdown-divider{height:1px;background:#1e1e1e;margin:4px 0}
+.main{padding-top:56px;min-height:100vh}
+.page-header{background:var(--black);padding:48px 28px 36px;border-bottom:1px solid #1a1a1a;}
+.page-breadcrumb{font-size:11px;font-weight:500;color:#555;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:6px;margin-bottom:12px;}
+.page-breadcrumb span{color:#333}
+.page-title{font-size:28px;font-weight:300;color:var(--white);letter-spacing:-.02em;line-height:1.2;margin-bottom:6px;}
+.page-title strong{font-weight:600;color:var(--green-mid)}
+.page-subtitle{font-size:13px;color:#555;font-weight:400}
+.content{padding:28px;max-width:1600px;margin:0 auto}
+.cooler-tabs{display:flex;gap:2px;margin-bottom:24px;background:var(--gray);border-radius:10px;padding:3px;width:fit-content;flex-wrap:wrap;}
+.cooler-tab{font-size:12px;font-weight:500;padding:6px 16px;border-radius:7px;cursor:pointer;color:var(--gray-dark);transition:all .15s;border:none;background:none;font-family:var(--font);letter-spacing:.01em;}
+.cooler-tab.active{background:var(--white);color:var(--black);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.cooler-panel{display:none}.cooler-panel.active{display:block}
+.plano-card{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+.plano-card-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);background:var(--gray);}
+.plano-card-title{display:flex;align-items:center;gap:10px;}
+.plano-card-title h2{font-size:14px;font-weight:600;color:var(--black)}
+.plano-card-title span{font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;background:var(--green-light);color:var(--green);letter-spacing:.04em;}
+.plano-inner{padding:20px}
+.stats-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.stat-pill{background:var(--gray);border-radius:8px;padding:8px 14px;font-size:11px;color:var(--gray-dark);}
+.stat-pill strong{display:block;font-size:18px;font-weight:600;color:var(--black);font-family:var(--mono)}
+.legend-box{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;padding:10px 14px;background:var(--gray);border-radius:10px;border:1px solid var(--border);}
+.legend-title-row{font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--gray-dark);text-transform:uppercase;width:100%;margin-bottom:4px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--black)}
+.legend-swatch{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.legend-sub{font-size:10px;color:var(--gray-dark);margin-left:1px}
+.toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.tb-btn{font-size:11px;font-weight:500;padding:5px 13px;border-radius:7px;border:1px solid var(--border);background:var(--white);color:var(--black);cursor:pointer;height:30px;font-family:var(--font);transition:background .1s,border-color .1s;display:flex;align-items:center;gap:5px;}
+.tb-btn:hover{background:var(--gray);border-color:var(--gray-mid)}
+.tb-btn.pri{background:var(--green);color:#fff;border-color:var(--green)}
+.tb-btn.pri:hover{background:var(--green-mid)}
+.tb-btn:disabled{opacity:.35;cursor:default}
+
+/* SHARED PLANOGRAM STYLES */
+.cooler{border:2px solid var(--border);border-radius:12px;overflow:hidden;background:#dde2e6}
+.cooler-head{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--white);border-bottom:1px solid var(--border);}
+.cooler-head-left{display:flex;align-items:center;gap:8px}
+.cooler-head-icon{width:8px;height:8px;border-radius:50%;background:var(--green-mid)}
+.cooler-head span{font-size:12px;font-weight:500;color:var(--black)}
+.cooler-head small{font-size:10px;color:var(--gray-dark)}
+.shelf-wrap{padding:6px 8px;display:flex;flex-direction:column;gap:5px}
+.shelf{background:var(--white);border:0.5px solid var(--border);border-radius:10px;overflow:hidden}
+.shelf-bar{display:flex;align-items:center;gap:5px;padding:5px 10px;background:var(--gray);border-bottom:0.5px solid var(--border);}
+.shelf-label{font-size:10px;font-weight:600;color:var(--black);flex:1;letter-spacing:.01em}
+.shelf-note{font-size:9px;color:var(--gray-dark);font-style:italic}
+.shelf-faces{font-size:10px;color:var(--gray-dark);font-family:var(--mono)}
+.shelf-row{display:flex;width:100%;padding:4px 6px;gap:3px;align-items:flex-end}
+.brand-group{display:flex;flex-direction:column;min-width:0}
+.brand-header{font-size:8px;font-weight:600;padding:3px 4px;border-radius:4px 4px 0 0;text-align:center;overflow:hidden;color:#fff;line-height:1.3}
+.brand-name-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-oz-line{font-size:7px;font-weight:400;opacity:.85}
+.brand-total{font-size:8px;color:var(--gray-dark);text-align:center;padding:1px 0;font-family:var(--mono)}
+.brand-flavors{display:flex;gap:2px}
+.flavor-block{display:flex;flex-direction:column;border-radius:0 0 4px 4px;overflow:hidden;border:0.5px solid var(--border);min-width:0;cursor:pointer;background:var(--white)}
+.flavor-block:hover{filter:brightness(.97)}
+.flavor-block.sel{outline:2px solid #222;outline-offset:1px}
+.facings{display:flex;gap:1px;padding:2px}
+.f{flex:1;border-radius:3px;min-width:0;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:600;text-align:center;line-height:1.1;overflow:hidden;position:relative}
+.f img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:3px}
+.f span{position:relative;z-index:1;pointer-events:none;padding:1px}
+.ffoot{padding:2px 4px;border-top:0.5px solid var(--border);min-width:0}
+.fname{font-size:7px;font-weight:500;color:var(--black);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fmeta{display:flex;justify-content:space-between;align-items:center}
+.fprice{font-size:7px;color:var(--green);font-weight:600;font-family:var(--mono)}
+.ffaces{font-size:7px;color:var(--gray-dark);font-family:var(--mono)}
+.vendor-tag{font-size:6px;font-weight:600;padding:1px 4px;border-radius:3px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block;margin-top:1px}
+.dp{display:none;padding:8px;border-top:0.5px solid var(--border);background:var(--gray)}
+.dp.open{display:block}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.dfield label{display:block;font-size:9px;font-weight:600;color:var(--gray-dark);margin-bottom:3px;letter-spacing:.04em;text-transform:uppercase}
+.dfield input,.dfield select{width:100%;font-size:11px;padding:5px 8px;border-radius:7px;border:1px solid var(--border);background:var(--white);color:var(--black);font-family:var(--font)}
+.dfield input:focus,.dfield select:focus{outline:2px solid var(--green);border-color:transparent}
+.dfield.full{grid-column:1/-1;margin-top:2px}
+.img-hint{font-size:8px;color:var(--gray-dark);margin-top:3px}
+.dact{display:flex;gap:5px;margin-top:8px;justify-content:flex-end}
+.add-row{display:flex;align-items:center;justify-content:center;gap:6px;padding:5px;border-top:0.5px dashed var(--border)}
+.empty-slot{flex:1;min-width:0;display:flex;flex-direction:column;border-radius:6px;border:1.5px dashed #AAA;background:#F8F8F6;overflow:hidden}
+.empty-slot.open{border:2px solid var(--green);background:var(--green-light)}
+.empty-top{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 4px;min-height:72px;cursor:pointer}
+.empty-icon{font-size:16px;color:#AAA}
+.empty-label{font-size:7px;color:#AAA;font-weight:500;text-align:center;line-height:1.3}
+.empty-price{font-size:7px;color:var(--green);font-weight:600;font-family:var(--mono)}
+.empty-form{display:none;padding:7px;border-top:1px dashed #CCC;background:var(--gray)}
+.empty-form.open{display:block}
+/* Door holders */
+.door-section{padding:6px 8px;background:#e0e5e0;border-bottom:2px solid #C8CFC8;display:flex;gap:8px}
+.door-holder{flex:1;background:var(--white);border:1.5px solid var(--border);border-radius:10px;overflow:hidden}
+.door-holder-bar{padding:5px 8px;font-size:9px;font-weight:600;color:#fff;display:flex;justify-content:space-between;align-items:center}
+.door-pos-badge{font-size:7px;background:rgba(255,255,255,0.25);padding:1px 6px;border-radius:10px;font-weight:600}
+.door-row-label{font-size:8px;color:var(--gray-dark);padding:2px 6px 0;font-style:italic}
+.door-shelf-row{display:flex;gap:2px;padding:3px 5px}
+.door-face{flex:1;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 2px;gap:1px;min-height:44px;cursor:pointer;transition:filter .1s}
+.door-face:hover{filter:brightness(.88)}
+.door-face.sel{outline:2px solid #fff;outline-offset:1px}
+.door-face-name{font-size:6px;font-weight:600;color:#fff;text-align:center;line-height:1.2}
+.door-face-price{font-size:6px;color:rgba(255,255,255,0.85);font-family:var(--mono)}
+.door-face-oz{font-size:5px;color:rgba(255,255,255,0.7)}
+.door-total{font-size:8px;color:var(--gray-dark);text-align:center;padding:3px 6px;border-top:0.5px solid var(--border);font-family:var(--mono)}
+.door-edit-panel{display:none;padding:6px;border-top:0.5px solid var(--border);background:var(--gray)}
+.door-edit-panel.open{display:block}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><div class="nav-logo-dot"></div>Surefire Market</div>
+  <div class="nav-links">
+    <a class="nav-link" href="#">Dashboard</a>
+    <div class="nav-dropdown" id="retailDropdown">
+      <button class="nav-dropdown-btn" id="retailBtn" onclick="toggleDropdown()">
+        Retail
+        <span class="nav-arrow"><svg viewBox="0 0 10 10"><polyline points="2,3 5,7 8,3"/></svg></span>
+      </button>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <div class="dropdown-section">Planograms</div>
+        <a class="dropdown-item" onclick="switchCooler(0);closeDropdown()"><span class="dropdown-item-dot"></span>Cooler 1 — Turbo Air</a>
+        <a class="dropdown-item" onclick="switchCooler(1);closeDropdown()"><span class="dropdown-item-dot"></span>Cooler 2 — Glass Door (Coca-Cola)</a>
+        <a class="dropdown-item" onclick="switchCooler(2);closeDropdown()"><span class="dropdown-item-dot"></span>Cooler 3 — Glass Door (Choice)</a>
+        <a class="dropdown-item" onclick="switchCooler(3);closeDropdown()"><span class="dropdown-item-dot"></span>Cooler 4 — Beer 12-Packs</a>
+        <a class="dropdown-item" onclick="switchCooler(4);closeDropdown()"><span class="dropdown-item-dot"></span>Cooler 5 — Singles & Craft</a>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-section">Coming Soon</div>
+        <a class="dropdown-item" style="opacity:.4;cursor:default"><span class="dropdown-item-dot" style="background:#555"></span>Dry Goods</a>
+        <a class="dropdown-item" style="opacity:.4;cursor:default"><span class="dropdown-item-dot" style="background:#555"></span>Snack Wall</a>
+      </div>
+    </div>
+    <a class="nav-link" href="#">Inventory</a>
+    <a class="nav-link" href="#">Reports</a>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="page-header">
+    <div class="page-breadcrumb">Retail <span>›</span> Planograms</div>
+    <div class="page-title">Surefire Market <strong>Planograms</strong></div>
+    <div class="page-subtitle" id="pageSubtitle">5 coolers · vendor color coded · click any product to edit</div>
+  </div>
+
+  <div class="content">
+    <div class="cooler-tabs" id="coolerTabs">
+      <button class="cooler-tab active" onclick="switchCooler(0)">Cooler 1</button>
+      <button class="cooler-tab" onclick="switchCooler(1)">Cooler 2</button>
+      <button class="cooler-tab" onclick="switchCooler(2)">Cooler 3</button>
+      <button class="cooler-tab" onclick="switchCooler(3)">Cooler 4</button>
+      <button class="cooler-tab" onclick="switchCooler(4)">Cooler 5</button>
+    </div>
+
+    <!-- COOLER 1 -->
+    <div class="cooler-panel active" id="panel0">
+      <div class="plano-card">
+        <div class="plano-card-header"><div class="plano-card-title"><h2>Cooler 1 — Turbo Air Open-Face</h2><span>ACTIVE</span></div></div>
+        <div class="plano-inner">
+          <div class="legend-box" id="c1-legend"></div>
+          <div class="stats-row" id="c1-sum"></div>
+          <div class="toolbar">
+            <button class="tb-btn pri" onclick="c1AddBrand(c1data.shelves[0].id)">+ add brand</button>
+            <button class="tb-btn" id="c1-undo" onclick="c1Undo()" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="c1Export()">↗ export</button>
+          </div>
+          <div class="cooler"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Turbo Air — Surefire Market</span></div><small>width = shelf space · vendor color coded</small></div><div class="shelf-wrap" id="c1-sw"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COOLER 2 -->
+    <div class="cooler-panel" id="panel1">
+      <div class="plano-card">
+        <div class="plano-card-header"><div class="plano-card-title"><h2>Cooler 2 — Glass Door (Coca-Cola)</h2><span>ACTIVE</span></div></div>
+        <div class="plano-inner">
+          <div class="legend-box" id="c2-legend"></div>
+          <div class="stats-row" id="c2-sum"></div>
+          <div class="toolbar">
+            <button class="tb-btn pri" onclick="c2AddBrand(c2data.shelves[0].id)">+ add brand</button>
+            <button class="tb-btn" id="c2-undo" onclick="c2Undo()" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="c2Export()">↗ export</button>
+          </div>
+          <div class="cooler"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Glass Door Cooler 2 — Surefire Market</span></div><small>color = vendor · click flavor to edit</small></div><div class="shelf-wrap" id="c2-sw"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COOLER 3 -->
+    <div class="cooler-panel" id="panel2">
+      <div class="plano-card">
+        <div class="plano-card-header"><div class="plano-card-title"><h2>Cooler 3 — Glass Door (Choice Beverage)</h2><span>ACTIVE</span></div></div>
+        <div class="plano-inner">
+          <div class="legend-box" id="c3-legend"></div>
+          <div class="stats-row" id="c3-sum"></div>
+          <div class="toolbar">
+            <button class="tb-btn pri" onclick="c3AddBrand(c3data.shelves[0].id)">+ add brand</button>
+            <button class="tb-btn" id="c3-undo" onclick="c3Undo()" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="c3Export()">↗ export</button>
+          </div>
+          <div class="cooler"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Glass Door Cooler 3 — Surefire Market</span></div><small>vendor: Choice Beverage · click to edit</small></div><div class="shelf-wrap" id="c3-sw"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COOLER 4 -->
+    <div class="cooler-panel" id="panel3">
+      <div class="plano-card">
+        <div class="plano-card-header"><div class="plano-card-title"><h2>Cooler 4 — Beer 12-Packs</h2><span>ACTIVE</span></div></div>
+        <div class="plano-inner">
+          <div class="legend-box" id="c4-legend"></div>
+          <div class="stats-row" id="c4-sum"></div>
+          <div class="toolbar">
+            <button class="tb-btn pri" onclick="c4AddBrand(c4data.shelves[0].id)">+ add brand</button>
+            <button class="tb-btn" id="c4-undo" onclick="c4Undo()" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="c4Export()">↗ export</button>
+          </div>
+          <div class="cooler"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Beer Cooler 4 — Surefire Market</span></div><small>organized by price tier · click to edit</small></div><div class="shelf-wrap" id="c4-sw"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COOLER 5 -->
+    <div class="cooler-panel" id="panel4">
+      <div class="plano-card">
+        <div class="plano-card-header"><div class="plano-card-title"><h2>Cooler 5 — Singles & Craft</h2><span>ACTIVE</span></div></div>
+        <div class="plano-inner">
+          <div class="legend-box" id="c5-legend"></div>
+          <div class="stats-row" id="c5-sum"></div>
+          <div class="toolbar">
+            <button class="tb-btn pri" onclick="c5AddBrand(c5data.shelves[0].id)">+ add brand</button>
+            <button class="tb-btn" id="c5-undo" onclick="c5Undo()" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="c5Export()">↗ export</button>
+          </div>
+          <div class="cooler" id="c5-cooler"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Cooler 5 — Singles & Craft</span></div><small>color = vendor · click to edit</small></div>
+          <div class="door-section">
+            <div class="door-holder"><div class="door-holder-bar" style="background:#5E35B1"><span>BuzzBallz — door top</span><span class="door-pos-badge">Johnston Brothers · $5.99</span></div><div class="door-row-label">row 1</div><div class="door-shelf-row" id="bz-row1"></div><div class="door-row-label">row 2</div><div class="door-shelf-row" id="bz-row2"></div><div class="door-total">10 units · Berry Cherry Limeade 3.4oz</div><div class="door-edit-panel" id="bz-edit-panel"></div></div>
+            <div class="door-holder"><div class="door-holder-bar" style="background:#2E7D32"><span>Oasis — door bottom</span><span class="door-pos-badge">Herbal Oasis · $4.99</span></div><div class="door-row-label">row 1</div><div class="door-shelf-row" id="oa-row1"></div><div class="door-total">7 units · Tropic Wave 10mg 12oz</div><div class="door-edit-panel" id="oa-edit-panel"></div></div>
+          </div>
+          <div class="shelf-wrap" id="c5-sw"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── NAV ──────────────────────────────────────────────────────────
+function toggleDropdown(){const btn=document.getElementById('retailBtn');const menu=document.getElementById('dropdownMenu');btn.classList.toggle('open');menu.classList.toggle('open');}
+function closeDropdown(){document.getElementById('retailBtn').classList.remove('open');document.getElementById('dropdownMenu').classList.remove('open');}
+document.addEventListener('click',e=>{if(!document.getElementById('retailDropdown').contains(e.target))closeDropdown();});
+
+let currentCooler=0;
+function switchCooler(i){
+  document.querySelectorAll('.cooler-panel').forEach((p,j)=>p.classList.toggle('active',j===i));
+  document.querySelectorAll('.cooler-tab').forEach((t,j)=>t.classList.toggle('active',j===i));
+  document.querySelectorAll('.dropdown-item').forEach((d,j)=>d.classList.toggle('active',j===i));
+  currentCooler=i;
+}
+
+// ── SHARED HELPERS ────────────────────────────────────────────────
+function mkFoot(f,c,vendor,sid,bid,pid,selId){
+  return `<div class="ffoot"><div class="fname" title="${f.name}">${f.name}</div><div class="fmeta"><span class="fprice">${f.price||'—'}</span><span class="ffaces">${f.facings} faces</span></div><span class="vendor-tag" style="background:${c.hdr}">${vendor}</span></div>`;
+}
+function mkFields(f,b,sid,bid,pfx){
+  return `<div class="dgrid">
+    <div class="dfield"><label>Flavor</label><input value="${f.name}" onchange="${pfx}UpdF('${f.id}','name',this.value)"/></div>
+    <div class="dfield"><label>Price</label><input value="${f.price}" onchange="${pfx}UpdF('${f.id}','price',this.value)"/></div>
+    <div class="dfield"><label>Faces</label><input type="number" min="1" value="${f.facings}" onchange="${pfx}UpdF('${f.id}','facings',parseInt(this.value)||1);${pfx}Render()"/></div>
+    <div class="dfield"><label>Brand</label><input value="${b.name}" onchange="${pfx}UpdB('${b.id}','name',this.value);${pfx}Render()"/></div>
+    <div class="dfield"><label>Size</label><input value="${b.oz||''}" onchange="${pfx}UpdB('${b.id}','oz',this.value);${pfx}Render()"/></div>
+    <div class="dfield full"><label>Image URL</label><input value="${f.img||''}" placeholder="paste image URL..." onchange="${pfx}UpdImg('${f.id}',this.value)"/><div class="img-hint">right-click product image → copy image address → paste above</div></div>
+  </div>
+  <div class="dact">
+    <button class="tb-btn" style="color:#A32D2D;border-color:#F5BBBB;font-size:10px;height:26px" onclick="${pfx}RemFlavor('${sid}','${bid}','${f.id}')">remove</button>
+    <button class="tb-btn pri" style="font-size:10px;height:26px" onclick="${pfx}Done()">done</button>
+  </div>`;
+}
+
+// ════════════════════════════════════════════════════════════════
+// COOLER 1 — TURBO AIR
+// ════════════════════════════════════════════════════════════════
+const C1_VENDORS={'Pepsi':{hdr:'#004B93',bg:'#E8F0FB',tx:'#003070'},'Choice':{hdr:'#E65100',bg:'#FFF3E0',tx:'#BF360C'},"Sam's Club":{hdr:'#007DC6',bg:'#E3F4FC',tx:'#005A8E'},'US Foods':{hdr:'#F57F17',bg:'#FFF8E1',tx:'#7B4800'},'Coca-Cola':{hdr:'#B71C1C',bg:'#FFEBEE',tx:'#7A0000'},'Adams Beverage':{hdr:'#2E7D32',bg:'#E8F5E9',tx:'#1B5E20'},'Restaurant Depot':{hdr:'#6A1B9A',bg:'#F3E5F5',tx:'#4A148C'},'Unknown':{hdr:'#9E9E9E',bg:'#F5F5F5',tx:'#616161'}};
+const C1_BRAND_VENDOR={'Poppi':'Pepsi','Alani Nu':'Pepsi','Gatorade':'Pepsi','Good2Grow':'Pepsi','Electrolit':'Choice','Red Bull':"Sam's Club",'Acqua Panna':'US Foods','Saratoga Still':'US Foods','Jarritos':'US Foods','Topo Chico':'Coca-Cola','Smart Water':'Coca-Cola','Gold Peak':'Coca-Cola','Mexican Sprite':'Coca-Cola','Mexican Coca-Cola':'Coca-Cola','Liquid Death':'Adams Beverage','Calypso':'Adams Beverage','Saratoga Sparkling':'Restaurant Depot'};
+function c1Color(n){const v=C1_BRAND_VENDOR[n]||'Unknown';return C1_VENDORS[v]||C1_VENDORS['Unknown'];}
+function c1Vendor(n){return C1_BRAND_VENDOR[n]||'Unknown';}
+const C1_H={p10a:72,p6a:64,p7a:64,p8a:58,p9a:54,p5a:48,p11a:60,p11b:60,p12a:52,p13a:62,p13b:62,p13c:62,p14a:62,p15a:62,p16a:62,p17a:44,p17b:44};
+let c1Sel=null,c1Pid=40,c1Hist=[];
+let c1data={shelves:[
+  {id:'s1',label:'shelf 1 — top',note:'functional & energy',brands:[
+    {id:'b1',name:'Poppi',oz:'12oz can',flavors:[{id:'p1a',name:'Wild Berry',facings:3,price:'$4.09',img:''},{id:'p1b',name:'Raspberry Rose',facings:3,price:'$4.09',img:''},{id:'p1c',name:'Cherry Limeade',facings:3,price:'$4.09',img:''}]},
+    {id:'b2',name:'Electrolit',oz:'21oz',flavors:[{id:'p2a',name:'Strawberry',facings:4,price:'$4.49',img:''}]},
+    {id:'b3',name:'Alani Nu',oz:'12oz can',flavors:[{id:'p3a',name:'Tropsicle',facings:2,price:'$3.49',img:''},{id:'p3b',name:'Breezeberry',facings:2,price:'$3.49',img:''}]},
+    {id:'b4',name:'Red Bull',oz:'8.4oz can',flavors:[{id:'p4a',name:'Original',facings:3,price:'$3.49',img:''}]},
+  ]},
+  {id:'s2',label:'shelf 2',note:'tall → short, left → right',brands:[
+    {id:'b10',name:'Acqua Panna',oz:'1L glass',flavors:[{id:'p10a',name:'Still',facings:4,price:'$4.99',img:''}]},
+    {id:'b6',name:'Saratoga Sparkling',oz:'12oz',flavors:[{id:'p6a',name:'Sparkling',facings:3,price:'$3.49',img:''}]},
+    {id:'b7',name:'Saratoga Still',oz:'12oz',flavors:[{id:'p7a',name:'Still',facings:3,price:'$3.49',img:''}]},
+    {id:'b8',name:'Topo Chico',oz:'12oz',flavors:[{id:'p8a',name:'Sparkling',facings:3,price:'$3.39',img:''}]},
+    {id:'b9',name:'Smart Water',oz:'20oz',flavors:[{id:'p9a',name:'Still',facings:2,price:'$3.39',img:''}]},
+    {id:'b5',name:'Gold Peak',oz:'18.5oz',flavors:[{id:'p5a',name:'Sweet Tea',facings:3,price:'$3.49',img:''}]},
+  ]},
+  {id:'s3',label:'shelf 3',note:'sports & juice',brands:[
+    {id:'b11',name:'Liquid Death',oz:'19.2oz',flavors:[{id:'p11a',name:'Still',facings:3,price:'$3.09',img:''},{id:'p11b',name:'Sparkling',facings:3,price:'$3.09',img:''}]},
+    {id:'b12',name:'Gatorade',oz:'28oz',flavors:[{id:'p12a',name:'Orange',facings:3,price:'$3.09',img:''}]},
+    {id:'b13',name:'Calypso',oz:'16oz',flavors:[{id:'p13a',name:'Ocean Blue Lemonade',facings:3,price:'$4.09',img:''},{id:'p13b',name:'Strawberry Lemonade',facings:3,price:'$4.09',img:''},{id:'p13c',name:'Southern Peach Lemonade',facings:3,price:'$4.09',img:''}]},
+  ]},
+  {id:'s4',label:'shelf 4 — bottom',note:'sodas · kids grab zone',brands:[
+    {id:'b18',name:'Mexican Sprite',oz:'12oz',flavors:[{id:'p18a',name:'Original',facings:5,price:'$3.49',img:''}]},
+    {id:'b15',name:'Mexican Coca-Cola',oz:'12oz',flavors:[{id:'p15a',name:'Original',facings:5,price:'$3.49',img:''}]},
+    {id:'b16',name:'Jarritos',oz:'12oz',flavors:[{id:'p16a',name:'Mandarin',facings:5,price:'$2.99',img:''}]},
+    {id:'b17',name:'Good2Grow',oz:'6oz',flavors:[{id:'p17a',name:'Fruit Punch',facings:3,price:'$4.99',img:''},{id:'p17b',name:'Kiwi Strawberry',facings:3,price:'$4.99',img:''}]},
+  ]},
+]};
+function c1Snap(){c1Hist.push(JSON.stringify(c1data));if(c1Hist.length>20)c1Hist.shift();document.getElementById('c1-undo').disabled=false;}
+function c1Undo(){if(!c1Hist.length)return;c1data=JSON.parse(c1Hist.pop());document.getElementById('c1-undo').disabled=c1Hist.length===0;c1Sel=null;c1Render();}
+function c1UpdF(id,k,v){c1data.shelves.forEach(sh=>sh.brands.forEach(b=>{const f=b.flavors.find(x=>x.id===id);if(f)f[k]=v;}));}
+function c1UpdB(id,k,v){c1data.shelves.forEach(sh=>{const b=sh.brands.find(x=>x.id===id);if(b)b[k]=v;});}
+function c1UpdImg(id,v){c1data.shelves.forEach(sh=>sh.brands.forEach(b=>{const f=b.flavors.find(x=>x.id===id);if(f)f.img=v;}));c1Render();}
+function c1Done(){c1Sel=null;c1Render();}
+function c1RemFlavor(sid,bid,fid){const sh=c1data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);if(!b.flavors.length)sh.brands=sh.brands.filter(x=>x.id!==bid);c1Sel=null;c1Render();}
+function c1AddFlavor(sid){c1Snap();const sh=c1data.shelves.find(s=>s.id===sid);if(!sh||!sh.brands.length)return;const b=sh.brands[sh.brands.length-1];const id='p'+(c1Pid++);b.flavors.push({id,name:'new flavor',facings:2,price:'',img:''});c1Sel=id;c1Render();}
+function c1AddBrand(sid){c1Snap();const sh=c1data.shelves.find(s=>s.id===sid);if(!sh)return;const bid='b'+(c1Pid++);const fid='p'+(c1Pid++);sh.brands.push({id:bid,name:'new brand',oz:'',flavors:[{id:fid,name:'new flavor',facings:2,price:'',img:''}]});c1Sel=fid;c1Render();}
+function c1Export(){const blob=new Blob([JSON.stringify(c1data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cooler1-planogram.json';a.click();}
+function c1Render(){
+  const sw=document.getElementById('c1-sw');sw.innerHTML='';
+  c1data.shelves.forEach(sh=>{
+    const total=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
+    const sd=document.createElement('div');sd.className='shelf';
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c1-row-${sh.id}"></div><div class="add-row"><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c1AddFlavor('${sh.id}')">+ add flavor</button><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c1AddBrand('${sh.id}')">+ add brand</button></div>`;
+    sw.appendChild(sd);
+    const row=document.getElementById('c1-row-'+sh.id);
+    sh.brands.forEach(b=>{
+      const c=c1Color(b.name);const vendor=c1Vendor(b.name);
+      const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
+      const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf;grp.style.minWidth='0';
+      grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} faces</div><div class="brand-flavors" id="c1-fl-${b.id}"></div>`;
+      row.appendChild(grp);
+      const flRow=document.getElementById('c1-fl-'+b.id);
+      b.flavors.forEach(f=>{
+        const h=C1_H[f.id]||52;const isSel=c1Sel===f.id;
+        const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
+        fb.onclick=(e)=>{e.stopPropagation();c1Sel=c1Sel===f.id?null:f.id;c1Render();};
+        const pct=Math.round((f.facings/total)*100);
+        const imgTag=f.img?`<img src="${f.img}" onerror="this.style.display='none'"/>`:'';
+        const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:${h}px">${imgTag}<span>${f.img?'':b.name.split(' ')[0]}</span></div>`).join('');
+        fb.innerHTML=`<div class="facings">${fDivs}</div>${mkFoot(f,c,vendor,sh.id,b.id,f.id,c1Sel)}<div class="dp${isSel?' open':''}">${mkFields(f,b,sh.id,b.id,'c1')}</div>`;
+        flRow.appendChild(fb);
+      });
+    });
+  });
+  c1UpdateSum();
+}
+function c1UpdateSum(){
+  const allF=c1data.shelves.flatMap(s=>s.brands.flatMap(b=>b.flavors));
+  const tf=allF.reduce((n,f)=>n+f.facings,0);
+  const vendors=[...new Set(c1data.shelves.flatMap(s=>s.brands.map(b=>c1Vendor(b.name))))].length;
+  const leg=document.getElementById('c1-legend');
+  const vb={};c1data.shelves.forEach(sh=>sh.brands.forEach(b=>{const v=c1Vendor(b.name);if(!vb[v])vb[v]=[];if(!vb[v].includes(b.name))vb[v].push(b.name);}));
+  leg.innerHTML=`<div class="legend-title-row">Vendor Color Key</div>`+Object.entries(vb).map(([v,brands])=>{const c=C1_VENDORS[v]||C1_VENDORS['Unknown'];return `<div class="legend-item"><div class="legend-swatch" style="background:${c.hdr}"></div><strong>${v}</strong><span class="legend-sub">· ${brands.join(', ')}</span></div>`;}).join('');
+  document.getElementById('c1-sum').innerHTML=`<div class="stat-pill"><strong>${vendors}</strong>vendors</div><div class="stat-pill"><strong>${c1data.shelves.flatMap(s=>s.brands).length}</strong>brands</div><div class="stat-pill"><strong>${allF.length}</strong>flavors</div><div class="stat-pill"><strong>${tf}</strong>total faces</div>`;
+}
+
+// ════════════════════════════════════════════════════════════════
+// COOLER 2 — GLASS DOOR COCA-COLA
+// ════════════════════════════════════════════════════════════════
+const C2V={'Coca-Cola':{hdr:'#B71C1C',bg:'#FFEBEE',tx:'#7A0000'},'Vitamin Water':{hdr:'#B71C1C',bg:'#FFEBEE',tx:'#7A0000'}};
+function c2Color(n){return C2V['Coca-Cola'];}
+function c2Vendor(){return 'Coca-Cola';}
+let c2Sel=null,c2Pid=60,c2Hist=[];
+let c2data={shelves:[
+  {id:'s1',label:'shelf 1 — top',note:'highest velocity',brands:[{id:'b1',name:'Coca-Cola',oz:'20oz',flavors:[{id:'f1a',name:'Original',facings:8,price:'$3.09',img:''}]}]},
+  {id:'s2',label:'shelf 2',note:'',brands:[{id:'b2',name:'Diet Coke',oz:'20oz',flavors:[{id:'f2a',name:'Original',facings:8,price:'$3.09',img:''}]}]},
+  {id:'s3',label:'shelf 3',note:'Dr Pepper family',brands:[{id:'b3',name:'Diet Dr Pepper',oz:'20oz',flavors:[{id:'f3a',name:'Original',facings:3,price:'$3.09',img:''}]},{id:'b4',name:'Dr Pepper',oz:'20oz',flavors:[{id:'f4a',name:'Original',facings:5,price:'$3.09',img:''}]}]},
+  {id:'s4',label:'shelf 4',note:'Sprite family',brands:[{id:'b5',name:'Sprite',oz:'20oz',flavors:[{id:'f5a',name:'Original',facings:6,price:'$3.09',img:''}]},{id:'b6',name:'Sprite Zero',oz:'20oz',flavors:[{id:'f6a',name:'Original',facings:2,price:'$3.09',img:''}]}]},
+  {id:'s5',label:'shelf 5',note:'Fanta family + Vitamin Water · 8 faces',brands:[
+    {id:'b7',name:'Fanta',oz:'20oz',flavors:[{id:'f7a',name:'Berry',facings:1,price:'$3.09',img:''},{id:'f7b',name:'Pineapple',facings:2,price:'$3.09',img:''},{id:'f7c',name:'Strawberry',facings:2,price:'$3.09',img:''}]},
+    {id:'b8',name:'Vitamin Water',oz:'20oz',flavors:[{id:'f8a',name:'Kiwi Strawberry Focus',facings:2,price:'$3.69',img:''},{id:'f8b',name:'Zero Power C',facings:1,price:'$3.69',img:''}]},
+  ]},
+  {id:'s6',label:'shelf 6 — bottom',note:'Minute Maid family · 8 faces',brands:[
+    {id:'b9',name:'Minute Maid Apple',oz:'12oz',flavors:[{id:'f9a',name:'Apple',facings:2,price:'$3.09',img:''}]},
+    {id:'b10',name:'Minute Maid',oz:'20oz',flavors:[{id:'f10a',name:'Fruit Punch',facings:2,price:'$3.09',img:''},{id:'f10b',name:'Pink Lemonade',facings:2,price:'$3.09',img:''},{id:'f10c',name:'Lemonade',facings:2,price:'$3.09',img:''}]},
+  ]},
+]};
+function c2Snap(){c2Hist.push(JSON.stringify(c2data));if(c2Hist.length>20)c2Hist.shift();document.getElementById('c2-undo').disabled=false;}
+function c2Undo(){if(!c2Hist.length)return;c2data=JSON.parse(c2Hist.pop());document.getElementById('c2-undo').disabled=c2Hist.length===0;c2Sel=null;c2Render();}
+function c2UpdF(id,k,v){c2data.shelves.forEach(sh=>sh.brands.forEach(b=>{const f=b.flavors.find(x=>x.id===id);if(f)f[k]=v;}));}
+function c2UpdB(id,k,v){c2data.shelves.forEach(sh=>{const b=sh.brands.find(x=>x.id===id);if(b)b[k]=v;});}
+function c2UpdImg(id,v){c2data.shelves.forEach(sh=>sh.brands.forEach(b=>{const f=b.flavors.find(x=>x.id===id);if(f)f.img=v;}));c2Render();}
+function c2Done(){c2Sel=null;c2Render();}
+function c2RemFlavor(sid,bid,fid){const sh=c2data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);if(!b.flavors.length)sh.brands=sh.brands.filter(x=>x.id!==bid);c2Sel=null;c2Render();}
+function c2AddFlavor(sid){c2Snap();const sh=c2data.shelves.find(s=>s.id===sid);if(!sh||!sh.brands.length)return;const b=sh.brands[sh.brands.length-1];const id='f'+(c2Pid++);b.flavors.push({id,name:'new flavor',facings:2,price:'',img:''});c2Sel=id;c2Render();}
+function c2AddBrand(sid){c2Snap();const sh=c2data.shelves.find(s=>s.id===sid);if(!sh)return;const bid='b'+(c2Pid++);const fid='f'+(c2Pid++);sh.brands.push({id:bid,name:'new brand',oz:'',flavors:[{id:fid,name:'new flavor',facings:2,price:'',img:''}]});c2Sel=fid;c2Render();}
+function c2Export(){const blob=new Blob([JSON.stringify(c2data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cooler2-planogram.json';a.click();}
+function c2Render(){
+  const sw=document.getElementById('c2-sw');sw.innerHTML='';
+  c2data.shelves.forEach(sh=>{
+    const total=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
+    const sd=document.createElement('div');sd.className='shelf';
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c2-row-${sh.id}"></div><div class="add-row"><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c2AddFlavor('${sh.id}')">+ add flavor</button><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c2AddBrand('${sh.id}')">+ add brand</button></div>`;
+    sw.appendChild(sd);
+    const row=document.getElementById('c2-row-'+sh.id);
+    sh.brands.forEach(b=>{
+      const c=c2Color(b.name);const vendor=c2Vendor();
+      const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
+      const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf;grp.style.minWidth='0';
+      grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} faces</div><div class="brand-flavors" id="c2-fl-${b.id}"></div>`;
+      row.appendChild(grp);
+      const flRow=document.getElementById('c2-fl-'+b.id);
+      b.flavors.forEach(f=>{
+        const isSel=c2Sel===f.id;
+        const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
+        fb.onclick=(e)=>{e.stopPropagation();c2Sel=c2Sel===f.id?null:f.id;c2Render();};
+        const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:56px">${b.name.split(' ')[0]}</div>`).join('');
+        fb.innerHTML=`<div class="facings">${fDivs}</div>${mkFoot(f,c,vendor,sh.id,b.id,f.id,c2Sel)}<div class="dp${isSel?' open':''}">${mkFields(f,b,sh.id,b.id,'c2')}</div>`;
+        flRow.appendChild(fb);
+      });
+    });
+  });
+  document.getElementById('c2-legend').innerHTML=`<div class="legend-title-row">Vendor Color Key</div><div class="legend-item"><div class="legend-swatch" style="background:#B71C1C"></div><strong>Coca-Cola</strong><span class="legend-sub">· all products including Vitamin Water</span></div>`;
+  const allF=c2data.shelves.flatMap(s=>s.brands.flatMap(b=>b.flavors));
+  document.getElementById('c2-sum').innerHTML=`<div class="stat-pill"><strong>1</strong>vendor</div><div class="stat-pill"><strong>${c2data.shelves.flatMap(s=>s.brands).length}</strong>brands</div><div class="stat-pill"><strong>${allF.length}</strong>flavors</div><div class="stat-pill"><strong>${allF.reduce((n,f)=>n+f.facings,0)}</strong>total faces</div>`;
+}
+
+// ════════════════════════════════════════════════════════════════
+// COOLER 3 — GLASS DOOR CHOICE BEVERAGE
+// ════════════════════════════════════════════════════════════════
+const C3V={hdr:'#E65100',bg:'#FFF3E0',tx:'#BF360C'};
+function c3Color(){return C3V;}function c3Vendor(){return 'Choice Beverage';}
+let c3Sel=null,c3Pid=80,c3Hist=[];
+let c3data={shelves:[
+  {id:'s1',label:'shelf 1 — top',note:'specialty & premium',brands:[
+    {id:'b1',name:'Cheerwine',oz:'12oz glass',flavors:[{id:'f1a',name:'Original',facings:3,price:'$2.99',img:''}]},
+    {id:'b2',name:'Bloom Energy',oz:'12oz can',flavors:[{id:'f2a',name:'Watermelon',facings:1,price:'$4.19',img:''},{id:'f2b',name:'Grape',facings:1,price:'$4.19',img:''},{id:'f2c',name:'Strawberry',facings:1,price:'$4.19',img:''}]},
+    {id:'b3',name:'La Colombe',oz:'12oz can',flavors:[{id:'f3a',name:'Draft Latte',facings:2,price:'$4.19',img:''}]},
+  ]},
+  {id:'s2',label:'shelf 2',note:'Snapple family',brands:[{id:'b4',name:'Snapple',oz:'16oz',flavors:[{id:'f4a',name:'Apple',facings:2,price:'$2.79',img:''},{id:'f4b',name:'Kiwi Strawberry',facings:3,price:'$2.79',img:''},{id:'f4c',name:'Mango',facings:3,price:'$2.79',img:''}]}]},
+  {id:'s3',label:'shelf 3',note:'Canada Dry family',brands:[{id:'b5',name:'Canada Dry',oz:'20oz',flavors:[{id:'f5a',name:'Original',facings:3,price:'$2.79',img:''},{id:'f5b',name:'Peach Ginger Ale',facings:2,price:'$2.79',img:''},{id:'f5c',name:'Pineapple',facings:3,price:'$2.79',img:''}]}]},
+  {id:'s4',label:'shelf 4',note:'cream & dark sodas',brands:[
+    {id:'b6',name:'A&W',oz:'20oz',flavors:[{id:'f6a',name:'Root Beer',facings:2,price:'$2.79',img:''},{id:'f6b',name:'Cream Soda',facings:2,price:'$2.79',img:''}]},
+    {id:'b7',name:'Nehi',oz:'20oz',flavors:[{id:'f7a',name:'Original',facings:2,price:'$2.79',img:''}]},
+    {id:'b8',name:'Tahitian Treat',oz:'20oz',flavors:[{id:'f8a',name:'Original',facings:2,price:'$2.79',img:''}]},
+  ]},
+  {id:'s5',label:'shelf 5',note:'fruit sodas',brands:[
+    {id:'b9',name:'Sunkist',oz:'20oz',flavors:[{id:'f9a',name:'Grape',facings:2,price:'$2.79',img:''}]},
+    {id:'b10',name:'Choice',oz:'20oz',flavors:[{id:'f10a',name:'Cherry Gold',facings:2,price:'$2.79',img:''}]},
+    {id:'b11',name:'Sun Drop',oz:'20oz',flavors:[{id:'f11a',name:'Citrus',facings:2,price:'$2.79',img:''},{id:'f11b',name:'Original',facings:2,price:'$2.79',img:''}]},
+  ]},
+  {id:'s6',label:'shelf 6 — bottom',note:'water & wellness',brands:[
+    {id:'b12',name:'Core Water',oz:'20oz',flavors:[{id:'f12a',name:'Original',facings:4,price:'$2.79',img:''}]},
+    {id:'b13',name:'Aloevine',oz:'16.9oz',flavors:[{id:'f13a',name:'Mango',facings:2,price:'$2.79',img:''},{id:'f13b',name:'Original',facings:2,price:'$2.79',img:''}]},
+  ]},
+]};
+function c3Snap(){c3Hist.push(JSON.stringify(c3data));if(c3Hist.length>20)c3Hist.shift();document.getElementById('c3-undo').disabled=false;}
+function c3Undo(){if(!c3Hist.length)return;c3data=JSON.parse(c3Hist.pop());document.getElementById('c3-undo').disabled=c3Hist.length===0;c3Sel=null;c3Render();}
+function c3UpdF(id,k,v){c3data.shelves.forEach(sh=>sh.brands.forEach(b=>{const f=b.flavors.find(x=>x.id===id);if(f)f[k]=v;}));}
+function c3UpdB(id,k,v){c3data.shelves.forEach(sh=>{const b=sh.brands.find(x=>x.id===id);if(b)b[k]=v;});}
+function c3UpdImg(id,v){c3data.shelves.forEach(sh=>sh.brands.forEach(b=>{const f=b.flavors.find(x=>x.id===id);if(f)f.img=v;}));c3Render();}
+function c3Done(){c3Sel=null;c3Render();}
+function c3RemFlavor(sid,bid,fid){const sh=c3data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);if(!b.flavors.length)sh.brands=sh.brands.filter(x=>x.id!==bid);c3Sel=null;c3Render();}
+function c3AddFlavor(sid){c3Snap();const sh=c3data.shelves.find(s=>s.id===sid);if(!sh||!sh.brands.length)return;const b=sh.brands[sh.brands.length-1];const id='f'+(c3Pid++);b.flavors.push({id,name:'new flavor',facings:2,price:'',img:''});c3Sel=id;c3Render();}
+function c3AddBrand(sid){c3Snap();const sh=c3data.shelves.find(s=>s.id===sid);if(!sh)return;const bid='b'+(c3Pid++);const fid='f'+(c3Pid++);sh.brands.push({id:bid,name:'new brand',oz:'',flavors:[{id:fid,name:'new flavor',facings:2,price:'',img:''}]});c3Sel=fid;c3Render();}
+function c3Export(){const blob=new Blob([JSON.stringify(c3data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cooler3-planogram.json';a.click();}
+function c3Render(){
+  const sw=document.getElementById('c3-sw');sw.innerHTML='';
+  c3data.shelves.forEach(sh=>{
+    const total=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
+    const sd=document.createElement('div');sd.className='shelf';
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c3-row-${sh.id}"></div><div class="add-row"><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c3AddFlavor('${sh.id}')">+ add flavor</button><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c3AddBrand('${sh.id}')">+ add brand</button></div>`;
+    sw.appendChild(sd);
+    const row=document.getElementById('c3-row-'+sh.id);
+    sh.brands.forEach(b=>{
+      const c=c3Color();const vendor=c3Vendor();
+      const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
+      const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf;grp.style.minWidth='0';
+      grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} faces</div><div class="brand-flavors" id="c3-fl-${b.id}"></div>`;
+      row.appendChild(grp);
+      const flRow=document.getElementById('c3-fl-'+b.id);
+      b.flavors.forEach(f=>{
+        const isSel=c3Sel===f.id;
+        const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
+        fb.onclick=(e)=>{e.stopPropagation();c3Sel=c3Sel===f.id?null:f.id;c3Render();};
+        const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:56px">${b.name.split(' ')[0]}</div>`).join('');
+        fb.innerHTML=`<div class="facings">${fDivs}</div>${mkFoot(f,c,vendor,sh.id,b.id,f.id,c3Sel)}<div class="dp${isSel?' open':''}">${mkFields(f,b,sh.id,b.id,'c3')}</div>`;
+        flRow.appendChild(fb);
+      });
+    });
+  });
+  document.getElementById('c3-legend').innerHTML=`<div class="legend-title-row">Vendor Color Key</div><div class="legend-item"><div class="legend-swatch" style="background:#E65100"></div><strong>Choice Beverage</strong><span class="legend-sub">· all products</span></div>`;
+  const allF=c3data.shelves.flatMap(s=>s.brands.flatMap(b=>b.flavors));
+  document.getElementById('c3-sum').innerHTML=`<div class="stat-pill"><strong>1</strong>vendor</div><div class="stat-pill"><strong>${c3data.shelves.flatMap(s=>s.brands).length}</strong>brands</div><div class="stat-pill"><strong>${allF.length}</strong>flavors</div><div class="stat-pill"><strong>${allF.reduce((n,f)=>n+f.facings,0)}</strong>total faces</div>`;
+}
+
+// ════════════════════════════════════════════════════════════════
+// COOLER 4 — BEER 12-PACKS
+// ════════════════════════════════════════════════════════════════
+const C4V={'United Carolina Beverage':{hdr:'#1B5E20',bg:'#E8F5E9',tx:'#1B5E20'},'Adams Beverage':{hdr:'#4A148C',bg:'#F3E5F5',tx:'#4A148C'}};
+const C4_BV={'Corona Extra':'United Carolina Beverage','Fat Tire':'United Carolina Beverage','Heineken':'United Carolina Beverage','Budweiser':'United Carolina Beverage','Bud Light':'United Carolina Beverage','Modelo Especial':'United Carolina Beverage','Miller High Life':'United Carolina Beverage','Stella Artois':'Adams Beverage','Michelob Ultra':'Adams Beverage','White Claw':'Adams Beverage','Happy Dad':'Adams Beverage'};
+function c4Color(n){const v=C4_BV[n]||'United Carolina Beverage';return C4V[v];}
+function c4Vendor(n){return C4_BV[n]||'Unknown';}
+let c4Sel=null,c4EmptyOpen=false,c4Pid=90,c4Hist=[];
+let c4EmptySlot={name:'',oz:'',price:''};
+let c4data={shelves:[
+  {id:'s1',label:'shelf 1 — top',note:'premium imports · $25.99',brands:[{id:'b1',name:'Corona Extra',oz:'12pk bottle',flavors:[{id:'f1a',name:'Original',facings:1,price:'$25.99',img:''}]},{id:'b2',name:'Stella Artois',oz:'12pk bottle',flavors:[{id:'f2a',name:'Original',facings:1,price:'$25.99',img:''}]},{id:'b3',name:'Heineken',oz:'12pk bottle',flavors:[{id:'f3a',name:'Original',facings:1,price:'$25.99',img:''}]}]},
+  {id:'s2',label:'shelf 2',note:'craft & premium domestic · $24.99–$25.99',brands:[{id:'b4',name:'Fat Tire',oz:'12pk bottle',flavors:[{id:'f4a',name:'Original',facings:1,price:'$24.99',img:''}]},{id:'b5',name:'Michelob Ultra',oz:'12pk bottle',flavors:[{id:'f5a',name:'Original',facings:1,price:'$25.99',img:''}]},{id:'b6',name:'Modelo Especial',oz:'12pk bottle',flavors:[{id:'f6a',name:'Original',facings:1,price:'$25.99',img:''}]}]},
+  {id:'s3',label:'shelf 3',note:'core domestics & value · $12.99–$23.99',brands:[{id:'b7',name:'Budweiser',oz:'12pk bottle',flavors:[{id:'f7a',name:'Original',facings:1,price:'$23.99',img:''}]},{id:'b8',name:'Bud Light',oz:'12pk bottle',flavors:[{id:'f8a',name:'Original',facings:1,price:'$23.99',img:''}]},{id:'b9',name:'Miller High Life',oz:'12pk bottle',flavors:[{id:'f9a',name:'Original',facings:1,price:'$12.99',img:''}]}]},
+  {id:'s4',label:'shelf 4 — bottom',note:'hard seltzer · $23.99',brands:[{id:'b11',name:'White Claw',oz:'12pk can',flavors:[{id:'f11a',name:'Variety Pack',facings:1,price:'$23.99',img:''}]},{id:'b12',name:'Happy Dad',oz:'12pk can',flavors:[{id:'f12a',name:'Variety Pack',facings:1,price:'$23.99',img:''}]}]},
+]};
+function c4Snap(){c4Hist.push(JSON.stringify({data:c4data,empty:c4EmptySlot}));if(c4Hist.length>20)c4Hist.shift();document.getElementById('c4-undo').disabled=false;}
+function c4Undo(){if(!c4Hist.length)return;const s=JSON.parse(c4Hist.pop());c4data=s.data;c4EmptySlot=s.empty;document.getElementById('c4-undo').disabled=c4Hist.length===0;c4Sel=null;c4EmptyOpen=false;c4Render();}
+function c4UpdF(id,k,v){c4data.shelves.forEach(sh=>sh.brands.forEach(b=>{const f=b.flavors.find(x=>x.id===id);if(f)f[k]=v;}));}
+function c4UpdB(id,k,v){c4data.shelves.forEach(sh=>{const b=sh.brands.find(x=>x.id===id);if(b)b[k]=v;});}
+function c4UpdImg(id,v){c4data.shelves.forEach(sh=>sh.brands.forEach(b=>{const f=b.flavors.find(x=>x.id===id);if(f)f.img=v;}));c4Render();}
+function c4Done(){c4Sel=null;c4Render();}
+function c4SaveEmpty(){c4Snap();c4EmptySlot.name=document.getElementById('c4-es-name').value;c4EmptySlot.price=document.getElementById('c4-es-price').value;c4EmptySlot.oz=document.getElementById('c4-es-oz').value;c4EmptyOpen=false;c4Render();}
+function c4ClearEmpty(){c4Snap();c4EmptySlot={name:'',oz:'',price:''};c4EmptyOpen=false;c4Render();}
+function c4RemFlavor(sid,bid,fid){const sh=c4data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);if(!b.flavors.length)sh.brands=sh.brands.filter(x=>x.id!==bid);c4Sel=null;c4Render();}
+function c4AddBrand(sid){c4Snap();const sh=c4data.shelves.find(s=>s.id===sid);if(!sh)return;const bid='b'+(c4Pid++);const fid='f'+(c4Pid++);sh.brands.push({id:bid,name:'new brand',oz:'12pk',flavors:[{id:fid,name:'Original',facings:1,price:'',img:''}]});c4Sel=fid;c4Render();}
+function c4Export(){const blob=new Blob([JSON.stringify(c4data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cooler4-planogram.json';a.click();}
+function c4Render(){
+  const sw=document.getElementById('c4-sw');sw.innerHTML='';
+  c4data.shelves.forEach(sh=>{
+    const isS4=sh.id==='s4';
+    const pf=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
+    const total=pf+(isS4?1:0);
+    const sd=document.createElement('div');sd.className='shelf';
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c4-row-${sh.id}"></div><div class="add-row"><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c4AddBrand('${sh.id}')">+ add brand</button></div>`;
+    sw.appendChild(sd);
+    const row=document.getElementById('c4-row-'+sh.id);
+    if(isS4){
+      const es=document.createElement('div');
+      es.className='empty-slot'+(c4EmptyOpen?' open':'');
+      es.style.flex='1';
+      es.innerHTML=`<div class="empty-top"><div class="empty-icon">${c4EmptySlot.name?'📦':'＋'}</div><div class="empty-label">${c4EmptySlot.name||'open slot\nclick to fill'}</div>${c4EmptySlot.price?`<div class="empty-price">${c4EmptySlot.price}</div>`:''}</div><div class="empty-form${c4EmptyOpen?' open':''}"><div class="dgrid"><div class="dfield"><label>Brand</label><input id="c4-es-name" value="${c4EmptySlot.name}" placeholder="e.g. Coors Light"/></div><div class="dfield"><label>Price</label><input id="c4-es-price" value="${c4EmptySlot.price}" placeholder="$23.99"/></div><div class="dfield"><label>Pack Size</label><input id="c4-es-oz" value="${c4EmptySlot.oz}" placeholder="12pk bottle"/></div></div><div class="dact"><button class="tb-btn" style="font-size:10px;height:24px" onclick="c4ClearEmpty()">clear</button><button class="tb-btn pri" style="font-size:10px;height:24px" onclick="c4SaveEmpty()">done</button></div></div>`;
+      es.querySelector('.empty-top').addEventListener('click',()=>{c4EmptyOpen=!c4EmptyOpen;c4Sel=null;c4Render();});
+      row.appendChild(es);
+    }
+    sh.brands.forEach(b=>{
+      const c=c4Color(b.name);const vendor=c4Vendor(b.name);
+      const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
+      const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf;grp.style.minWidth='0';
+      grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} face${bf!==1?'s':''}</div><div class="brand-flavors" id="c4-fl-${b.id}"></div>`;
+      row.appendChild(grp);
+      const flRow=document.getElementById('c4-fl-'+b.id);
+      b.flavors.forEach(f=>{
+        const isSel=c4Sel===f.id;
+        const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
+        fb.onclick=(e)=>{e.stopPropagation();c4Sel=c4Sel===f.id?null:f.id;c4EmptyOpen=false;c4Render();};
+        const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:68px">${b.name.split(' ')[0]}</div>`).join('');
+        fb.innerHTML=`<div class="facings">${fDivs}</div>${mkFoot(f,c,vendor,sh.id,b.id,f.id,c4Sel)}<div class="dp${isSel?' open':''}">${mkFields(f,b,sh.id,b.id,'c4')}</div>`;
+        flRow.appendChild(fb);
+      });
+    });
+  });
+  const leg=document.getElementById('c4-legend');
+  leg.innerHTML=`<div class="legend-title-row">Vendor Color Key</div>`+Object.entries(C4V).map(([v,c])=>{const brands=Object.entries(C4_BV).filter(([,vv])=>vv===v).map(([b])=>b);return `<div class="legend-item"><div class="legend-swatch" style="background:${c.hdr}"></div><strong>${v}</strong><span class="legend-sub">· ${brands.join(', ')}</span></div>`;}).join('');
+  const allF=c4data.shelves.flatMap(s=>s.brands.flatMap(b=>b.flavors));
+  document.getElementById('c4-sum').innerHTML=`<div class="stat-pill"><strong>2</strong>vendors</div><div class="stat-pill"><strong>${c4data.shelves.flatMap(s=>s.brands).length}</strong>brands</div><div class="stat-pill"><strong>${allF.reduce((n,f)=>n+f.facings,0)+1}</strong>total faces</div>`;
+}
+
+// ════════════════════════════════════════════════════════════════
+// COOLER 5 — SINGLES & CRAFT
+// ════════════════════════════════════════════════════════════════
+const C5V={'Adams Beverage':{hdr:'#4A148C',bg:'#F3E5F5',tx:'#4A148C'},'United Carolina Beverage':{hdr:'#1B5E20',bg:'#E8F5E9',tx:'#1B5E20'},'HopFly':{hdr:'#E65100',bg:'#FFF3E0',tx:'#BF360C'},'Herbal Oasis':{hdr:'#2E7D32',bg:'#E8F5E9',tx:'#1B5E20'},'Empire Distributors':{hdr:'#B71C1C',bg:'#FFEBEE',tx:'#7A0000'},'Johnston Brothers':{hdr:'#5E35B1',bg:'#EDE7F6',tx:'#4527A0'},'Unknown':{hdr:'#9E9E9E',bg:'#F5F5F5',tx:'#616161'}};
+const C5_BV={'Bold Rock N/A':'Adams Beverage','Bold Rock':'Adams Beverage','Voodoo Ranger':'United Carolina Beverage','Lagunitas':'United Carolina Beverage','NoDa':'Adams Beverage','White Claw':'Adams Beverage','Blue Moon':'Adams Beverage','HopFly':'HopFly','Bud Light':'Adams Beverage','Budweiser':'Adams Beverage','Miller High Life':'United Carolina Beverage','Heineken':'United Carolina Beverage','Stella Artois':'Adams Beverage','Corona Extra':'United Carolina Beverage','Modelo':'United Carolina Beverage','Coors Light':'United Carolina Beverage','Guinness':'United Carolina Beverage','Fat Tire':'United Carolina Beverage','Michelob Ultra':'Adams Beverage','Pabst Blue Ribbon':'United Carolina Beverage','Clubtails':'Adams Beverage','Oasis':'Herbal Oasis','Jack Daniels':'Empire Distributors','Sabe':'Johnston Brothers'};
+function c5Color(n){const v=C5_BV[n]||'Unknown';return C5V[v]||C5V['Unknown'];}
+function c5Vendor(n){return C5_BV[n]||'Unknown';}
+let c5Sel=null,c5S3Open=false,c5Pid=100,c5Hist=[];
+let c5S3Slot={name:'',oz:'',price:''};
+let buzzSlots=Array.from({length:10},(_,i)=>({id:'bz'+i,name:'Berry Cherry Limeade',price:'$5.99',oz:'3.4oz',open:false}));
+let oasisSlots=Array.from({length:7},(_,i)=>({id:'oa'+i,name:'Tropic Wave 10mg',price:'$4.99',oz:'12oz',open:false}));
+let c5data={shelves:[
+  {id:'s1',label:'shelf 1 — top',note:'craft, cider & seltzer · $3.99–$4.79',brands:[
+    {id:'b1',name:'Bold Rock N/A',oz:'12oz can',flavors:[{id:'f1a',name:'N/A',facings:1,price:'$4.39',img:''}]},
+    {id:'b2',name:'Bold Rock',oz:'16oz can',flavors:[{id:'f2a',name:'Imperial Berry',facings:1,price:'$3.99',img:''},{id:'f2b',name:'Apple',facings:1,price:'$3.99',img:''}]},
+    {id:'b3',name:'Voodoo Ranger',oz:'19.2oz can',flavors:[{id:'f3a',name:'Juice Force IPA',facings:1,price:'$4.79',img:''}]},
+    {id:'b4',name:'Lagunitas',oz:'19.2oz can',flavors:[{id:'f4a',name:'Maximus IPA',facings:1,price:'$4.79',img:''}]},
+    {id:'b5',name:'NoDa',oz:'19.2oz can',flavors:[{id:'f5a',name:'Hop Drop N Roll',facings:1,price:'$4.79',img:''}]},
+    {id:'b6',name:'White Claw',oz:'19.2oz can',flavors:[{id:'f6a',name:'Black Cherry',facings:1,price:'$4.79',img:''}]},
+    {id:'b7',name:'Blue Moon',oz:'19.2oz can',flavors:[{id:'f7a',name:'Belgian White',facings:1,price:'$4.79',img:''}]},
+  ]},
+  {id:'s2',label:'shelf 2',note:'domestic & import singles · $3.99–$7.39',brands:[
+    {id:'b8',name:'HopFly',oz:'16oz can',flavors:[{id:'f8a',name:'Communion Juice Blend',facings:1,price:'$7.39',img:''}]},
+    {id:'b9',name:'Bud Light',oz:'12oz bottle',flavors:[{id:'f9a',name:'Original',facings:1,price:'$3.99',img:''}]},
+    {id:'b10',name:'Budweiser',oz:'12oz bottle',flavors:[{id:'f10a',name:'Original',facings:1,price:'$3.99',img:''}]},
+    {id:'b11',name:'Miller High Life',oz:'12oz bottle',flavors:[{id:'f11a',name:'Original',facings:1,price:'$3.99',img:''}]},
+    {id:'b12',name:'Heineken',oz:'12oz bottle',flavors:[{id:'f12a',name:'Original',facings:1,price:'$3.99',img:''}]},
+    {id:'b13',name:'Stella Artois',oz:'12oz bottle',flavors:[{id:'f13a',name:'Original',facings:1,price:'$3.99',img:''}]},
+    {id:'b14',name:'Corona Extra',oz:'12oz bottle',flavors:[{id:'f14a',name:'Original',facings:1,price:'$3.99',img:''}]},
+    {id:'b15',name:'Modelo',oz:'12oz bottle',flavors:[{id:'f15a',name:'Especial',facings:1,price:'$3.99',img:''}]},
+  ]},
+  {id:'s3',label:'shelf 3',note:'craft singles + RTD · $2.99–$3.99',brands:[
+    {id:'b16',name:'Coors Light',oz:'12oz bottle',flavors:[{id:'f16a',name:'Original',facings:1,price:'$3.99',img:''}]},
+    {id:'b17',name:'Guinness',oz:'12oz bottle',flavors:[{id:'f17a',name:'Extra Stout',facings:1,price:'$3.99',img:''}]},
+    {id:'b18',name:'Fat Tire',oz:'12oz bottle',flavors:[{id:'f18a',name:'Ale',facings:1,price:'$3.99',img:''}]},
+    {id:'b19',name:'Michelob Ultra',oz:'12oz bottle',flavors:[{id:'f19a',name:'Original',facings:1,price:'$3.99',img:''}]},
+    {id:'b20',name:'Pabst Blue Ribbon',oz:'16oz can',flavors:[{id:'f20a',name:'Original',facings:1,price:'$2.99',img:''}]},
+    {id:'b21',name:'Clubtails',oz:'16oz can',flavors:[{id:'f21a',name:'Long Island Iced Tea',facings:1,price:'$3.99',img:''},{id:'f21b',name:'Bahama Mama',facings:1,price:'$3.99',img:''}]},
+  ]},
+  {id:'s4',label:'shelf 4 — bottom',note:'cocktails & spirits · $3.99–$8.99',brands:[
+    {id:'b22',name:'Oasis',oz:'12oz can',flavors:[{id:'f22a',name:'Tropic Thunder 30mg',facings:1,price:'$7.99',img:''},{id:'f22b',name:'Mango Bliss 10mg',facings:1,price:'$6.99',img:''},{id:'f22c',name:'Berry Fusion 10mg',facings:1,price:'$6.99',img:''}]},
+    {id:'b23',name:'Jack Daniels',oz:'12oz bottle',flavors:[{id:'f23a',name:'Lynchburg Lemonade',facings:1,price:'$3.99',img:''},{id:'f23b',name:'Downside Punch',facings:1,price:'$3.99',img:''}]},
+    {id:'b24',name:'Sabe',oz:'16oz can',flavors:[{id:'f24a',name:'Moscow Mule',facings:1,price:'$8.99',img:''},{id:'f24b',name:'Mojito',facings:1,price:'$8.99',img:''}]},
+  ]},
+]};
+function c5Snap(){c5Hist.push(JSON.stringify({data:c5data,s3:c5S3Slot,bz:buzzSlots,oa:oasisSlots}));if(c5Hist.length>20)c5Hist.shift();document.getElementById('c5-undo').disabled=false;}
+function c5Undo(){if(!c5Hist.length)return;const s=JSON.parse(c5Hist.pop());c5data=s.data;c5S3Slot=s.s3;buzzSlots=s.bz;oasisSlots=s.oa;document.getElementById('c5-undo').disabled=c5Hist.length===0;c5Sel=null;c5S3Open=false;c5RenderDoor();c5Render();}
+function c5UpdF(id,k,v){c5data.shelves.forEach(sh=>sh.brands.forEach(b=>{const f=b.flavors.find(x=>x.id===id);if(f)f[k]=v;}));}
+function c5UpdB(id,k,v){c5data.shelves.forEach(sh=>{const b=sh.brands.find(x=>x.id===id);if(b)b[k]=v;});}
+function c5UpdImg(id,v){c5data.shelves.forEach(sh=>sh.brands.forEach(b=>{const f=b.flavors.find(x=>x.id===id);if(f)f.img=v;}));c5Render();}
+function c5Done(){c5Sel=null;c5Render();}
+function c5SaveS3(){c5Snap();c5S3Slot.name=document.getElementById('c5-s3-name').value;c5S3Slot.price=document.getElementById('c5-s3-price').value;c5S3Slot.oz=document.getElementById('c5-s3-oz').value;c5S3Open=false;c5Render();}
+function c5ClearS3(){c5Snap();c5S3Slot={name:'',oz:'',price:''};c5S3Open=false;c5Render();}
+function c5SaveBz(){const slot=buzzSlots.find(s=>s.open);if(slot){c5Snap();slot.name=document.getElementById('c5-bz-name').value;slot.price=document.getElementById('c5-bz-price').value;slot.open=false;}c5RenderDoor();}
+function c5SaveOa(){const slot=oasisSlots.find(s=>s.open);if(slot){c5Snap();slot.name=document.getElementById('c5-oa-name').value;slot.price=document.getElementById('c5-oa-price').value;slot.open=false;}c5RenderDoor();}
+function c5RemFlavor(sid,bid,fid){const sh=c5data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);if(!b.flavors.length)sh.brands=sh.brands.filter(x=>x.id!==bid);c5Sel=null;c5Render();}
+function c5AddFlavor(sid){c5Snap();const sh=c5data.shelves.find(s=>s.id===sid);if(!sh||!sh.brands.length)return;const b=sh.brands[sh.brands.length-1];const id='f'+(c5Pid++);b.flavors.push({id,name:'new flavor',facings:1,price:'',img:''});c5Sel=id;c5Render();}
+function c5AddBrand(sid){c5Snap();const sh=c5data.shelves.find(s=>s.id===sid);if(!sh)return;const bid='b'+(c5Pid++);const fid='f'+(c5Pid++);sh.brands.push({id:bid,name:'new brand',oz:'',flavors:[{id:fid,name:'Original',facings:1,price:'',img:''}]});c5Sel=fid;c5Render();}
+function c5Export(){const blob=new Blob([JSON.stringify({c5data,c5S3Slot,buzzSlots,oasisSlots},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cooler5-planogram.json';a.click();}
+function c5RenderDoor(){
+  ['bz-row1','bz-row2'].forEach((rowId,ri)=>{
+    const row=document.getElementById(rowId);if(!row)return;row.innerHTML='';
+    buzzSlots.slice(ri*5,(ri+1)*5).forEach((slot,i)=>{
+      const idx=ri*5+i;const div=document.createElement('div');
+      div.className='door-face'+(slot.open?' sel':'');div.style.background=slot.open?'#4527A0':'#7B1FA2';
+      div.innerHTML=`<div class="door-face-name">${slot.name}</div><div class="door-face-oz">${slot.oz}</div><div class="door-face-price">${slot.price}</div>`;
+      div.addEventListener('click',()=>{buzzSlots.forEach((_,j)=>{buzzSlots[j].open=j===idx&&!buzzSlots[idx].open;});c5RenderDoor();});
+      row.appendChild(div);
+    });
+  });
+  const bzPanel=document.getElementById('bz-edit-panel');const openBz=buzzSlots.find(s=>s.open);
+  if(bzPanel){bzPanel.className='door-edit-panel'+(openBz?' open':'');bzPanel.innerHTML=openBz?`<div class="dgrid"><div class="dfield"><label>Flavor</label><input id="c5-bz-name" value="${openBz.name}"/></div><div class="dfield"><label>Price</label><input id="c5-bz-price" value="${openBz.price}"/></div></div><div class="dact"><button class="tb-btn pri" style="font-size:10px;height:24px" onclick="c5SaveBz()">done</button></div>`:'';}
+  const oaRow=document.getElementById('oa-row1');if(!oaRow)return;oaRow.innerHTML='';
+  oasisSlots.forEach((slot,i)=>{
+    const div=document.createElement('div');div.className='door-face'+(slot.open?' sel':'');div.style.background=slot.open?'#1B5E20':'#388E3C';
+    div.innerHTML=`<div class="door-face-name">${slot.name}</div><div class="door-face-oz">${slot.oz}</div><div class="door-face-price">${slot.price}</div>`;
+    div.addEventListener('click',()=>{oasisSlots.forEach((_,j)=>{oasisSlots[j].open=j===i&&!oasisSlots[i].open;});c5RenderDoor();});
+    oaRow.appendChild(div);
+  });
+  const oaPanel=document.getElementById('oa-edit-panel');const openOa=oasisSlots.find(s=>s.open);
+  if(oaPanel){oaPanel.className='door-edit-panel'+(openOa?' open':'');oaPanel.innerHTML=openOa?`<div class="dgrid"><div class="dfield"><label>Flavor</label><input id="c5-oa-name" value="${openOa.name}"/></div><div class="dfield"><label>Price</label><input id="c5-oa-price" value="${openOa.price}"/></div></div><div class="dact"><button class="tb-btn pri" style="font-size:10px;height:24px" onclick="c5SaveOa()">done</button></div>`:'';}
+}
+function c5Render(){
+  const sw=document.getElementById('c5-sw');sw.innerHTML='';
+  c5data.shelves.forEach(sh=>{
+    const pf=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
+    const ef=sh.id==='s3'?1:0;
+    const sd=document.createElement('div');sd.className='shelf';
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${pf+ef} faces</span></div><div class="shelf-row" id="c5-row-${sh.id}"></div><div class="add-row"><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c5AddFlavor('${sh.id}')">+ add flavor</button><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c5AddBrand('${sh.id}')">+ add brand</button></div>`;
+    sw.appendChild(sd);
+    const row=document.getElementById('c5-row-'+sh.id);
+    sh.brands.forEach(b=>{
+      const c=c5Color(b.name);const vendor=c5Vendor(b.name);
+      const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
+      const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf;grp.style.minWidth='0';
+      grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf}f</div><div class="brand-flavors" id="c5-fl-${b.id}"></div>`;
+      row.appendChild(grp);
+      const flRow=document.getElementById('c5-fl-'+b.id);
+      b.flavors.forEach(f=>{
+        const isSel=c5Sel===f.id;
+        const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
+        fb.onclick=(e)=>{e.stopPropagation();c5Sel=c5Sel===f.id?null:f.id;c5S3Open=false;c5Render();};
+        const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:52px">${b.name.split(' ')[0]}</div>`).join('');
+        fb.innerHTML=`<div class="facings">${fDivs}</div>${mkFoot(f,c,vendor,sh.id,b.id,f.id,c5Sel)}<div class="dp${isSel?' open':''}">${mkFields(f,b,sh.id,b.id,'c5')}</div>`;
+        flRow.appendChild(fb);
+      });
+    });
+    if(sh.id==='s3'){
+      const es=document.createElement('div');es.className='empty-slot'+(c5S3Open?' open':'');es.style.flex='1';
+      es.innerHTML=`<div class="empty-top"><div class="empty-icon">${c5S3Slot.name?'📦':'＋'}</div><div class="empty-label">${c5S3Slot.name||'open slot\nclick to fill'}</div>${c5S3Slot.price?`<div class="empty-price">${c5S3Slot.price}</div>`:''}</div><div class="empty-form${c5S3Open?' open':''}"><div class="dgrid"><div class="dfield"><label>Brand</label><input id="c5-s3-name" value="${c5S3Slot.name}" placeholder="e.g. Yuengling"/></div><div class="dfield"><label>Price</label><input id="c5-s3-price" value="${c5S3Slot.price}" placeholder="$3.99"/></div><div class="dfield"><label>Size</label><input id="c5-s3-oz" value="${c5S3Slot.oz||''}" placeholder="12oz bottle"/></div></div><div class="dact"><button class="tb-btn" style="font-size:10px;height:24px" onclick="c5ClearS3()">clear</button><button class="tb-btn pri" style="font-size:10px;height:24px" onclick="c5SaveS3()">done</button></div></div>`;
+      es.querySelector('.empty-top').addEventListener('click',()=>{c5S3Open=!c5S3Open;c5Sel=null;c5Render();});
+      row.appendChild(es);
+    }
+  });
+  const leg=document.getElementById('c5-legend');
+  const vb={};c5data.shelves.forEach(sh=>sh.brands.forEach(b=>{const v=c5Vendor(b.name);if(!vb[v])vb[v]=[];if(!vb[v].includes(b.name))vb[v].push(b.name);}));
+  if(!vb['Johnston Brothers'])vb['Johnston Brothers']=[];if(!vb['Johnston Brothers'].includes('BuzzBallz'))vb['Johnston Brothers'].push('BuzzBallz');
+  if(!vb['Herbal Oasis'])vb['Herbal Oasis']=[];if(!vb['Herbal Oasis'].includes('Oasis (door)'))vb['Herbal Oasis'].push('Oasis (door)');
+  leg.innerHTML=`<div class="legend-title-row">Vendor Color Key</div>`+Object.entries(vb).map(([v,brands])=>{const c=C5V[v]||C5V['Unknown'];return `<div class="legend-item"><div class="legend-swatch" style="background:${c.hdr}"></div><strong>${v}</strong><span class="legend-sub">· ${brands.join(', ')}</span></div>`;}).join('');
+  const allF=c5data.shelves.flatMap(s=>s.brands.flatMap(b=>b.flavors));
+  const vendors=[...new Set(c5data.shelves.flatMap(s=>s.brands.map(b=>c5Vendor(b.name))))].length;
+  document.getElementById('c5-sum').innerHTML=`<div class="stat-pill"><strong>${vendors}</strong>vendors</div><div class="stat-pill"><strong>${c5data.shelves.flatMap(s=>s.brands).length}</strong>brands</div><div class="stat-pill"><strong>${allF.length}</strong>flavors</div><div class="stat-pill"><strong>${allF.reduce((n,f)=>n+f.facings,0)+1}</strong>shelf faces</div>`;
+}
+
+// ── INIT ─────────────────────────────────────────────────────────
+c1Render();
+c2Render();
+c3Render();
+c4Render();
+c5Render();
+c5RenderDoor();
+</script>
+</body>
+</html>
