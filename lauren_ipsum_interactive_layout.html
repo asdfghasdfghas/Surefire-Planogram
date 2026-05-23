@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lorem Ipsum — Interactive Layout</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a1a;
+    font-family: 'DM Sans', sans-serif;
+    color: #fff;
+    padding: 20px;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  header { text-align: center; margin-bottom: 14px; }
+  header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.08em; color: #FF6B2B; }
+  header p { font-size: 0.75rem; color: #888; margin-top: 2px; }
+
+  .toolbar {
+    display: flex; gap: 8px; justify-content: center;
+    flex-wrap: wrap; margin-bottom: 14px;
+  }
+  .toolbar button {
+    background: #2a2a2a; border: 1px solid #444;
+    color: #ccc; padding: 7px 14px; border-radius: 6px;
+    font-size: 0.75rem; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  }
+  .toolbar button:hover, .toolbar button:active { background: #FF6B2B; color: #fff; border-color: #FF6B2B; }
+
+  #patio-wrap { position: relative; max-width: 760px; margin: 0 auto; }
+  #patio-label {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: #6366f1; color: white; font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.1em; padding: 2px 14px; border-radius: 20px;
+    white-space: nowrap; z-index: 20; pointer-events: none;
+  }
+  #patio {
+    position: relative; width: 100%; height: 560px;
+    border: 3px dashed #6366f1; border-radius: 14px;
+    background: #242424; overflow: visible;
+  }
+
+  .box {
+    position: absolute; border-radius: 10px; background: #2a2a2a;
+    cursor: grab; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 8px 6px; gap: 4px;
+    touch-action: none; overflow: hidden;
+  }
+  .box.sel { outline: 3px solid #fff; outline-offset: 1px; }
+  .lbl { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.3; pointer-events: none; }
+  .dtl { font-size: 0.53rem; color: #999; line-height: 1.4; pointer-events: none; }
+  .pi { display: flex; flex-direction: column; align-items: center; gap: 2px; pointer-events: none; }
+  .ic { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; color: white; }
+  .pn { font-size: 0.46rem; font-weight: 700; color: #ddd; text-transform: uppercase; }
+  .pr { font-size: 0.42rem; color: #777; }
+  .wells { display: flex; flex-direction: column; gap: 3px; width: 100%; pointer-events: none; }
+  .wh { border-radius: 3px; padding: 3px 4px; font-size: 0.46rem; font-weight: 600; line-height: 1.3; background: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444; }
+  .wc { border-radius: 3px; padding: 3px 4px; font-size: 0.46rem; font-weight: 600; line-height: 1.3; background: #0c4a6e; color: #7dd3fc; border: 1px solid #38bdf8; }
+
+  #info {
+    max-width: 760px; margin: 10px auto 0;
+    background: #2a2a2a; border-radius: 8px; border: 1px solid #333;
+    padding: 8px 14px; font-size: 0.7rem; color: #666;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  #rot-row { display: none; align-items: center; gap: 6px; flex-wrap: wrap; }
+  #rot-row button {
+    background: #333; border: 1px solid #555; color: #ccc;
+    padding: 5px 11px; border-radius: 5px; font-size: 0.7rem;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+  }
+  #rot-row button:hover, #rot-row button:active { background: #FF6B2B; color: #fff; border-color: #FF6B2B; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Lorem Ipsum — Interactive Layout</h1>
+  <p>Tap a box to select · Drag to move · Rotate with buttons below</p>
+</header>
+
+<div class="toolbar">
+  <button id="save-btn" onclick="saveLayout()">💾 Save Layout</button>
+  <button onclick="resetLayout()">↺ Reset</button>
+</div>
+
+<div id="patio-wrap">
+  <div id="patio-label">🏠 Patio — Event Setup</div>
+  <div id="patio">
+
+    <div class="box" id="b1" style="border:2px solid #38bdf8; left:14px; top:14px; width:76px; height:95px;">
+      <div class="lbl" style="color:#38bdf8">🧊 Fridge</div>
+      <div class="dtl">Burger balls<br>Vegan patties<br>Cold items</div>
+    </div>
+
+    <div class="box" id="b2" style="border:2px solid #34d399; left:14px; top:120px; width:76px; height:300px;">
+      <div class="lbl" style="color:#34d399">🌭 Hot Dog<br>Station</div>
+      <div class="pi">
+        <div class="ic" style="background:#059669">A</div>
+        <div class="pn">Azzreia</div>
+        <div class="pr">Hot Dogs</div>
+      </div>
+      <div class="wells">
+        <div class="wh">🌡 Hot #1 — Hot Dogs</div>
+        <div class="wh">🌡 Hot #2 — Chili</div>
+        <div class="wc">❄ Cold — Onions · Coleslaw · Sauces</div>
+      </div>
+    </div>
+
+    <div class="box" id="b3" style="border:2px solid #f59e0b; left:104px; top:14px; width:158px; height:88px; flex-direction:row; gap:8px;">
+      <div style="pointer-events:none">
+        <div class="lbl" style="color:#f59e0b">🔥 Big Flat Top</div>
+        <div class="dtl">Smash burgers</div>
+      </div>
+      <div class="pi">
+        <div class="ic" style="background:#dc2626">S</div>
+        <div class="pn">Sutton</div>
+        <div class="pr">Flat Top</div>
+      </div>
+    </div>
+
+    <div class="box" id="b4" style="border:2px solid #fb923c; left:274px; top:14px; width:88px; height:88px;">
+      <div class="lbl" style="color:#fb923c">🥖 Small<br>Flat Top</div>
+      <div class="dtl">Bun toasting<br>Baker Street</div>
+    </div>
+
+    <div class="box" id="b5" style="border:2px solid #818cf8; left:374px; top:14px; width:148px; height:88px;">
+      <div class="lbl" style="color:#818cf8">🍔 Build Station</div>
+      <div class="dtl">Assemble · Bun toast<br>Baker Street assist</div>
+      <div class="pi">
+        <div class="ic" style="background:#7c3aed">C</div>
+        <div class="pn">Courtney</div>
+        <div class="pr">Build</div>
+      </div>
+    </div>
+
+    <div class="box" id="b6" style="border:2px solid #e879f9; left:190px; top:450px; width:220px; height:80px; flex-direction:row; gap:10px;">
+      <div style="pointer-events:none">
+        <div class="lbl" style="color:#e879f9">📋 POS / Ordering</div>
+        <div class="dtl">POS · Charger · Guest Checkbook</div>
+      </div>
+      <div class="pi">
+        <div class="ic" style="background:#0284c7">Z</div>
+        <div class="pn">Zareia/Makayla</div>
+        <div class="pr">Ordering</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="info">
+  <span id="hint">Tap any box to select it</span>
+  <div id="rot-row">
+    Rotating: <strong id="sel-name">—</strong>
+    <button onclick="doRotate(-90)">-90°</button>
+    <button onclick="doRotate(90)">+90°</button>
+    <button onclick="doRotate(180)">180°</button>
+    <button onclick="doRotate(360)">360°</button>
+    <button onclick="deselect()" style="background:#444">✕</button>
+  </div>
+</div>
+
+<script>
+var patio   = document.getElementById('patio');
+var selEl   = null;
+var rotMap  = {b1:0,b2:0,b3:0,b4:0,b5:0,b6:0};
+var savedHTML = patio.innerHTML;
+
+function applyRot(el) {
+  el.style.transform = 'rotate(' + rotMap[el.id] + 'deg)';
+}
+
+function doRotate(deg) {
+  if (!selEl) return;
+  rotMap[selEl.id] = (rotMap[selEl.id] || 0) + deg;
+  applyRot(selEl);
+}
+
+function selectBox(el) {
+  if (selEl && selEl !== el) selEl.classList.remove('sel');
+  selEl = el;
+  el.classList.add('sel');
+  document.getElementById('rot-row').style.display  = 'flex';
+  document.getElementById('hint').style.display     = 'none';
+  var lbl = el.querySelector('.lbl');
+  document.getElementById('sel-name').textContent   = lbl ? lbl.textContent.replace(/\n/g,' ') : el.id;
+}
+
+function deselect() {
+  if (selEl) selEl.classList.remove('sel');
+  selEl = null;
+  document.getElementById('rot-row').style.display = 'none';
+  document.getElementById('hint').style.display    = 'inline';
+}
+
+function saveLayout() {
+  var data = {};
+  document.querySelectorAll('.box').forEach(function(el) {
+    data[el.id] = { left: el.style.left, top: el.style.top, rot: rotMap[el.id] || 0 };
+  });
+  try { localStorage.setItem('li_v2', JSON.stringify(data)); } catch(e) {}
+  var btn = document.getElementById('save-btn');
+  btn.textContent = '✓ Saved!';
+  btn.style.background = '#16a34a';
+  btn.style.color = '#fff';
+  setTimeout(function() {
+    btn.textContent = '💾 Save Layout';
+    btn.style.background = '';
+    btn.style.color = '';
+  }, 2000);
+}
+
+function loadSaved() {
+  try {
+    var raw = localStorage.getItem('li_v2');
+    if (!raw) return;
+    var data = JSON.parse(raw);
+    document.querySelectorAll('.box').forEach(function(el) {
+      if (data[el.id]) {
+        el.style.left = data[el.id].left;
+        el.style.top  = data[el.id].top;
+        rotMap[el.id] = data[el.id].rot || 0;
+        applyRot(el);
+      }
+    });
+  } catch(e) {}
+}
+
+function resetLayout() {
+  patio.innerHTML = savedHTML;
+  Object.keys(rotMap).forEach(function(k) { rotMap[k] = 0; });
+  deselect();
+  initDrag();
+  try { localStorage.removeItem('li_v2'); } catch(e) {}
+}
+
+patio.addEventListener('click', function(e) {
+  if (e.target === patio) deselect();
+});
+
+function initDrag() {
+  document.querySelectorAll('.box').forEach(function(el) {
+    var dragging = false, hasMoved = false;
+    var startX, startY, startL, startT;
+
+    el.addEventListener('mousedown', function(e) {
+      dragging = true; hasMoved = false;
+      startX = e.clientX; startY = e.clientY;
+      var pr = patio.getBoundingClientRect();
+      var er = el.getBoundingClientRect();
+      startL = er.left - pr.left;
+      startT = er.top  - pr.top;
+      el.style.zIndex = 99;
+      e.preventDefault();
+    });
+
+    el.addEventListener('touchstart', function(e) {
+      dragging = true; hasMoved = false;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      var pr = patio.getBoundingClientRect();
+      var er = el.getBoundingClientRect();
+      startL = er.left - pr.left;
+      startT = er.top  - pr.top;
+      el.style.zIndex = 99;
+      e.stopPropagation();
+      // Don't preventDefault here so tap still registers
+    }, { passive: true });
+
+    // Block ALL touchmove on the box itself to stop scroll while dragging
+    el.addEventListener('touchmove', function(e) {
+      e.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener('mousemove', function(e) {
+      if (!dragging) return;
+      var dx = e.clientX - startX, dy = e.clientY - startY;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) hasMoved = true;
+      var nl = Math.max(0, Math.min(startL + dx, patio.offsetWidth  - el.offsetWidth));
+      var nt = Math.max(0, Math.min(startT + dy, patio.offsetHeight - el.offsetHeight));
+      el.style.left = nl + 'px';
+      el.style.top  = nt + 'px';
+    });
+
+    window.addEventListener('touchmove', function(e) {
+      if (!dragging) return;
+      var dx = e.touches[0].clientX - startX;
+      var dy = e.touches[0].clientY - startY;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) hasMoved = true;
+      var nl = Math.max(0, Math.min(startL + dx, patio.offsetWidth  - el.offsetWidth));
+      var nt = Math.max(0, Math.min(startT + dy, patio.offsetHeight - el.offsetHeight));
+      el.style.left = nl + 'px';
+      el.style.top  = nt + 'px';
+    }, { passive: true });
+
+    window.addEventListener('mouseup', function() {
+      if (!dragging) return;
+      dragging = false;
+      el.style.zIndex = '';
+      if (!hasMoved) selectBox(el);
+    });
+
+    window.addEventListener('touchend', function() {
+      if (!dragging) return;
+      dragging = false;
+      el.style.zIndex = '';
+      if (!hasMoved) selectBox(el);
+    });
+  });
+}
+
+initDrag();
+loadSaved();
+</script>
+</body>
+</html>

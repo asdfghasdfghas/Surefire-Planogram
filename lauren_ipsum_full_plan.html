@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lorem Ipsum Event — Full Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a1a;
+    font-family: 'DM Sans', sans-serif;
+    color: #fff;
+    padding: 32px 24px 60px;
+  }
+  .main-header { text-align: center; margin-bottom: 32px; }
+  .main-header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem; letter-spacing: 0.08em; color: #FF6B2B;
+  }
+  .main-header p { font-size: 0.95rem; color: #aaa; margin-top: 6px; letter-spacing: 0.04em; }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem; letter-spacing: 0.08em; color: #FF6B2B;
+    margin-bottom: 16px; border-left: 4px solid #FF6B2B; padding-left: 12px;
+  }
+
+  .wrapper { max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; }
+
+  .card { background: #242424; border-radius: 14px; border: 1px solid #333; overflow: hidden; }
+
+  .plan-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .plan-table thead tr { background: #444; }
+  .plan-table thead th {
+    padding: 10px 14px; text-align: left;
+    font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.07em; text-transform: uppercase; color: #fff;
+  }
+  .plan-table tbody tr:nth-child(even) { background: #2e2e2e; }
+  .plan-table tbody tr:nth-child(odd)  { background: #282828; }
+  .plan-table td {
+    padding: 9px 14px; color: #ccc;
+    vertical-align: top; border-bottom: 1px solid #333;
+  }
+  .plan-table td:first-child { font-weight: 600; color: #fff; white-space: nowrap; }
+  .price { color: #4ade80; font-weight: 700; }
+  .note  { color: #777; font-style: italic; font-size: 0.75rem; }
+  .check-col { text-align: center; color: #555; }
+
+  /* ── LAYOUT ── */
+  .tent {
+    position: relative;
+    border: 3px dashed #6366f1;
+    border-radius: 14px;
+    height: 580px;
+    margin: 24px;
+  }
+  .tent-label {
+    position: absolute;
+    top: -13px; left: 50%; transform: translateX(-50%);
+    background: #6366f1; color: white;
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.1em; padding: 2px 16px; border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .box {
+    position: absolute;
+    border-radius: 10px;
+    background: #2a2a2a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px 8px;
+    gap: 5px;
+  }
+  .box .lbl {
+    font-size: 0.65rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    line-height: 1.3;
+  }
+  .box .dtl { font-size: 0.58rem; color: #888; line-height: 1.4; }
+
+  /* BACK ROW left to right: Fridge | Big Flat Top | Small Flat Top | Build | POS */
+  /* Fridge — far left, tall (spans back + comes down) */
+  .fridge {
+    border: 2px solid #38bdf8;
+    top: 40px; left: 20px;
+    width: 80px; height: 160px;
+  }
+  .fridge .lbl { color: #38bdf8; }
+
+  /* Big flat top */
+  .big-flat {
+    border: 2px solid #f59e0b;
+    top: 40px; left: 116px;
+    width: 140px; height: 75px;
+    flex-direction: row; gap: 8px;
+  }
+  .big-flat .lbl { color: #f59e0b; }
+
+  /* Small flat top */
+  .small-flat {
+    border: 2px solid #fb923c;
+    top: 40px; left: 268px;
+    width: 110px; height: 75px;
+    flex-direction: row; gap: 8px;
+  }
+  .small-flat .lbl { color: #fb923c; }
+
+  /* Build station */
+  .build {
+    border: 2px solid #818cf8;
+    top: 40px; left: 390px;
+    width: 110px; height: 75px;
+    flex-direction: row; gap: 8px;
+  }
+  .build .lbl { color: #818cf8; }
+
+  /* Sutton badge on big flat top */
+  /* Hot Dog Station — comes down from fridge on left side */
+  .hotdog {
+    border: 2px solid #34d399;
+    top: 220px; left: 20px;
+    width: 220px; height: 90px;
+    flex-direction: column;
+  }
+  .hotdog .lbl { color: #34d399; }
+
+  /* Well detail inside hotdog station */
+  .wells {
+    display: flex; gap: 6px; margin-top: 4px;
+  }
+  .well {
+    border-radius: 6px; padding: 4px 6px;
+    font-size: 0.55rem; font-weight: 600;
+    text-align: center; line-height: 1.3;
+  }
+  .well.hot  { background: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444; }
+  .well.cold { background: #0c4a6e; color: #7dd3fc; border: 1px solid #38bdf8; }
+
+  /* POS — front center-right */
+  .pos {
+    border: 2px solid #e879f9;
+    bottom: 50px;
+    left: 50%; transform: translateX(-50%);
+    width: 200px; height: 70px;
+    flex-direction: row; gap: 10px;
+  }
+  .pos .lbl { color: #e879f9; }
+
+  /* Staff badge */
+  .person { display: flex; flex-direction: column; align-items: center; gap: 3px; flex-shrink: 0; }
+  .person-icon {
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 700; color: white;
+    border: 2px solid rgba(255,255,255,0.12);
+  }
+  .person-name { font-size: 0.5rem; font-weight: 700; color: #ccc; text-transform: uppercase; }
+  .person-role { font-size: 0.48rem; color: #666; }
+
+  /* Customer facing label */
+  .customer-side {
+    position: absolute;
+    bottom: 14px; left: 50%; transform: translateX(-50%);
+    font-size: 0.6rem; color: #444; letter-spacing: 0.1em;
+    text-transform: uppercase; white-space: nowrap;
+  }
+
+  /* Direction labels */
+  .dir-label {
+    position: absolute;
+    font-size: 0.58rem; color: #555;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+
+  .flow {
+    text-align: center; margin-top: 14px;
+    font-size: 0.65rem; letter-spacing: 0.12em;
+    color: #444; text-transform: uppercase;
+  }
+  .flow span { font-size: 1.4rem; color: #3a3a3a; display: block; margin-bottom: 2px; }
+
+  .note-box {
+    margin: 0 24px 24px;
+    background: #1e1e1e; border-left: 3px solid #FF6B2B;
+    border-radius: 6px; padding: 11px 15px;
+    font-size: 0.75rem; color: #aaa; line-height: 1.7;
+  }
+  .note-box strong { color: #FF6B2B; }
+
+/* ── Interactive Layout ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a1a;
+    font-family: 'DM Sans', sans-serif;
+    color: #fff;
+    padding: 20px;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  header { text-align: center; margin-bottom: 14px; }
+  header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.08em; color: #FF6B2B; }
+  header p { font-size: 0.75rem; color: #888; margin-top: 2px; }
+
+  .toolbar {
+    display: flex; gap: 8px; justify-content: center;
+    flex-wrap: wrap; margin-bottom: 14px;
+  }
+  .toolbar button {
+    background: #2a2a2a; border: 1px solid #444;
+    color: #ccc; padding: 7px 14px; border-radius: 6px;
+    font-size: 0.75rem; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  }
+  .toolbar button:hover, .toolbar button:active { background: #FF6B2B; color: #fff; border-color: #FF6B2B; }
+
+  #patio-wrap { position: relative; max-width: 760px; margin: 0 auto; }
+  #patio-label {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: #6366f1; color: white; font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.1em; padding: 2px 14px; border-radius: 20px;
+    white-space: nowrap; z-index: 20; pointer-events: none;
+  }
+  #patio {
+    position: relative; width: 100%; height: 560px;
+    border: 3px dashed #6366f1; border-radius: 14px;
+    background: #242424; overflow: visible;
+  }
+
+  .box {
+    position: absolute; border-radius: 10px; background: #2a2a2a;
+    cursor: grab; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 8px 6px; gap: 4px;
+    touch-action: none; overflow: hidden;
+  }
+  .box.sel { outline: 3px solid #fff; outline-offset: 1px; }
+  .lbl { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.3; pointer-events: none; }
+  .dtl { font-size: 0.53rem; color: #999; line-height: 1.4; pointer-events: none; }
+  .pi { display: flex; flex-direction: column; align-items: center; gap: 2px; pointer-events: none; }
+  .ic { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; color: white; }
+  .pn { font-size: 0.46rem; font-weight: 700; color: #ddd; text-transform: uppercase; }
+  .pr { font-size: 0.42rem; color: #777; }
+  .wells { display: flex; flex-direction: column; gap: 3px; width: 100%; pointer-events: none; }
+  .wh { border-radius: 3px; padding: 3px 4px; font-size: 0.46rem; font-weight: 600; line-height: 1.3; background: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444; }
+  .wc { border-radius: 3px; padding: 3px 4px; font-size: 0.46rem; font-weight: 600; line-height: 1.3; background: #0c4a6e; color: #7dd3fc; border: 1px solid #38bdf8; }
+
+  #info {
+    max-width: 760px; margin: 10px auto 0;
+    background: #2a2a2a; border-radius: 8px; border: 1px solid #333;
+    padding: 8px 14px; font-size: 0.7rem; color: #666;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  #rot-row { display: none; align-items: center; gap: 6px; flex-wrap: wrap; }
+  #rot-row button {
+    background: #333; border: 1px solid #555; color: #ccc;
+    padding: 5px 11px; border-radius: 5px; font-size: 0.7rem;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+  }
+  #rot-row button:hover, #rot-row button:active { background: #FF6B2B; color: #fff; border-color: #FF6B2B; }
+</style>
+</head>
+<body>
+
+<div class="main-header">
+  <h1>Lorem Ipsum Event</h1>
+  <p>Sunday, May 25, 2026 &nbsp;|&nbsp; 6:00 PM – 11:00 PM &nbsp;|&nbsp; Lorem Ipsum — 1101 Central Ave Unit B, Charlotte NC 28204</p>
+</div>
+
+<!-- Timeline -->
+<div style="max-width:820px; margin: 0 auto 40px; display:flex; gap:0; border-radius:12px; overflow:hidden; border:1px solid #333;">
+  <div style="flex:1; background:#2a2a2a; padding:16px; text-align:center; border-right:1px solid #333;">
+    <div style="font-size:0.62rem; color:#888; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">Setup</div>
+    <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#f59e0b; letter-spacing:0.06em;">4:30 PM</div>
+    <div style="font-size:0.68rem; color:#666;">Arrive &amp; set up<br>after Boiler Yard</div>
+  </div>
+  <div style="flex:1; background:#2a2a2a; padding:16px; text-align:center; border-right:1px solid #333;">
+    <div style="font-size:0.62rem; color:#888; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">Prep</div>
+    <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#FF6B2B; letter-spacing:0.06em;">5:00 PM</div>
+    <div style="font-size:0.68rem; color:#666;">Flat tops on, stations<br>prepped &amp; stocked</div>
+  </div>
+  <div style="flex:1; background:#2a2a2a; padding:16px; text-align:center; border-right:1px solid #333;">
+    <div style="font-size:0.62rem; color:#888; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">Service Starts</div>
+    <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#4ade80; letter-spacing:0.06em;">6:00 PM</div>
+    <div style="font-size:0.68rem; color:#666;">Ready to serve,<br>event is live</div>
+  </div>
+  <div style="flex:1; background:#2a2a2a; padding:16px; text-align:center;">
+    <div style="font-size:0.62rem; color:#888; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">Event Ends</div>
+    <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#818cf8; letter-spacing:0.06em;">11:00 PM</div>
+    <div style="font-size:0.68rem; color:#666;">Break down<br>&amp; close out</div>
+  </div>
+</div>
+
+<div class="wrapper">
+
+  <!-- MENU -->
+  <div>
+    <div class="section-title">Menu & Pricing</div>
+    <div class="card">
+      <table class="plan-table">
+        <thead><tr><th>Item</th><th>Price</th></tr></thead>
+        <tbody>
+          <tr><td>Baker Street Burger (Vegan) — Single</td><td class="price">$11.99</td></tr>
+          <tr><td>Baker Street Burger (Vegan) — Double</td><td class="price">$14.99</td></tr>
+          <tr><td>Regular Burger — Single</td><td class="price">$8.99</td></tr>
+          <tr><td>Regular Burger — Double</td><td class="price">$12.99</td></tr>
+          <tr><td>Sausage Dog</td><td class="price">$7.00</td></tr>
+          <tr><td>Beef Hot Dog</td><td class="price">$6.00</td></tr>
+          <tr><td>Vegan Hot Dog</td><td class="price">$7.00</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- BURGER TOPPINGS -->
+  <div>
+    <div class="section-title">Burger Toppings</div>
+    <div class="card">
+      <table class="plan-table">
+        <thead><tr><th>Topping</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Raw Onions (circular)</td><td class="note">Sliced rings</td></tr>
+          <tr><td>Tomatoes</td><td></td></tr>
+          <tr><td>Lettuce</td><td></td></tr>
+          <tr><td>Ketchup</td><td></td></tr>
+          <tr><td>Mustard</td><td></td></tr>
+          <tr><td>Smack Sauce</td><td></td></tr>
+          <tr><td>Pickles</td><td></td></tr>
+          <tr><td>American Cheese</td><td></td></tr>
+          <tr><td>Vegan Cheese</td><td></td></tr>
+          <tr><td>Vegan Mayo</td><td></td></tr>
+          <tr><td>Regular Mayo Packets</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- HOT DOG TOPPINGS -->
+  <div>
+    <div class="section-title">Hot Dog Toppings</div>
+    <div class="card">
+      <table class="plan-table">
+        <thead><tr><th>Topping</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Coleslaw</td><td></td></tr>
+          <tr><td>Raw Onions (chopped)</td><td class="note">Diced for hot dogs</td></tr>
+          <tr><td>Chili</td><td></td></tr>
+          <tr><td>Ketchup</td><td></td></tr>
+          <tr><td>Mustard</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- INVENTORY -->
+  <div>
+    <div class="section-title">Inventory</div>
+    <div class="card">
+      <table class="plan-table">
+        <thead><tr><th>Item</th><th>Quantity</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Burger Balls (regular)</td><td>1 full pan</td><td></td></tr>
+          <tr><td>Vegan Burger Patties</td><td>1 full pan</td><td></td></tr>
+          <tr><td>Beef Hot Dogs</td><td>Leftover from Boiler Yard</td><td></td></tr>
+          <tr><td>Sausage Dogs</td><td>Leftover from Boiler Yard</td><td></td></tr>
+          <tr><td>Vegan Hot Dogs</td><td>Leftover from Boiler Yard</td><td></td></tr>
+          <tr><td>American Cheese</td><td>2½ pans</td><td></td></tr>
+          <tr><td>Vegan Cheese</td><td>1 x 1/6 pan</td><td></td></tr>
+          <tr><td>House Pickles</td><td>1 x 1/2 pan</td><td class="note">+ 1/3 pan for transfer</td></tr>
+          <tr><td>Chili</td><td>1 x 1/3 pan</td><td></td></tr>
+          <tr><td>Ketchup</td><td>2 bottles</td><td></td></tr>
+          <tr><td>Mustard</td><td>1 bottle</td><td></td></tr>
+          <tr><td>Mayo Packets</td><td>As needed</td><td></td></tr>
+          <tr><td>Guest Checkbook</td><td>1</td><td></td></tr>
+          <tr><td>Smack Sauce</td><td>2 bottles</td><td></td></tr>
+          <tr><td>Raw Onions (chopped)</td><td>1 x 1/6 pan</td><td class="note">For hot dogs</td></tr>
+          <tr><td>Raw Onions (whole/circular)</td><td>1 x 1/6 pan</td><td class="note">For burgers</td></tr>
+          <tr><td>Potato Salad</td><td>1 x 1/3 pan</td><td></td></tr>
+          <tr><td>Baked Beans</td><td>1 full pan</td><td></td></tr>
+          <tr><td>Coleslaw</td><td>1 x 1/3 pan</td><td></td></tr>
+          <tr><td>Lettuce</td><td>1 x 1/3 pan</td><td></td></tr>
+          <tr><td>Tomatoes</td><td>1 x 1/3 pan</td><td></td></tr>
+          <tr><td>Butter</td><td>As needed</td><td></td></tr>
+          <tr><td>Hairnets</td><td>As needed</td><td></td></tr>
+          <tr><td>Gloves</td><td>As needed</td><td></td></tr>
+          <tr><td>Grill Brick</td><td>1</td><td class="note">For cleaning flat tops</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EQUIPMENT -->
+  <div>
+    <div class="section-title">Equipment Checklist</div>
+    <div class="card">
+      <table class="plan-table">
+        <thead><tr><th>Item</th><th>Qty</th><th class="check-col">✓ Packed</th></tr></thead>
+        <tbody>
+          <tr><td>Flat Tops</td><td>2</td><td class="check-col">☐</td></tr>
+          <tr><td>Propane Tanks</td><td>2</td><td class="check-col">☐</td></tr>
+          <tr><td>Fridge</td><td>1</td><td class="check-col">☐</td></tr>
+          <tr><td>Tables</td><td>2</td><td class="check-col">☐</td></tr>
+          <tr><td>Lighter</td><td>1</td><td class="check-col">☐</td></tr>
+          <tr><td>Scrapers / Spatulas</td><td>2</td><td class="check-col">☐</td></tr>
+          <tr><td>Smashers</td><td>2</td><td class="check-col">☐</td></tr>
+          <tr><td>Grill Brick</td><td>1</td><td class="check-col">☐</td></tr>
+          <tr><td>Towels</td><td></td><td class="check-col">☐</td></tr>
+          <tr><td>Aprons</td><td></td><td class="check-col">☐</td></tr>
+          <tr><td>Hairnets</td><td></td><td class="check-col">☐</td></tr>
+          <tr><td>Gloves</td><td></td><td class="check-col">☐</td></tr>
+          <tr><td>Hot Dog Station</td><td>1</td><td class="check-col">☐</td></tr>
+          <tr><td>Oil Bottle</td><td>1</td><td class="check-col">☐</td></tr>
+          <tr><td>Butter Roller</td><td>1</td><td class="check-col">☐</td></tr>
+          <tr><td>Burger Shakers</td><td>2</td><td class="check-col">☐</td></tr>
+          <tr><td>POS System</td><td>1</td><td class="check-col">☐</td></tr>
+          <tr><td>POS Charger</td><td>1</td><td class="check-col">☐</td></tr>
+          <tr><td>Hot Dog Well Pans</td><td>3</td><td class="check-col">☐</td></tr>
+          <tr><td>Menu Board</td><td>1</td><td class="check-col">☐</td></tr>
+          <tr><td>SureFire Paper</td><td></td><td class="check-col">☐</td></tr>
+          <tr><td>Foil Paper</td><td></td><td class="check-col">☐</td></tr>
+          <tr><td>Cookout Plates</td><td></td><td class="check-col">☐</td></tr>
+          <tr><td>Napkins</td><td></td><td class="check-col">☐</td></tr>
+          <tr><td>6 oz Containers</td><td></td><td class="check-col">☐</td></tr>
+          <tr><td>6 oz Container Lids</td><td></td><td class="check-col">☐</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- STAFFING -->
+  <div>
+    <div class="section-title">Staffing</div>
+    <div class="card">
+      <table class="plan-table">
+        <thead><tr><th>Staff</th><th>Role</th><th>Station</th></tr></thead>
+        <tbody>
+          <tr><td>Zareia / Makayla</td><td>Ordering / Cashier</td><td>POS Table</td></tr>
+          <tr><td>Courtney</td><td>Build · Bun Toasting · Baker Street Assist</td><td>Build Station / Small Flat Top</td></tr>
+          <tr><td>Sutton</td><td>Flat Top</td><td>Big Flat Top — Smash Burgers</td></tr>
+          <tr><td>Azzreia</td><td>Hot Dog Station</td><td>Hot Dog Well</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- LAYOUT -->
+  <div>
+    <div class="section-title">Event Setup Layout</div>
+    <div class="card">
+      <div class="tent">
+        <span class="tent-label">🏠 Patio — Event Setup</span>
+
+        <!-- Direction labels -->
+        <div class="dir-label" style="top:26px; left:16px; font-size:0.55rem;">← Back Left</div>
+        <div class="dir-label" style="top:26px; right:16px; font-size:0.55rem;">Back Right →</div>
+
+        <!-- FAR LEFT TOP: Fridge -->
+        <div class="box" style="border:2px solid #38bdf8; top:42px; left:14px; width:72px; height:82px; flex-direction:column; gap:4px; padding:8px 6px;">
+          <div class="lbl" style="color:#38bdf8; font-size:0.6rem;">🧊 Fridge</div>
+          <div class="dtl" style="font-size:0.54rem;">Burger balls<br>Vegan patties<br>Cold items</div>
+        </div>
+
+        <!-- FAR LEFT BELOW FRIDGE: Hot Dog Station — VERTICAL -->
+        <div class="box" style="border:2px solid #34d399; top:136px; left:14px; width:72px; bottom:14px; flex-direction:column; gap:6px; justify-content:flex-start; padding:10px 6px;">
+          <div class="lbl" style="color:#34d399; font-size:0.6rem;">🌭 Hot Dog<br>Station</div>
+          <div class="person">
+            <div class="person-icon" style="background:#059669; width:28px; height:28px; font-size:0.75rem;">A</div>
+            <div class="person-name" style="font-size:0.48rem;">Azzreia</div>
+            <div class="person-role" style="font-size:0.46rem;">Hot Dogs</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:5px; margin-top:6px; width:100%;">
+            <div class="well hot" style="font-size:0.5rem; padding:4px 3px;">🌡 Hot #1<br>Hot Dogs</div>
+            <div class="well hot" style="font-size:0.5rem; padding:4px 3px;">🌡 Hot #2<br>Chili</div>
+            <div class="well cold" style="font-size:0.5rem; padding:4px 3px;">❄ Cold<br>Onions<br>Coleslaw<br>Sauces</div>
+          </div>
+        </div>
+
+        <!-- BACK ROW: Big Flat Top -->
+        <div class="box" style="border:2px solid #f59e0b; top:42px; left:96px; right:calc(67% - 14px); height:82px; flex-direction:row; gap:8px; padding:8px 10px;">
+          <div>
+            <div class="lbl" style="color:#f59e0b; font-size:0.62rem;">🔥 Big Flat Top</div>
+            <div class="dtl" style="font-size:0.58rem;">Smash burgers</div>
+          </div>
+          <div class="person">
+            <div class="person-icon" style="background:#dc2626; width:28px; height:28px; font-size:0.75rem;">S</div>
+            <div class="person-name" style="font-size:0.48rem;">Sutton</div>
+            <div class="person-role" style="font-size:0.46rem;">Flat Top</div>
+          </div>
+        </div>
+
+        <!-- BACK ROW: Small Flat Top -->
+        <div class="box" style="border:2px solid #fb923c; top:42px; left:calc(33% + 96px); right:calc(34% - 14px); height:82px; flex-direction:column; gap:3px; padding:8px 10px;">
+          <div class="lbl" style="color:#fb923c; font-size:0.62rem;">🥖 Small Flat Top</div>
+          <div class="dtl" style="font-size:0.56rem;">Bun toasting<br>Baker Street</div>
+        </div>
+
+        <!-- BACK ROW: Build Station -->
+        <div class="box" style="border:2px solid #818cf8; top:42px; left:calc(67% + 14px); right:14px; height:82px; flex-direction:column; gap:3px; padding:8px 10px; align-items:flex-start;">
+          <div class="lbl" style="color:#818cf8; font-size:0.62rem;">🍔 Build Station</div>
+          <div class="dtl" style="font-size:0.54rem; text-align:left;">Assemble · Bun toast assist<br>Baker Street assist</div>
+          <div class="person" style="margin-top:4px; align-self:center;">
+            <div class="person-icon" style="background:#7c3aed; width:26px; height:26px; font-size:0.72rem;">C</div>
+            <div class="person-name" style="font-size:0.46rem;">Courtney</div>
+            <div class="person-role" style="font-size:0.44rem;">Build</div>
+          </div>
+        </div>
+
+        <!-- FRONT CENTER: POS Table -->
+        <div class="box" style="border:2px solid #e879f9; bottom:14px; left:50%; transform:translateX(-50%); width:210px; height:70px; flex-direction:row; gap:10px; padding:8px 14px;">
+          <div>
+            <div class="lbl" style="color:#e879f9; font-size:0.62rem;">📋 POS / Ordering</div>
+            <div class="dtl" style="font-size:0.56rem;">POS · Charger · Guest Checkbook</div>
+          </div>
+          <div class="person">
+            <div class="person-icon" style="background:#0284c7; width:28px; height:28px; font-size:0.75rem;">Z</div>
+            <div class="person-name" style="font-size:0.46rem;">Zareia/Makayla</div>
+            <div class="person-role" style="font-size:0.44rem;">Ordering</div>
+          </div>
+        </div>
+
+      </div><!-- end tent -->
+
+      <div class="flow">
+        <span>↑</span>
+        Customer Approach
+      </div>
+
+      <div class="note-box">
+        <strong>Back row L→R:</strong> Fridge → Big Flat Top (Sutton) → Small Flat Top (buns/Baker Street) → Build Station (Courtney)<br><strong>Left side vertical:</strong> Hot Dog Station (Azzreia) — Hot Well #1: hot dogs · Hot Well #2: chili · Cold Well: onions, coleslaw, sauces<br><strong>Front center:</strong> POS Table (Zareia/Makayla)
+      </div>
+    </div>
+  </div>
+
+</div>
+
+  <!-- INTERACTIVE LAYOUT -->
+  <div style="max-width:820px; margin:0 auto 40px;">
+    <div class="section-title">Interactive Event Layout</div>
+    <div class="card" style="padding:20px;">
+      <header>
+  <h1>Lorem Ipsum — Interactive Layout</h1>
+  <p>Tap a box to select · Drag to move · Rotate with buttons below</p>
+</header>
+
+<div class="toolbar">
+  <button id="save-btn" onclick="saveLayout()">💾 Save Layout</button>
+  <button onclick="resetLayout()">↺ Reset</button>
+</div>
+
+<div id="patio-wrap">
+  <div id="patio-label">🏠 Patio — Event Setup</div>
+  <div id="patio">
+
+    <div class="box" id="b1" style="border:2px solid #38bdf8; left:14px; top:14px; width:76px; height:95px;">
+      <div class="lbl" style="color:#38bdf8">🧊 Fridge</div>
+      <div class="dtl">Burger balls<br>Vegan patties<br>Cold items</div>
+    </div>
+
+    <div class="box" id="b2" style="border:2px solid #34d399; left:14px; top:120px; width:76px; height:300px;">
+      <div class="lbl" style="color:#34d399">🌭 Hot Dog<br>Station</div>
+      <div class="pi">
+        <div class="ic" style="background:#059669">A</div>
+        <div class="pn">Azzreia</div>
+        <div class="pr">Hot Dogs</div>
+      </div>
+      <div class="wells">
+        <div class="wh">🌡 Hot #1 — Hot Dogs</div>
+        <div class="wh">🌡 Hot #2 — Chili</div>
+        <div class="wc">❄ Cold — Onions · Coleslaw · Sauces</div>
+      </div>
+    </div>
+
+    <div class="box" id="b3" style="border:2px solid #f59e0b; left:104px; top:14px; width:158px; height:88px; flex-direction:row; gap:8px;">
+      <div style="pointer-events:none">
+        <div class="lbl" style="color:#f59e0b">🔥 Big Flat Top</div>
+        <div class="dtl">Smash burgers</div>
+      </div>
+      <div class="pi">
+        <div class="ic" style="background:#dc2626">S</div>
+        <div class="pn">Sutton</div>
+        <div class="pr">Flat Top</div>
+      </div>
+    </div>
+
+    <div class="box" id="b4" style="border:2px solid #fb923c; left:274px; top:14px; width:88px; height:88px;">
+      <div class="lbl" style="color:#fb923c">🥖 Small<br>Flat Top</div>
+      <div class="dtl">Bun toasting<br>Baker Street</div>
+    </div>
+
+    <div class="box" id="b5" style="border:2px solid #818cf8; left:374px; top:14px; width:148px; height:88px;">
+      <div class="lbl" style="color:#818cf8">🍔 Build Station</div>
+      <div class="dtl">Assemble · Bun toast<br>Baker Street assist</div>
+      <div class="pi">
+        <div class="ic" style="background:#7c3aed">C</div>
+        <div class="pn">Courtney</div>
+        <div class="pr">Build</div>
+      </div>
+    </div>
+
+    <div class="box" id="b6" style="border:2px solid #e879f9; left:190px; top:450px; width:220px; height:80px; flex-direction:row; gap:10px;">
+      <div style="pointer-events:none">
+        <div class="lbl" style="color:#e879f9">📋 POS / Ordering</div>
+        <div class="dtl">POS · Charger · Guest Checkbook</div>
+      </div>
+      <div class="pi">
+        <div class="ic" style="background:#0284c7">Z</div>
+        <div class="pn">Zareia/Makayla</div>
+        <div class="pr">Ordering</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="info">
+  <span id="hint">Tap any box to select it</span>
+  <div id="rot-row">
+    Rotating: <strong id="sel-name">—</strong>
+    <button onclick="doRotate(-90)">-90°</button>
+    <button onclick="doRotate(90)">+90°</button>
+    <button onclick="doRotate(180)">180°</button>
+    <button onclick="doRotate(360)">360°</button>
+    <button onclick="deselect()" style="background:#444">✕</button>
+  </div>
+</div>
+
+<script>
+var patio   = document.getElementById('patio');
+var selEl   = null;
+var rotMap  = {b1:0,b2:0,b3:0,b4:0,b5:0,b6:0};
+var savedHTML = patio.innerHTML;
+
+function applyRot(el) {
+  el.style.transform = 'rotate(' + rotMap[el.id] + 'deg)';
+}
+
+function doRotate(deg) {
+  if (!selEl) return;
+  rotMap[selEl.id] = (rotMap[selEl.id] || 0) + deg;
+  applyRot(selEl);
+}
+
+function selectBox(el) {
+  if (selEl && selEl !== el) selEl.classList.remove('sel');
+  selEl = el;
+  el.classList.add('sel');
+  document.getElementById('rot-row').style.display  = 'flex';
+  document.getElementById('hint').style.display     = 'none';
+  var lbl = el.querySelector('.lbl');
+  document.getElementById('sel-name').textContent   = lbl ? lbl.textContent.replace(/\n/g,' ') : el.id;
+}
+
+function deselect() {
+  if (selEl) selEl.classList.remove('sel');
+  selEl = null;
+  document.getElementById('rot-row').style.display = 'none';
+  document.getElementById('hint').style.display    = 'inline';
+}
+
+function saveLayout() {
+  var data = {};
+  document.querySelectorAll('.box').forEach(function(el) {
+    data[el.id] = { left: el.style.left, top: el.style.top, rot: rotMap[el.id] || 0 };
+  });
+  try { localStorage.setItem('li_v2', JSON.stringify(data)); } catch(e) {}
+  var btn = document.getElementById('save-btn');
+  btn.textContent = '✓ Saved!';
+  btn.style.background = '#16a34a';
+  btn.style.color = '#fff';
+  setTimeout(function() {
+    btn.textContent = '💾 Save Layout';
+    btn.style.background = '';
+    btn.style.color = '';
+  }, 2000);
+}
+
+function loadSaved() {
+  try {
+    var raw = localStorage.getItem('li_v2');
+    if (!raw) return;
+    var data = JSON.parse(raw);
+    document.querySelectorAll('.box').forEach(function(el) {
+      if (data[el.id]) {
+        el.style.left = data[el.id].left;
+        el.style.top  = data[el.id].top;
+        rotMap[el.id] = data[el.id].rot || 0;
+        applyRot(el);
+      }
+    });
+  } catch(e) {}
+}
+
+function resetLayout() {
+  patio.innerHTML = savedHTML;
+  Object.keys(rotMap).forEach(function(k) { rotMap[k] = 0; });
+  deselect();
+  initDrag();
+  try { localStorage.removeItem('li_v2'); } catch(e) {}
+}
+
+patio.addEventListener('click', function(e) {
+  if (e.target === patio) deselect();
+});
+
+function initDrag() {
+  document.querySelectorAll('.box').forEach(function(el) {
+    var dragging = false, hasMoved = false;
+    var startX, startY, startL, startT;
+
+    el.addEventListener('mousedown', function(e) {
+      dragging = true; hasMoved = false;
+      startX = e.clientX; startY = e.clientY;
+      var pr = patio.getBoundingClientRect();
+      var er = el.getBoundingClientRect();
+      startL = er.left - pr.left;
+      startT = er.top  - pr.top;
+      el.style.zIndex = 99;
+      e.preventDefault();
+    });
+
+    el.addEventListener('touchstart', function(e) {
+      dragging = true; hasMoved = false;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      var pr = patio.getBoundingClientRect();
+      var er = el.getBoundingClientRect();
+      startL = er.left - pr.left;
+      startT = er.top  - pr.top;
+      el.style.zIndex = 99;
+      e.stopPropagation();
+      // Don't preventDefault here so tap still registers
+    }, { passive: true });
+
+    // Block ALL touchmove on the box itself to stop scroll while dragging
+    el.addEventListener('touchmove', function(e) {
+      e.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener('mousemove', function(e) {
+      if (!dragging) return;
+      var dx = e.clientX - startX, dy = e.clientY - startY;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) hasMoved = true;
+      var nl = Math.max(0, Math.min(startL + dx, patio.offsetWidth  - el.offsetWidth));
+      var nt = Math.max(0, Math.min(startT + dy, patio.offsetHeight - el.offsetHeight));
+      el.style.left = nl + 'px';
+      el.style.top  = nt + 'px';
+    });
+
+    window.addEventListener('touchmove', function(e) {
+      if (!dragging) return;
+      var dx = e.touches[0].clientX - startX;
+      var dy = e.touches[0].clientY - startY;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) hasMoved = true;
+      var nl = Math.max(0, Math.min(startL + dx, patio.offsetWidth  - el.offsetWidth));
+      var nt = Math.max(0, Math.min(startT + dy, patio.offsetHeight - el.offsetHeight));
+      el.style.left = nl + 'px';
+      el.style.top  = nt + 'px';
+    }, { passive: true });
+
+    window.addEventListener('mouseup', function() {
+      if (!dragging) return;
+      dragging = false;
+      el.style.zIndex = '';
+      if (!hasMoved) selectBox(el);
+    });
+
+    window.addEventListener('touchend', function() {
+      if (!dragging) return;
+      dragging = false;
+      el.style.zIndex = '';
+      if (!hasMoved) selectBox(el);
+    });
+  });
+}
+
+initDrag();
+loadSaved();
+</script>
+    </div>
+  </div>
+  <script>
+  var patio   = document.getElementById('patio');
+var selEl   = null;
+var rotMap  = {b1:0,b2:0,b3:0,b4:0,b5:0,b6:0};
+var savedHTML = patio.innerHTML;
+
+function applyRot(el) {
+  el.style.transform = 'rotate(' + rotMap[el.id] + 'deg)';
+}
+
+function doRotate(deg) {
+  if (!selEl) return;
+  rotMap[selEl.id] = (rotMap[selEl.id] || 0) + deg;
+  applyRot(selEl);
+}
+
+function selectBox(el) {
+  if (selEl && selEl !== el) selEl.classList.remove('sel');
+  selEl = el;
+  el.classList.add('sel');
+  document.getElementById('rot-row').style.display  = 'flex';
+  document.getElementById('hint').style.display     = 'none';
+  var lbl = el.querySelector('.lbl');
+  document.getElementById('sel-name').textContent   = lbl ? lbl.textContent.replace(/\n/g,' ') : el.id;
+}
+
+function deselect() {
+  if (selEl) selEl.classList.remove('sel');
+  selEl = null;
+  document.getElementById('rot-row').style.display = 'none';
+  document.getElementById('hint').style.display    = 'inline';
+}
+
+function saveLayout() {
+  var data = {};
+  document.querySelectorAll('.box').forEach(function(el) {
+    data[el.id] = { left: el.style.left, top: el.style.top, rot: rotMap[el.id] || 0 };
+  });
+  try { localStorage.setItem('li_v2', JSON.stringify(data)); } catch(e) {}
+  var btn = document.getElementById('save-btn');
+  btn.textContent = '✓ Saved!';
+  btn.style.background = '#16a34a';
+  btn.style.color = '#fff';
+  setTimeout(function() {
+    btn.textContent = '💾 Save Layout';
+    btn.style.background = '';
+    btn.style.color = '';
+  }, 2000);
+}
+
+function loadSaved() {
+  try {
+    var raw = localStorage.getItem('li_v2');
+    if (!raw) return;
+    var data = JSON.parse(raw);
+    document.querySelectorAll('.box').forEach(function(el) {
+      if (data[el.id]) {
+        el.style.left = data[el.id].left;
+        el.style.top  = data[el.id].top;
+        rotMap[el.id] = data[el.id].rot || 0;
+        applyRot(el);
+      }
+    });
+  } catch(e) {}
+}
+
+function resetLayout() {
+  patio.innerHTML = savedHTML;
+  Object.keys(rotMap).forEach(function(k) { rotMap[k] = 0; });
+  deselect();
+  initDrag();
+  try { localStorage.removeItem('li_v2'); } catch(e) {}
+}
+
+patio.addEventListener('click', function(e) {
+  if (e.target === patio) deselect();
+});
+
+function initDrag() {
+  document.querySelectorAll('.box').forEach(function(el) {
+    var dragging = false, hasMoved = false;
+    var startX, startY, startL, startT;
+
+    el.addEventListener('mousedown', function(e) {
+      dragging = true; hasMoved = false;
+      startX = e.clientX; startY = e.clientY;
+      var pr = patio.getBoundingClientRect();
+      var er = el.getBoundingClientRect();
+      startL = er.left - pr.left;
+      startT = er.top  - pr.top;
+      el.style.zIndex = 99;
+      e.preventDefault();
+    });
+
+    el.addEventListener('touchstart', function(e) {
+      dragging = true; hasMoved = false;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      var pr = patio.getBoundingClientRect();
+      var er = el.getBoundingClientRect();
+      startL = er.left - pr.left;
+      startT = er.top  - pr.top;
+      el.style.zIndex = 99;
+      e.stopPropagation();
+      // Don't preventDefault here so tap still registers
+    }, { passive: true });
+
+    // Block ALL touchmove on the box itself to stop scroll while dragging
+    el.addEventListener('touchmove', function(e) {
+      e.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener('mousemove', function(e) {
+      if (!dragging) return;
+      var dx = e.clientX - startX, dy = e.clientY - startY;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) hasMoved = true;
+      var nl = Math.max(0, Math.min(startL + dx, patio.offsetWidth  - el.offsetWidth));
+      var nt = Math.max(0, Math.min(startT + dy, patio.offsetHeight - el.offsetHeight));
+      el.style.left = nl + 'px';
+      el.style.top  = nt + 'px';
+    });
+
+    window.addEventListener('touchmove', function(e) {
+      if (!dragging) return;
+      var dx = e.touches[0].clientX - startX;
+      var dy = e.touches[0].clientY - startY;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) hasMoved = true;
+      var nl = Math.max(0, Math.min(startL + dx, patio.offsetWidth  - el.offsetWidth));
+      var nt = Math.max(0, Math.min(startT + dy, patio.offsetHeight - el.offsetHeight));
+      el.style.left = nl + 'px';
+      el.style.top  = nt + 'px';
+    }, { passive: true });
+
+    window.addEventListener('mouseup', function() {
+      if (!dragging) return;
+      dragging = false;
+      el.style.zIndex = '';
+      if (!hasMoved) selectBox(el);
+    });
+
+    window.addEventListener('touchend', function() {
+      if (!dragging) return;
+      dragging = false;
+      el.style.zIndex = '';
+      if (!hasMoved) selectBox(el);
+    });
+  });
+}
+
+initDrag();
+loadSaved();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boiler Yard Brunch — Full Event Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1a1a1a;
+    font-family: 'DM Sans', sans-serif;
+    color: #fff;
+    padding: 32px 24px 60px;
+  }
+
+  /* ── HEADER ── */
+  .main-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .main-header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    letter-spacing: 0.08em;
+    color: #FF6B2B;
+  }
+  .main-header p {
+    font-size: 0.95rem;
+    color: #aaa;
+    margin-top: 6px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── SECTION TITLES ── */
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.08em;
+    color: #FF6B2B;
+    margin-bottom: 16px;
+    padding-left: 4px;
+    border-left: 4px solid #FF6B2B;
+    padding-left: 12px;
+  }
+
+  .wrapper {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: #242424;
+    border-radius: 14px;
+    border: 1px solid #333;
+    overflow: hidden;
+  }
+
+  /* ── TABLE STYLES ── */
+  .plan-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  .plan-table thead tr {
+    background: #444;
+  }
+  .plan-table thead th {
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  .plan-table tbody tr:nth-child(even) { background: #2e2e2e; }
+  .plan-table tbody tr:nth-child(odd)  { background: #282828; }
+  .plan-table td {
+    padding: 9px 14px;
+    color: #ccc;
+    vertical-align: top;
+    border-bottom: 1px solid #333;
+  }
+  .plan-table td:first-child {
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+  }
+  .section-hdr td {
+    background: #FF6B2B !important;
+    color: #fff !important;
+    font-weight: 700 !important;
+    font-size: 0.75rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+  }
+  .price { color: #4ade80; font-weight: 700; }
+  .note  { color: #777; font-style: italic; font-size: 0.75rem; }
+  .check-col { text-align: center; color: #555; }
+
+  /* ── LAYOUT DIAGRAM ── */
+  .tent {
+    position: relative;
+    border: 3px dashed #6366f1;
+    border-radius: 14px;
+    height: 520px;
+    margin: 24px;
+  }
+  .tent-label {
+    position: absolute;
+    top: -13px; left: 50%; transform: translateX(-50%);
+    background: #6366f1;
+    color: white; font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.1em; padding: 2px 16px; border-radius: 20px;
+    white-space: nowrap;
+  }
+  .role-bar {
+    position: absolute;
+    top: 14px; left: 20px; right: 20px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem; color: #555;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .role-bar span { color: #999; font-weight: 700; }
+
+  .box {
+    position: absolute;
+    border-radius: 10px;
+    background: #2a2a2a;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .box .info .label {
+    font-size: 0.72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    margin-bottom: 4px;
+  }
+  .box .info .detail { font-size: 0.63rem; color: #888; line-height: 1.5; }
+
+  .hcp { border: 2px solid #f59e0b; top: 52px; left: 20px; right: 20px; height: 80px; }
+  .hcp .info .label { color: #f59e0b; }
+
+  .staging {
+    border: 2px solid #34d399;
+    top: 190px; left: 20px;
+    width: 90px; height: 110px;
+    flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; gap: 6px;
+  }
+  .staging .label { font-size: 0.65rem; font-weight: 700; color: #34d399; text-transform: uppercase; letter-spacing: 0.05em; }
+  .staging .detail { font-size: 0.58rem; color: #666; line-height: 1.4; }
+
+  .pos { border: 2px solid #818cf8; bottom: 52px; left: 20px; right: 20px; height: 80px; }
+  .pos .info .label { color: #818cf8; }
+
+  .staff-grp { display: flex; gap: 10px; flex-shrink: 0; }
+  .person { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .person-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; font-weight: 700; color: white;
+    border: 2px solid rgba(255,255,255,0.12);
+  }
+  .person-name { font-size: 0.56rem; font-weight: 700; color: #ccc; text-transform: uppercase; letter-spacing: 0.04em; }
+  .person-role { font-size: 0.53rem; color: #666; }
+
+  .flow {
+    text-align: center; margin-top: 14px;
+    font-size: 0.65rem; letter-spacing: 0.12em;
+    color: #444; text-transform: uppercase;
+  }
+  .flow span { font-size: 1.4rem; color: #3a3a3a; display: block; margin-bottom: 2px; }
+
+  .note-box {
+    margin: 0 24px 24px;
+    background: #1e1e1e;
+    border-left: 3px solid #FF6B2B;
+    border-radius: 6px;
+    padding: 11px 15px;
+    font-size: 0.75rem; color: #aaa; line-height: 1.7;
+  }
+  .note-box strong { color: #FF6B2B; }
+</style>
+</head>
+<body>
+
+<div class="main-header">
+  <h1>Boiler Yard Brunch</h1>
+  <p>&nbsp; 11:00 AM – 4:00 PM|&nbsp; 11:00 AM – 4:00 PM &nbsp;|&nbsp; Camp North End — Boiler Yard</p>
+</div>
+
+
+  <!-- ══ TIMELINE BANNER ══ -->
+  <div style="max-width:720px; margin: 0 auto 40px; display:flex; gap:0; border-radius:12px; overflow:hidden; border:1px solid #333;">
+    <div style="flex:1; background:#2a2a2a; padding:16px; text-align:center; border-right:1px solid #333;">
+      <div style="font-size:0.62rem; color:#888; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">Setup</div>
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#f59e0b; letter-spacing:0.06em;">10:30 AM</div>
+      <div style="font-size:0.68rem; color:#666;">Arrive &amp; set up tent,<br>tables, equipment</div>
+    </div>
+    <div style="flex:1; background:#2a2a2a; padding:16px; text-align:center; border-right:1px solid #333;">
+      <div style="font-size:0.62rem; color:#888; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">Warmup</div>
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#FF6B2B; letter-spacing:0.06em;">11:00 AM</div>
+      <div style="font-size:0.68rem; color:#666;">Set up stations &amp; prep toppings<br><span style="color:#f59e0b;">11:15 —</span> Flash fry all dogs at Surefire</div>
+    </div>
+    <div style="flex:1; background:#2a2a2a; padding:16px; text-align:center; border-right:1px solid #333;">
+      <div style="font-size:0.62rem; color:#888; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">Service Starts</div>
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#4ade80; letter-spacing:0.06em;">12:00 PM</div>
+      <div style="font-size:0.68rem; color:#666;"><span style="color:#f59e0b;">11:30 —</span> Dogs transported &amp; loaded into warmer at Boiler Yard<br><span style="color:#4ade80;">12:00 —</span> Ready to serve</div>
+    </div>
+    <div style="flex:1; background:#2a2a2a; padding:16px; text-align:center;">
+      <div style="font-size:0.62rem; color:#888; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">Event Ends</div>
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#818cf8; letter-spacing:0.06em;">4:00 PM</div>
+      <div style="font-size:0.68rem; color:#666;">Break down &amp;<br>transfer to Lorem Ipsum</div>
+    </div>
+  </div>
+
+<div class="wrapper">
+
+  <!-- ══ SECTION 1: MENU & PRICING ══ -->
+  <div>
+    <div class="section-title">Menu & Pricing</div>
+    <div class="card">
+      <table class="plan-table">
+        <thead><tr><th>Item</th><th>Price</th></tr></thead>
+        <tbody>
+          <tr><td>Sausage Dog</td><td class="price">$7.00</td></tr>
+          <tr><td>Hot Dog</td><td class="price">$6.00</td></tr>
+          <tr><td>VEEF Dog</td><td class="price">$7.00</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 2: TOPPINGS ══ -->
+  <div>
+    <div class="section-title">Toppings</div>
+    <div class="card">
+      <table class="plan-table">
+        <thead><tr><th>Topping</th><th>Quantity Needed</th></tr></thead>
+        <tbody>
+          <tr><td>Coleslaw</td><td>1 × 1/3 pan</td></tr>
+          <tr><td>Chili</td><td>1 × 1/3 pan</td></tr>
+          <tr><td>Onions</td><td>1 × 1/6 pan</td></tr>
+          <tr><td>Ketchup</td><td>2 bottles</td></tr>
+          <tr><td>Mustard</td><td>1 bottle</td></tr>
+          <tr><td>Barbecue Sauce</td><td>1 bottle</td></tr>
+          <tr><td>Red Cabbage</td><td>1 × 1/6 pan</td></tr>
+          <tr><td>Vegan Mayo</td><td>1 bottle</td></tr>
+          <tr><td>Fried Onions</td><td>1 container</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 3: INVENTORY ══ -->
+  <div>
+    <div class="section-title">Inventory</div>
+    <div class="card">
+      <table class="plan-table">
+        <thead><tr><th>Item</th><th>Quantity</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Hot Dog Buns</td><td>240 total</td><td class="note">Split across both events</td></tr>
+          <tr><td>Regular Hot Dogs</td><td>240 (3 boxes × 80)</td><td class="note">Full starting inventory</td></tr>
+          <tr><td>Sausage Dogs</td><td>12 (1 pack)</td><td class="note">12 per event</td></tr>
+          <tr><td>VEEF Vegan Dogs</td><td>10 total</td><td class="note">Split across both events</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 4: EQUIPMENT ══ -->
+  <div>
+    <div class="section-title">Equipment Checklist</div>
+    <div class="card">
+      <table class="plan-table">
+        <thead><tr><th>Item</th><th>Qty</th><th class="check-col">✓ Packed</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Tent</td><td>1</td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>Tent Weights</td><td>4</td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>Table — POS / Front</td><td>1</td><td class="check-col">☐</td><td class="note">Deja's ordering station</td></tr>
+          <tr><td>Table — Staging</td><td>1</td><td class="check-col">☐</td><td class="note">For finished hot dogs</td></tr>
+          <tr><td>Hot Dog Warmer / Well</td><td>1</td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>Pans for Warmer</td><td>3</td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>POS System</td><td>1</td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>POS Charger</td><td>1</td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>Guest Check Booklet</td><td>1</td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>Menus</td><td></td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>Hot Dog Boats / Trays</td><td></td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>Tongs</td><td>2</td><td class="check-col">☐</td><td class="note">1 for hot dogs/sausage · 1 for VEEF</td></tr>
+          <tr><td>Side Cups (6 oz)</td><td></td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>6 oz Container Lids</td><td></td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>Napkins</td><td></td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>Utensils</td><td></td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>Gloves</td><td></td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>Hairnets</td><td></td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>Towels</td><td></td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>Aprons</td><td></td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>Trash Cans</td><td>2</td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>Trash Bags</td><td></td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>Bags of Ice</td><td></td><td class="check-col">☐</td><td></td></tr>
+          <tr><td>Plastic Bags</td><td></td><td class="check-col">☐</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 5: STAFFING ══ -->
+  <div>
+    <div class="section-title">Staffing</div>
+    <div class="card">
+      <table class="plan-table">
+        <thead><tr><th>Staff</th><th>Role</th><th>Station</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Deja</td><td>Ordering / Cashier</td><td>Front POS Table</td><td class="note">Takes orders, handles payments</td></tr>
+          <tr><td>LaMonday</td><td>Hot Dog Builder</td><td>Hot Dog Warmer</td><td class="note">Builds & assembles hot dogs</td></tr>
+          <tr><td>Michael</td><td>Hot Dog Builder</td><td>Hot Dog Warmer</td><td class="note">Builds & assembles hot dogs</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 6: LAYOUT DIAGRAM ══ -->
+  <div>
+    <div class="section-title">Event Setup Layout</div>
+    <div class="card">
+      <div class="tent">
+        <span class="tent-label">⛺ TENT — Covers Entire Setup</span>
+        <div class="role-bar">
+          <div>Building — <span>LaMonday / Michael</span></div>
+          <div>Ordering — <span>Deja</span></div>
+        </div>
+
+        <!-- Hot Dog Warmer -->
+        <div class="box hcp">
+          <div class="info">
+            <div class="label">🌭 Hot Dog Warmer</div>
+            <div class="detail">3 pans &nbsp;·&nbsp; 2 tongs &nbsp;·&nbsp; Sausage / Hot Dog / VEEF</div>
+          </div>
+          <div class="staff-grp">
+            <div class="person">
+              <div class="person-icon" style="background:#e11d48;">L</div>
+              <div class="person-name">LaMonday</div>
+              <div class="person-role">Builder</div>
+            </div>
+            <div class="person">
+              <div class="person-icon" style="background:#0284c7;">M</div>
+              <div class="person-name">Michael</div>
+              <div class="person-role">Builder</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Staging Table -->
+        <div class="box staging">
+          <div class="label">Staging<br>Table</div>
+          <div class="detail">Finished<br>dogs<br>here</div>
+        </div>
+
+        <!-- POS Table -->
+        <div class="box pos">
+          <div class="info">
+            <div class="label">📋 POS / Front Table</div>
+            <div class="detail">POS System &nbsp;·&nbsp; Charger &nbsp;·&nbsp; Guest Checkbook</div>
+          </div>
+          <div class="staff-grp">
+            <div class="person">
+              <div class="person-icon" style="background:#7c3aed;">D</div>
+              <div class="person-name">Deja</div>
+              <div class="person-role">Ordering</div>
+            </div>
+          </div>
+        </div>
+      </div><!-- end tent -->
+
+      <div class="flow">
+        <span>↑</span>
+        Customer Approach
+      </div>
+
+      <div class="note-box">
+        <strong>Flow:</strong> LaMonday & Michael build at the <strong>hot dog warmer (back)</strong> → finished dogs placed on <strong>staging table (left, middle)</strong> → Deja grabs and hands to customers at the <strong>POS table (front)</strong>.
+      </div>
+    </div>
+  </div>
+
+</div><!-- end wrapper -->
+</body>
+</html>
