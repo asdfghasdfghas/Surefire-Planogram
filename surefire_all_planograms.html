@@ -132,81 +132,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--black);disp
 .door-total{font-size:8px;color:var(--gray-dark);text-align:center;padding:3px 6px;border-top:0.5px solid var(--border);font-family:var(--mono)}
 .door-edit-panel{display:none;padding:6px;border-top:0.5px solid var(--border);background:var(--gray)}
 .door-edit-panel.open{display:block}
-#mgr-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);align-items:center;justify-content:center;}
-#mgr-overlay.open{display:flex}
-#mgr-box{background:#111;border:1px solid #2a2a2a;border-radius:16px;padding:32px;width:300px;box-shadow:0 24px 64px rgba(0,0,0,.7)}
-#mgr-label{font-size:10px;font-weight:600;letter-spacing:.1em;color:#555;text-transform:uppercase;margin-bottom:8px}
-#mgr-title{font-size:20px;font-weight:300;color:#fff;margin-bottom:4px}
-#mgr-sub{font-size:12px;color:#555;margin-bottom:20px}
-#mgr-input{width:100%;font-size:18px;padding:10px 14px;border-radius:9px;border:1px solid #2a2a2a;background:#1a1a1a;color:#fff;font-family:var(--mono);letter-spacing:.25em;outline:none;margin-bottom:8px}
-#mgr-input:focus{border-color:var(--green-mid)}
-#mgr-err{font-size:11px;color:#c0392b;min-height:16px;margin-bottom:14px}
-#mgr-btns{display:flex;gap:8px}
-#mgr-cancel{flex:1;padding:9px;border-radius:8px;border:1px solid #2a2a2a;background:none;color:#888;font-size:12px;cursor:pointer;font-family:var(--font)}
-#mgr-submit{flex:1;padding:9px;border-radius:8px;border:none;background:var(--green);color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)}
-#mgr-submit:hover{background:var(--green-mid)}
-.mgr-only{display:none!important}
-body.manager-mode .mgr-only{display:flex!important}
-/* ── SNACK WALL ── */
-.snack-shelf-wrap{display:flex;flex-direction:column;gap:12px}
-.snack-shelf{border:2px solid var(--border);border-radius:12px;overflow:hidden;background:#dde2e6}
-.snack-shelf-head{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--white);border-bottom:1px solid var(--border)}
-.snack-shelf-head span{font-size:12px;font-weight:500;color:var(--black)}
-.snack-shelf-head small{font-size:10px;color:var(--gray-dark)}
-.snack-shelf-body{display:flex;gap:6px;padding:8px;align-items:stretch}
-.snack-hanger{width:90px;flex-shrink:0;background:var(--white);border-radius:8px;border:1px solid var(--border);overflow:hidden;display:flex;flex-direction:column}
-.snack-hanger-bar{font-size:9px;font-weight:600;text-align:center;padding:4px 6px;background:var(--gray);color:var(--gray-dark);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.05em}
-.snack-hanger-items{padding:5px;display:flex;flex-direction:column;gap:4px;flex:1}
-.snack-hanger-item{padding:7px 5px;border-radius:6px;text-align:center;cursor:pointer;border:1px solid var(--border);background:var(--white);transition:filter .1s}
-.snack-hanger-item:hover{filter:brightness(.96)}
-.snack-hanger-item.sel{outline:2px solid #222;outline-offset:1px}
-.snack-hanger-name{font-size:8px;font-weight:600;color:var(--black);line-height:1.2}
-.snack-hanger-variety{font-size:7px;color:var(--gray-dark);margin-top:1px}
-.snack-hanger-price{font-size:8px;font-weight:600;color:var(--green);font-family:var(--mono);margin-top:2px}
-.snack-rows{flex:1;display:flex;gap:6px}
-.snack-row{flex:1;background:var(--white);border-radius:8px;border:1px solid var(--border);overflow:hidden;display:flex;flex-direction:column}
-.snack-row-label{font-size:9px;font-weight:600;text-align:center;padding:4px;background:var(--gray);border-bottom:1px solid var(--border);color:var(--gray-dark);text-transform:uppercase;letter-spacing:.05em}
-.snack-row-product{flex:1;padding:8px 5px;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:filter .1s}
-.snack-row-product:hover{filter:brightness(.96)}
-.snack-row-product.sel{outline:2px solid #222;outline-offset:-2px}
-.snack-row-name{font-size:9px;font-weight:600;color:var(--black);line-height:1.2}
-.snack-row-variety{font-size:8px;color:var(--gray-dark);margin-top:2px}
-.snack-row-price{font-size:8px;font-weight:600;color:var(--green);font-family:var(--mono);margin-top:2px}
-.snack-row-oz{font-size:7px;color:var(--gray-dark)}
-.snack-edit-panel{display:none;padding:8px;border-top:1px solid var(--border);background:var(--gray)}
-.snack-edit-panel.open{display:block}
-/* ── VENDOR PAGE ── */
-.vendor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
-.vendor-card{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden}
-.vendor-card-head{padding:14px 18px 10px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
-.vendor-card-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.vendor-card-name{font-size:14px;font-weight:600;color:var(--black);flex:1}
-.vendor-card-body{padding:14px 18px}
-.vendor-info-row{display:flex;gap:8px;margin-bottom:6px;font-size:12px;align-items:baseline}
-.vendor-info-label{color:var(--gray-dark);font-weight:500;min-width:64px;flex-shrink:0}
-.vendor-info-val{color:var(--black)}
-.vendor-info-input{font-size:12px;padding:3px 7px;border-radius:6px;border:1px solid var(--border);background:var(--white);color:var(--black);font-family:var(--font);width:100%}
-.vendor-info-input:focus{outline:2px solid var(--green);border-color:transparent}
-.vendor-products{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
-.vendor-products-label{font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--gray-dark);text-transform:uppercase;margin-bottom:7px}
-.vendor-tag-list{display:flex;flex-wrap:wrap;gap:5px}
-.vendor-tag-pill{font-size:10px;padding:2px 9px;border-radius:20px;background:var(--gray);color:var(--black);border:1px solid var(--border)}
-/* ── INVOICE PAGE ── */
-.invoice-upload-area{border:2px dashed var(--border);border-radius:14px;padding:48px 28px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;margin-bottom:20px}
-.invoice-upload-area:hover,.invoice-upload-area.drag-over{border-color:var(--green-mid);background:var(--green-light)}
-.invoice-upload-icon{font-size:36px;margin-bottom:10px}
-.invoice-upload-text{font-size:14px;font-weight:500;color:var(--black);margin-bottom:4px}
-.invoice-upload-sub{font-size:12px;color:var(--gray-dark)}
-.invoice-list{display:flex;flex-direction:column;gap:8px}
-.invoice-item{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px}
-.invoice-file-icon{font-size:22px;flex-shrink:0}
-.invoice-info{flex:1;min-width:0}
-.invoice-name{font-size:13px;font-weight:500;color:var(--black);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.invoice-meta{font-size:11px;color:var(--gray-dark);margin-top:2px}
-.invoice-badge{font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;background:var(--green-light);color:var(--green)}
-.invoice-del{font-size:11px;color:#A32D2D;cursor:pointer;padding:4px 8px;border-radius:6px;border:1px solid #F5BBBB;background:none;font-family:var(--font)}
-.invoice-del:hover{background:#fff0f0}
-.invoice-empty{text-align:center;padding:40px;color:var(--gray-dark);font-size:13px}
 </style>
 </head>
 <body>
@@ -221,9 +146,17 @@ body.manager-mode .mgr-only{display:flex!important}
         <span class="nav-arrow"><svg viewBox="0 0 10 10"><polyline points="2,3 5,7 8,3"/></svg></span>
       </button>
       <div class="dropdown-menu" id="dropdownMenu">
-        <a class="dropdown-item" onclick="showPage('planograms');closeDropdown()"><span class="dropdown-item-dot"></span>Planograms</a>
-        <a class="dropdown-item" onclick="showPage('vendors');closeDropdown()"><span class="dropdown-item-dot"></span>Vendors</a>
-        <a class="dropdown-item" onclick="showPage('invoices');closeDropdown()"><span class="dropdown-item-dot"></span>Invoices</a>
+        <div class="dropdown-section">Planograms</div>
+        <a class="dropdown-item" onclick="switchCooler(0);closeDropdown()"><span class="dropdown-item-dot"></span>Cooler 1 — Turbo Air</a>
+        <a class="dropdown-item" onclick="switchCooler(1);closeDropdown()"><span class="dropdown-item-dot"></span>Cooler 2 — Glass Door (Coca-Cola)</a>
+        <a class="dropdown-item" onclick="switchCooler(2);closeDropdown()"><span class="dropdown-item-dot"></span>Cooler 3 — Glass Door (Choice)</a>
+        <a class="dropdown-item" onclick="switchCooler(3);closeDropdown()"><span class="dropdown-item-dot"></span>Cooler 4 — Beer 12-Packs</a>
+        <a class="dropdown-item" onclick="switchCooler(4);closeDropdown()"><span class="dropdown-item-dot"></span>Cooler 5 — Singles & Craft</a>
+        <a class="dropdown-item" onclick="switchCooler(5);closeDropdown()"><span class="dropdown-item-dot"></span>Wine Shelf</a>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-section">Coming Soon</div>
+        <a class="dropdown-item" style="opacity:.4;cursor:default"><span class="dropdown-item-dot" style="background:#555"></span>Dry Goods</a>
+        <a class="dropdown-item" style="opacity:.4;cursor:default"><span class="dropdown-item-dot" style="background:#555"></span>Snack Wall</a>
       </div>
     </div>
     <a class="nav-link" href="#">Inventory</a>
@@ -233,19 +166,19 @@ body.manager-mode .mgr-only{display:flex!important}
 
 <div class="main">
   <div class="page-header">
-    <div class="page-breadcrumb" id="pageBreadcrumb">Retail <span>›</span> Planograms</div>
-    <div class="page-title" id="pageTitle">Surefire Market <strong>Planograms</strong></div>
+    <div class="page-breadcrumb">Retail <span>›</span> Planograms</div>
+    <div class="page-title">Surefire Market <strong>Planograms</strong></div>
     <div class="page-subtitle" id="pageSubtitle">5 coolers · vendor color coded · click any product to edit</div>
   </div>
 
-  <div class="content" id="page-planograms">
+  <div class="content">
     <div class="cooler-tabs" id="coolerTabs">
       <button class="cooler-tab active" onclick="switchCooler(0)">Cooler 1</button>
       <button class="cooler-tab" onclick="switchCooler(1)">Cooler 2</button>
       <button class="cooler-tab" onclick="switchCooler(2)">Cooler 3</button>
       <button class="cooler-tab" onclick="switchCooler(3)">Cooler 4</button>
       <button class="cooler-tab" onclick="switchCooler(4)">Cooler 5</button>
-      <button class="cooler-tab" onclick="switchCooler(5)">Snack Wall</button>
+      <button class="cooler-tab" onclick="switchCooler(5)">Wine Shelf</button>
     </div>
 
     <!-- COOLER 1 -->
@@ -253,12 +186,12 @@ body.manager-mode .mgr-only{display:flex!important}
       <div class="plano-card">
         <div class="plano-card-header"><div class="plano-card-title"><h2>Cooler 1 — Turbo Air Open-Face</h2><span>ACTIVE</span></div></div>
         <div class="plano-inner">
-          <div class="legend-box mgr-only" id="c1-legend"></div>
-          <div class="stats-row mgr-only" id="c1-sum"></div>
-          <div class="toolbar mgr-only">
-            <button class="tb-btn pri" onclick="requireManager(()=>c1AddBrand(c1data.shelves[0].id))">+ add brand</button>
-            <button class="tb-btn" id="c1-undo" onclick="requireManager(()=>c1Undo())" disabled>↩ undo</button>
-            <button class="tb-btn" onclick="requireManager(()=>c1Export())">↗ export</button>
+          <div class="legend-box" id="c1-legend"></div>
+          <div class="stats-row" id="c1-sum"></div>
+          <div class="toolbar">
+            <button class="tb-btn pri" onclick="c1AddBrand(c1data.shelves[0].id)">+ add brand</button>
+            <button class="tb-btn" id="c1-undo" onclick="c1Undo()" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="c1Export()">↗ export</button>
           </div>
           <div class="cooler"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Turbo Air — Surefire Market</span></div><small>width = shelf space · vendor color coded</small></div><div class="shelf-wrap" id="c1-sw"></div></div>
         </div>
@@ -270,12 +203,12 @@ body.manager-mode .mgr-only{display:flex!important}
       <div class="plano-card">
         <div class="plano-card-header"><div class="plano-card-title"><h2>Cooler 2 — Glass Door (Coca-Cola)</h2><span>ACTIVE</span></div></div>
         <div class="plano-inner">
-          <div class="legend-box mgr-only" id="c2-legend"></div>
-          <div class="stats-row mgr-only" id="c2-sum"></div>
-          <div class="toolbar mgr-only">
-            <button class="tb-btn pri" onclick="requireManager(()=>c2AddBrand(c2data.shelves[0].id))">+ add brand</button>
-            <button class="tb-btn" id="c2-undo" onclick="requireManager(()=>c2Undo())" disabled>↩ undo</button>
-            <button class="tb-btn" onclick="requireManager(()=>c2Export())">↗ export</button>
+          <div class="legend-box" id="c2-legend"></div>
+          <div class="stats-row" id="c2-sum"></div>
+          <div class="toolbar">
+            <button class="tb-btn pri" onclick="c2AddBrand(c2data.shelves[0].id)">+ add brand</button>
+            <button class="tb-btn" id="c2-undo" onclick="c2Undo()" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="c2Export()">↗ export</button>
           </div>
           <div class="cooler"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Glass Door Cooler 2 — Surefire Market</span></div><small>color = vendor · click flavor to edit</small></div><div class="shelf-wrap" id="c2-sw"></div></div>
         </div>
@@ -287,12 +220,12 @@ body.manager-mode .mgr-only{display:flex!important}
       <div class="plano-card">
         <div class="plano-card-header"><div class="plano-card-title"><h2>Cooler 3 — Glass Door (Choice Beverage)</h2><span>ACTIVE</span></div></div>
         <div class="plano-inner">
-          <div class="legend-box mgr-only" id="c3-legend"></div>
-          <div class="stats-row mgr-only" id="c3-sum"></div>
-          <div class="toolbar mgr-only">
-            <button class="tb-btn pri" onclick="requireManager(()=>c3AddBrand(c3data.shelves[0].id))">+ add brand</button>
-            <button class="tb-btn" id="c3-undo" onclick="requireManager(()=>c3Undo())" disabled>↩ undo</button>
-            <button class="tb-btn" onclick="requireManager(()=>c3Export())">↗ export</button>
+          <div class="legend-box" id="c3-legend"></div>
+          <div class="stats-row" id="c3-sum"></div>
+          <div class="toolbar">
+            <button class="tb-btn pri" onclick="c3AddBrand(c3data.shelves[0].id)">+ add brand</button>
+            <button class="tb-btn" id="c3-undo" onclick="c3Undo()" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="c3Export()">↗ export</button>
           </div>
           <div class="cooler"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Glass Door Cooler 3 — Surefire Market</span></div><small>vendor: Choice Beverage · click to edit</small></div><div class="shelf-wrap" id="c3-sw"></div></div>
         </div>
@@ -304,12 +237,12 @@ body.manager-mode .mgr-only{display:flex!important}
       <div class="plano-card">
         <div class="plano-card-header"><div class="plano-card-title"><h2>Cooler 4 — Beer 12-Packs</h2><span>ACTIVE</span></div></div>
         <div class="plano-inner">
-          <div class="legend-box mgr-only" id="c4-legend"></div>
-          <div class="stats-row mgr-only" id="c4-sum"></div>
-          <div class="toolbar mgr-only">
-            <button class="tb-btn pri" onclick="requireManager(()=>c4AddBrand(c4data.shelves[0].id))">+ add brand</button>
-            <button class="tb-btn" id="c4-undo" onclick="requireManager(()=>c4Undo())" disabled>↩ undo</button>
-            <button class="tb-btn" onclick="requireManager(()=>c4Export())">↗ export</button>
+          <div class="legend-box" id="c4-legend"></div>
+          <div class="stats-row" id="c4-sum"></div>
+          <div class="toolbar">
+            <button class="tb-btn pri" onclick="c4AddBrand(c4data.shelves[0].id)">+ add brand</button>
+            <button class="tb-btn" id="c4-undo" onclick="c4Undo()" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="c4Export()">↗ export</button>
           </div>
           <div class="cooler"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Beer Cooler 4 — Surefire Market</span></div><small>organized by price tier · click to edit</small></div><div class="shelf-wrap" id="c4-sw"></div></div>
         </div>
@@ -321,12 +254,12 @@ body.manager-mode .mgr-only{display:flex!important}
       <div class="plano-card">
         <div class="plano-card-header"><div class="plano-card-title"><h2>Cooler 5 — Singles & Craft</h2><span>ACTIVE</span></div></div>
         <div class="plano-inner">
-          <div class="legend-box mgr-only" id="c5-legend"></div>
-          <div class="stats-row mgr-only" id="c5-sum"></div>
-          <div class="toolbar mgr-only">
-            <button class="tb-btn pri" onclick="requireManager(()=>c5AddBrand(c5data.shelves[0].id))">+ add brand</button>
-            <button class="tb-btn" id="c5-undo" onclick="requireManager(()=>c5Undo())" disabled>↩ undo</button>
-            <button class="tb-btn" onclick="requireManager(()=>c5Export())">↗ export</button>
+          <div class="legend-box" id="c5-legend"></div>
+          <div class="stats-row" id="c5-sum"></div>
+          <div class="toolbar">
+            <button class="tb-btn pri" onclick="c5AddBrand(c5data.shelves[0].id)">+ add brand</button>
+            <button class="tb-btn" id="c5-undo" onclick="c5Undo()" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="c5Export()">↗ export</button>
           </div>
           <div class="cooler" id="c5-cooler"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Cooler 5 — Singles & Craft</span></div><small>color = vendor · click to edit</small></div>
           <div class="door-section">
@@ -338,64 +271,29 @@ body.manager-mode .mgr-only{display:flex!important}
       </div>
     </div>
 
-    <!-- SNACK WALL -->
+    <!-- WINE SHELF -->
     <div class="cooler-panel" id="panel5">
       <div class="plano-card">
-        <div class="plano-card-header"><div class="plano-card-title"><h2>Snack Wall — Wire Rack Display</h2><span>ACTIVE</span></div></div>
+        <div class="plano-card-header"><div class="plano-card-title"><h2>Wine Shelf — 4 Shelves · 28 Bottles</h2><span>ACTIVE</span></div></div>
         <div class="plano-inner">
-          <div class="legend-box mgr-only" id="csw-legend"></div>
-          <div class="stats-row mgr-only" id="csw-sum"></div>
-          <div class="toolbar mgr-only">
-            <button class="tb-btn pri" onclick="requireManager(()=>cswAddBrand(cswdata.shelves[0].id))">+ add brand</button>
-            <button class="tb-btn" id="csw-undo" onclick="requireManager(()=>cswUndo())" disabled>↩ undo</button>
-            <button class="tb-btn" onclick="requireManager(()=>cswExport())">↗ export</button>
+          <div class="legend-box" id="wine-legend"></div>
+          <div class="stats-row" id="wine-sum"></div>
+          <div class="toolbar">
+            <button class="tb-btn" id="wine-undo" onclick="wineUndo()" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="wineExport()">↗ export CSV</button>
           </div>
-          <div class="cooler"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Snack Wall — Surefire Market</span></div><small>color = vendor · click to edit</small></div><div class="shelf-wrap" id="csw-sw"></div></div>
+          <div class="cooler">
+            <div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Wine Shelf — Surefire Market</span></div><small>price low → high within each shelf · click bottle to edit</small></div>
+            <div class="shelf-wrap" id="wine-sw"></div>
+          </div>
         </div>
       </div>
     </div>
 
   </div>
-
-  <!-- VENDORS PAGE -->
-  <div id="page-vendors" style="display:none;padding:28px;max-width:1600px;margin:0 auto">
-    <div class="vendor-grid" id="vendor-grid"></div>
-  </div>
-
-  <!-- INVOICES PAGE -->
-  <div id="page-invoices" style="display:none;padding:28px;max-width:900px;margin:0 auto">
-    <div class="invoice-upload-area" id="invoice-drop" onclick="document.getElementById('invoice-file-input').click()">
-      <input type="file" id="invoice-file-input" multiple accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xls,.csv" style="display:none" onchange="handleInvoiceFiles(this.files)"/>
-      <div class="invoice-upload-icon">📄</div>
-      <div class="invoice-upload-text">Click to upload invoices</div>
-      <div class="invoice-upload-sub">PDF, image, or spreadsheet files</div>
-    </div>
-    <div class="invoice-list" id="invoice-list"></div>
-  </div>
-
-</div>
-
-<div id="mgr-overlay">
-  <div id="mgr-box">
-    <div id="mgr-label">Manager Access</div>
-    <div id="mgr-title">Enter passcode</div>
-    <div id="mgr-sub">Required to edit planogram data</div>
-    <input id="mgr-input" type="password" placeholder="••••" maxlength="10" onkeydown="if(event.key==='Enter')mgrSubmit()"/>
-    <div id="mgr-err"></div>
-    <div id="mgr-btns">
-      <button id="mgr-cancel" onclick="mgrCancel()">Cancel</button>
-      <button id="mgr-submit" onclick="mgrSubmit()">Unlock</button>
-    </div>
-  </div>
 </div>
 
 <script>
-// ── MANAGER AUTH ─────────────────────────────────────────────────
-let managerUnlocked=false,mgrCallback=null;
-function requireManager(fn){if(managerUnlocked){fn();return;}mgrCallback=fn;document.getElementById('mgr-overlay').classList.add('open');document.getElementById('mgr-input').value='';document.getElementById('mgr-err').textContent='';setTimeout(()=>document.getElementById('mgr-input').focus(),50);}
-function mgrSubmit(){if(document.getElementById('mgr-input').value==='6304'){managerUnlocked=true;document.body.classList.add('manager-mode');document.getElementById('mgr-overlay').classList.remove('open');if(mgrCallback){mgrCallback();mgrCallback=null;}}else{document.getElementById('mgr-err').textContent='Incorrect passcode';document.getElementById('mgr-input').value='';document.getElementById('mgr-input').focus();}}
-function mgrCancel(){document.getElementById('mgr-overlay').classList.remove('open');mgrCallback=null;}
-
 // ── NAV ──────────────────────────────────────────────────────────
 function toggleDropdown(){const btn=document.getElementById('retailBtn');const menu=document.getElementById('dropdownMenu');btn.classList.toggle('open');menu.classList.toggle('open');}
 function closeDropdown(){document.getElementById('retailBtn').classList.remove('open');document.getElementById('dropdownMenu').classList.remove('open');}
@@ -479,7 +377,7 @@ function c1Render(){
   c1data.shelves.forEach(sh=>{
     const total=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
     const sd=document.createElement('div');sd.className='shelf';
-    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c1-row-${sh.id}"></div>`;
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c1-row-${sh.id}"></div><div class="add-row"><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c1AddFlavor('${sh.id}')">+ add flavor</button><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c1AddBrand('${sh.id}')">+ add brand</button></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c1-row-'+sh.id);
     sh.brands.forEach(b=>{
@@ -492,7 +390,7 @@ function c1Render(){
       b.flavors.forEach(f=>{
         const h=C1_H[f.id]||52;const isSel=c1Sel===f.id;
         const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
-        fb.onclick=(e)=>{e.stopPropagation();requireManager(()=>{c1Sel=c1Sel===f.id?null:f.id;c1Render();});};
+        fb.onclick=(e)=>{e.stopPropagation();c1Sel=c1Sel===f.id?null:f.id;c1Render();};
         const pct=Math.round((f.facings/total)*100);
         const imgTag=f.img?`<img src="${f.img}" onerror="this.style.display='none'"/>`:'';
         const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:${h}px">${imgTag}<span>${f.img?'':b.name.split(' ')[0]}</span></div>`).join('');
@@ -549,7 +447,7 @@ function c2Render(){
   c2data.shelves.forEach(sh=>{
     const total=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
     const sd=document.createElement('div');sd.className='shelf';
-    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c2-row-${sh.id}"></div>`;
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c2-row-${sh.id}"></div><div class="add-row"><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c2AddFlavor('${sh.id}')">+ add flavor</button><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c2AddBrand('${sh.id}')">+ add brand</button></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c2-row-'+sh.id);
     sh.brands.forEach(b=>{
@@ -562,7 +460,7 @@ function c2Render(){
       b.flavors.forEach(f=>{
         const isSel=c2Sel===f.id;
         const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
-        fb.onclick=(e)=>{e.stopPropagation();requireManager(()=>{c2Sel=c2Sel===f.id?null:f.id;c2Render();});};
+        fb.onclick=(e)=>{e.stopPropagation();c2Sel=c2Sel===f.id?null:f.id;c2Render();};
         const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:56px">${b.name.split(' ')[0]}</div>`).join('');
         fb.innerHTML=`<div class="facings">${fDivs}</div>${mkFoot(f,c,vendor,sh.id,b.id,f.id,c2Sel)}<div class="dp${isSel?' open':''}">${mkFields(f,b,sh.id,b.id,'c2')}</div>`;
         flRow.appendChild(fb);
@@ -618,7 +516,7 @@ function c3Render(){
   c3data.shelves.forEach(sh=>{
     const total=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
     const sd=document.createElement('div');sd.className='shelf';
-    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c3-row-${sh.id}"></div>`;
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c3-row-${sh.id}"></div><div class="add-row"><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c3AddFlavor('${sh.id}')">+ add flavor</button><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c3AddBrand('${sh.id}')">+ add brand</button></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c3-row-'+sh.id);
     sh.brands.forEach(b=>{
@@ -631,7 +529,7 @@ function c3Render(){
       b.flavors.forEach(f=>{
         const isSel=c3Sel===f.id;
         const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
-        fb.onclick=(e)=>{e.stopPropagation();requireManager(()=>{c3Sel=c3Sel===f.id?null:f.id;c3Render();});};
+        fb.onclick=(e)=>{e.stopPropagation();c3Sel=c3Sel===f.id?null:f.id;c3Render();};
         const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:56px">${b.name.split(' ')[0]}</div>`).join('');
         fb.innerHTML=`<div class="facings">${fDivs}</div>${mkFoot(f,c,vendor,sh.id,b.id,f.id,c3Sel)}<div class="dp${isSel?' open':''}">${mkFields(f,b,sh.id,b.id,'c3')}</div>`;
         flRow.appendChild(fb);
@@ -676,7 +574,7 @@ function c4Render(){
     const pf=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
     const total=pf+(isS4?1:0);
     const sd=document.createElement('div');sd.className='shelf';
-    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c4-row-${sh.id}"></div>`;
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c4-row-${sh.id}"></div><div class="add-row"><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c4AddBrand('${sh.id}')">+ add brand</button></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c4-row-'+sh.id);
     if(isS4){
@@ -684,7 +582,7 @@ function c4Render(){
       es.className='empty-slot'+(c4EmptyOpen?' open':'');
       es.style.flex='1';
       es.innerHTML=`<div class="empty-top"><div class="empty-icon">${c4EmptySlot.name?'📦':'＋'}</div><div class="empty-label">${c4EmptySlot.name||'open slot\nclick to fill'}</div>${c4EmptySlot.price?`<div class="empty-price">${c4EmptySlot.price}</div>`:''}</div><div class="empty-form${c4EmptyOpen?' open':''}"><div class="dgrid"><div class="dfield"><label>Brand</label><input id="c4-es-name" value="${c4EmptySlot.name}" placeholder="e.g. Coors Light"/></div><div class="dfield"><label>Price</label><input id="c4-es-price" value="${c4EmptySlot.price}" placeholder="$23.99"/></div><div class="dfield"><label>Pack Size</label><input id="c4-es-oz" value="${c4EmptySlot.oz}" placeholder="12pk bottle"/></div></div><div class="dact"><button class="tb-btn" style="font-size:10px;height:24px" onclick="c4ClearEmpty()">clear</button><button class="tb-btn pri" style="font-size:10px;height:24px" onclick="c4SaveEmpty()">done</button></div></div>`;
-      es.querySelector('.empty-top').addEventListener('click',()=>{requireManager(()=>{c4EmptyOpen=!c4EmptyOpen;c4Sel=null;c4Render();});});
+      es.querySelector('.empty-top').addEventListener('click',()=>{c4EmptyOpen=!c4EmptyOpen;c4Sel=null;c4Render();});
       row.appendChild(es);
     }
     sh.brands.forEach(b=>{
@@ -697,7 +595,7 @@ function c4Render(){
       b.flavors.forEach(f=>{
         const isSel=c4Sel===f.id;
         const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
-        fb.onclick=(e)=>{e.stopPropagation();requireManager(()=>{c4Sel=c4Sel===f.id?null:f.id;c4EmptyOpen=false;c4Render();});};
+        fb.onclick=(e)=>{e.stopPropagation();c4Sel=c4Sel===f.id?null:f.id;c4EmptyOpen=false;c4Render();};
         const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:68px">${b.name.split(' ')[0]}</div>`).join('');
         fb.innerHTML=`<div class="facings">${fDivs}</div>${mkFoot(f,c,vendor,sh.id,b.id,f.id,c4Sel)}<div class="dp${isSel?' open':''}">${mkFields(f,b,sh.id,b.id,'c4')}</div>`;
         flRow.appendChild(fb);
@@ -776,7 +674,7 @@ function c5RenderDoor(){
       const idx=ri*5+i;const div=document.createElement('div');
       div.className='door-face'+(slot.open?' sel':'');div.style.background=slot.open?'#4527A0':'#7B1FA2';
       div.innerHTML=`<div class="door-face-name">${slot.name}</div><div class="door-face-oz">${slot.oz}</div><div class="door-face-price">${slot.price}</div>`;
-      div.addEventListener('click',()=>{requireManager(()=>{buzzSlots.forEach((_,j)=>{buzzSlots[j].open=j===idx&&!buzzSlots[idx].open;});c5RenderDoor();});});
+      div.addEventListener('click',()=>{buzzSlots.forEach((_,j)=>{buzzSlots[j].open=j===idx&&!buzzSlots[idx].open;});c5RenderDoor();});
       row.appendChild(div);
     });
   });
@@ -786,7 +684,7 @@ function c5RenderDoor(){
   oasisSlots.forEach((slot,i)=>{
     const div=document.createElement('div');div.className='door-face'+(slot.open?' sel':'');div.style.background=slot.open?'#1B5E20':'#388E3C';
     div.innerHTML=`<div class="door-face-name">${slot.name}</div><div class="door-face-oz">${slot.oz}</div><div class="door-face-price">${slot.price}</div>`;
-    div.addEventListener('click',()=>{requireManager(()=>{oasisSlots.forEach((_,j)=>{oasisSlots[j].open=j===i&&!oasisSlots[i].open;});c5RenderDoor();});});
+    div.addEventListener('click',()=>{oasisSlots.forEach((_,j)=>{oasisSlots[j].open=j===i&&!oasisSlots[i].open;});c5RenderDoor();});
     oaRow.appendChild(div);
   });
   const oaPanel=document.getElementById('oa-edit-panel');const openOa=oasisSlots.find(s=>s.open);
@@ -798,7 +696,7 @@ function c5Render(){
     const pf=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
     const ef=sh.id==='s3'?1:0;
     const sd=document.createElement('div');sd.className='shelf';
-    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${pf+ef} faces</span></div><div class="shelf-row" id="c5-row-${sh.id}"></div>`;
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${pf+ef} faces</span></div><div class="shelf-row" id="c5-row-${sh.id}"></div><div class="add-row"><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c5AddFlavor('${sh.id}')">+ add flavor</button><button class="tb-btn" style="height:22px;font-size:10px;padding:0 10px" onclick="c5AddBrand('${sh.id}')">+ add brand</button></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c5-row-'+sh.id);
     sh.brands.forEach(b=>{
@@ -811,7 +709,7 @@ function c5Render(){
       b.flavors.forEach(f=>{
         const isSel=c5Sel===f.id;
         const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
-        fb.onclick=(e)=>{e.stopPropagation();requireManager(()=>{c5Sel=c5Sel===f.id?null:f.id;c5S3Open=false;c5Render();});};
+        fb.onclick=(e)=>{e.stopPropagation();c5Sel=c5Sel===f.id?null:f.id;c5S3Open=false;c5Render();};
         const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:52px">${b.name.split(' ')[0]}</div>`).join('');
         fb.innerHTML=`<div class="facings">${fDivs}</div>${mkFoot(f,c,vendor,sh.id,b.id,f.id,c5Sel)}<div class="dp${isSel?' open':''}">${mkFields(f,b,sh.id,b.id,'c5')}</div>`;
         flRow.appendChild(fb);
@@ -820,7 +718,7 @@ function c5Render(){
     if(sh.id==='s3'){
       const es=document.createElement('div');es.className='empty-slot'+(c5S3Open?' open':'');es.style.flex='1';
       es.innerHTML=`<div class="empty-top"><div class="empty-icon">${c5S3Slot.name?'📦':'＋'}</div><div class="empty-label">${c5S3Slot.name||'open slot\nclick to fill'}</div>${c5S3Slot.price?`<div class="empty-price">${c5S3Slot.price}</div>`:''}</div><div class="empty-form${c5S3Open?' open':''}"><div class="dgrid"><div class="dfield"><label>Brand</label><input id="c5-s3-name" value="${c5S3Slot.name}" placeholder="e.g. Yuengling"/></div><div class="dfield"><label>Price</label><input id="c5-s3-price" value="${c5S3Slot.price}" placeholder="$3.99"/></div><div class="dfield"><label>Size</label><input id="c5-s3-oz" value="${c5S3Slot.oz||''}" placeholder="12oz bottle"/></div></div><div class="dact"><button class="tb-btn" style="font-size:10px;height:24px" onclick="c5ClearS3()">clear</button><button class="tb-btn pri" style="font-size:10px;height:24px" onclick="c5SaveS3()">done</button></div></div>`;
-      es.querySelector('.empty-top').addEventListener('click',()=>{requireManager(()=>{c5S3Open=!c5S3Open;c5Sel=null;c5Render();});});
+      es.querySelector('.empty-top').addEventListener('click',()=>{c5S3Open=!c5S3Open;c5Sel=null;c5Render();});
       row.appendChild(es);
     }
   });
@@ -835,271 +733,172 @@ function c5Render(){
 }
 
 // ════════════════════════════════════════════════════════════════
-// SNACK WALL — WIRE RACK (2 shelves · 4 rows each · 2 side hangers)
+// WINE SHELF
 // ════════════════════════════════════════════════════════════════
-const CSW_COLORS={"Sam's Club":{hdr:'#007DC6',bg:'#E3F4FC'},'Restaurant Depot':{hdr:'#6A1B9A',bg:'#F3E5F5'},'Unknown':{hdr:'#9E9E9E',bg:'#F5F5F5'}};
-const CSW_BV={'Haribo':"Sam's Club","M&M's":"Sam's Club",'David Seeds':"Sam's Club",'Trolli':'Restaurant Depot','Sour Patch Kids':'Restaurant Depot'};
-function cswVendorColor(name){const v=CSW_BV[name]||'Unknown';return CSW_COLORS[v]||CSW_COLORS['Unknown'];}
-
-let cswSel=null,cswHist=[];
-let cswdata={shelves:[
-  {id:'sw1',label:'Shelf 1 — Top',
-    leftHanger:[
-      {id:'lh1a',name:'David Seeds',variety:'Ranch',oz:'5.25oz',price:'$3.49'},
-      {id:'lh1b',name:'David Seeds',variety:'Original',oz:'5.25oz',price:'$3.49'},
-    ],
-    rows:[
-      {id:'r1a',label:'Row 1',name:'Haribo',variety:'Gold Bears',oz:'5oz',price:'$3.99'},
-      {id:'r1b',label:'Row 2',name:'Haribo',variety:'Sour Bears',oz:'5oz',price:'$3.99'},
-      {id:'r1c',label:'Row 3',name:"M&M's",variety:'Peanut',oz:'3.27oz',price:'$3.49'},
-      {id:'r1d',label:'Row 4',name:"M&M's",variety:'Original',oz:'3.27oz',price:'$3.49'},
-    ],
-    rightHanger:[
-      {id:'rh1a',name:'Trolli',variety:'Sour Crawlers',oz:'4.25oz',price:'$3.49'},
-      {id:'rh1b',name:'Trolli',variety:'Sour Worms',oz:'4.25oz',price:'$3.49'},
-    ]
-  },
-  {id:'sw2',label:'Shelf 2 — Bottom',
-    leftHanger:[
-      {id:'lh2a',name:'David Seeds',variety:'BBQ',oz:'5.25oz',price:'$3.49'},
-      {id:'lh2b',name:'David Seeds',variety:'Dill Pickle',oz:'5.25oz',price:'$3.49'},
-    ],
-    rows:[
-      {id:'r2a',label:'Row 1',name:'Haribo',variety:'Peaches',oz:'5oz',price:'$3.99'},
-      {id:'r2b',label:'Row 2',name:'Haribo',variety:'Happy Cola',oz:'5oz',price:'$3.99'},
-      {id:'r2c',label:'Row 3',name:"M&M's",variety:'Peanut Butter',oz:'3.27oz',price:'$3.49'},
-      {id:'r2d',label:'Row 4',name:'Sour Patch Kids',variety:'Original',oz:'3.5oz',price:'$2.99'},
-    ],
-    rightHanger:[
-      {id:'rh2a',name:'Sour Patch Kids',variety:'Watermelon',oz:'3.5oz',price:'$2.99'},
-      {id:'rh2b',name:'Sour Patch Kids',variety:'Tropical',oz:'3.5oz',price:'$2.99'},
-    ]
-  },
-]};
-
-function cswSnap(){cswHist.push(JSON.stringify(cswdata));if(cswHist.length>20)cswHist.shift();document.getElementById('csw-undo').disabled=false;}
-function cswUndo(){if(!cswHist.length)return;cswdata=JSON.parse(cswHist.pop());document.getElementById('csw-undo').disabled=cswHist.length===0;cswSel=null;cswRender();}
-function cswExport(){const blob=new Blob([JSON.stringify(cswdata,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='snackwall-planogram.json';a.click();}
-function cswUpdItem(shelfId,section,itemId,field,val){
-  const sh=cswdata.shelves.find(s=>s.id===shelfId);if(!sh)return;
-  const items=section==='rows'?sh.rows:(section==='left'?sh.leftHanger:sh.rightHanger);
-  const item=items.find(i=>i.id===itemId);if(item)item[field]=val;
-  saveCSW();
-}
-function saveCSW(){localStorage.setItem('sm-cswdata',JSON.stringify(cswdata));}
-function cswEditPanel(item,shelfId,section){
-  return `<div class="snack-edit-panel open"><div class="dgrid">
-    <div class="dfield"><label>Name</label><input value="${item.name}" onchange="cswUpdItem('${shelfId}','${section}','${item.id}','name',this.value);cswRender()"/></div>
-    <div class="dfield"><label>Variety</label><input value="${item.variety}" onchange="cswUpdItem('${shelfId}','${section}','${item.id}','variety',this.value)"/></div>
-    <div class="dfield"><label>Price</label><input value="${item.price}" onchange="cswUpdItem('${shelfId}','${section}','${item.id}','price',this.value)"/></div>
-    <div class="dfield"><label>Size</label><input value="${item.oz}" onchange="cswUpdItem('${shelfId}','${section}','${item.id}','oz',this.value)"/></div>
-  </div><div class="dact"><button class="tb-btn pri" style="font-size:10px;height:26px" onclick="cswSel=null;cswRender()">done</button></div></div>`;
-}
-function cswRender(){
-  const sw=document.getElementById('csw-sw');if(!sw)return;sw.innerHTML='';
-  const saved=localStorage.getItem('sm-cswdata');if(saved)try{cswdata=JSON.parse(saved);}catch(e){}
-  cswdata.shelves.forEach(sh=>{
-    const shelf=document.createElement('div');shelf.className='snack-shelf';
-    const totalItems=sh.leftHanger.length+sh.rows.length+sh.rightHanger.length;
-    shelf.innerHTML=`<div class="snack-shelf-head"><span>${sh.label}</span><small>${totalItems} items · ${sh.rows.length} rows + 2 hangers</small></div>`;
-    const body=document.createElement('div');body.className='snack-shelf-body';
-
-    // LEFT HANGER
-    const lh=document.createElement('div');lh.className='snack-hanger';
-    lh.innerHTML=`<div class="snack-hanger-bar">◀ Hanger</div><div class="snack-hanger-items">${sh.leftHanger.map(item=>{
-      const c=cswVendorColor(item.name);const isSel=cswSel===item.id;
-      return `<div class="snack-hanger-item${isSel?' sel':''}" style="background:${c.bg};border-color:${c.hdr}30" onclick="requireManager(()=>{cswSel=cswSel==='${item.id}'?null:'${item.id}';cswRender();})">
-        <div class="snack-hanger-name">${item.name}</div>
-        <div class="snack-hanger-variety">${item.variety}</div>
-        <div class="snack-hanger-price">${item.price}</div>
-        ${isSel?cswEditPanel(item,sh.id,'left'):''}
-      </div>`;
-    }).join('')}</div>`;
-    body.appendChild(lh);
-
-    // 4 ROWS
-    const rowsWrap=document.createElement('div');rowsWrap.className='snack-rows';
-    sh.rows.forEach(row=>{
-      const c=cswVendorColor(row.name);const isSel=cswSel===row.id;
-      const rd=document.createElement('div');rd.className='snack-row';
-      rd.innerHTML=`<div class="snack-row-label">${row.label}</div>
-        <div class="snack-row-product${isSel?' sel':''}" style="background:${c.bg}" onclick="requireManager(()=>{cswSel=cswSel==='${row.id}'?null:'${row.id}';cswRender();})">
-          <div class="snack-row-name">${row.name}</div>
-          <div class="snack-row-variety">${row.variety}</div>
-          <div class="snack-row-oz">${row.oz}</div>
-          <div class="snack-row-price">${row.price}</div>
-          ${isSel?cswEditPanel(row,sh.id,'rows'):''}
-        </div>`;
-      rowsWrap.appendChild(rd);
-    });
-    body.appendChild(rowsWrap);
-
-    // RIGHT HANGER
-    const rh=document.createElement('div');rh.className='snack-hanger';
-    rh.innerHTML=`<div class="snack-hanger-bar">Hanger ▶</div><div class="snack-hanger-items">${sh.rightHanger.map(item=>{
-      const c=cswVendorColor(item.name);const isSel=cswSel===item.id;
-      return `<div class="snack-hanger-item${isSel?' sel':''}" style="background:${c.bg};border-color:${c.hdr}30" onclick="requireManager(()=>{cswSel=cswSel==='${item.id}'?null:'${item.id}';cswRender();})">
-        <div class="snack-hanger-name">${item.name}</div>
-        <div class="snack-hanger-variety">${item.variety}</div>
-        <div class="snack-hanger-price">${item.price}</div>
-        ${isSel?cswEditPanel(item,sh.id,'right'):''}
-      </div>`;
-    }).join('')}</div>`;
-    body.appendChild(rh);
-
-    shelf.appendChild(body);sw.appendChild(shelf);
-  });
-  const allItems=cswdata.shelves.flatMap(s=>[...s.leftHanger,...s.rows,...s.rightHanger]);
-  const brands=[...new Set(allItems.map(i=>i.name))];
-  const leg=document.getElementById('csw-legend');
-  if(leg)leg.innerHTML=`<div class="legend-title-row">Vendor Color Key</div>`+[...new Set(Object.values(CSW_BV))].map(v=>{const c=CSW_COLORS[v];const items=brands.filter(b=>CSW_BV[b]===v);return `<div class="legend-item"><div class="legend-swatch" style="background:${c.hdr}"></div><strong>${v}</strong><span class="legend-sub">· ${items.join(', ')}</span></div>`;}).join('');
-  const sumEl=document.getElementById('csw-sum');
-  if(sumEl)sumEl.innerHTML=`<div class="stat-pill"><strong>2</strong>shelves</div><div class="stat-pill"><strong>${brands.length}</strong>brands</div><div class="stat-pill"><strong>${allItems.length}</strong>total slots</div>`;
-}
-
-// ── PAGE SWITCHING ────────────────────────────────────────────────
-const PAGE_HEADERS={
-  planograms:{breadcrumb:'Retail › Planograms',title:'Surefire Market <strong>Planograms</strong>',sub:'5 coolers + snack wall · vendor color coded · click any product to edit'},
-  vendors:{breadcrumb:'Retail › Vendors',title:'Surefire Market <strong>Vendors</strong>',sub:'vendor contacts & purchased items'},
-  invoices:{breadcrumb:'Retail › Invoices',title:'Surefire Market <strong>Invoices</strong>',sub:'upload and manage incoming invoices'},
+const WINE_CAT_COLORS={
+  sparkling:{hdr:'#534AB7',bg:'#EEEDFE',tx:'#3C3489'},
+  whites:   {hdr:'#185FA5',bg:'#E6F1FB',tx:'#0C447C'},
+  sweet:    {hdr:'#639922',bg:'#EAF3DE',tx:'#27500A'},
+  rose:     {hdr:'#D4537E',bg:'#FBEAF0',tx:'#72243E'},
+  lightred: {hdr:'#3B6D11',bg:'#EAF3DE',tx:'#173404'},
+  boldred:  {hdr:'#A32D2D',bg:'#FCEBEB',tx:'#791F1F'},
 };
-function showPage(name){
-  ['planograms','vendors','invoices'].forEach(p=>{
-    const el=document.getElementById('page-'+p);
-    if(el)el.style.display=p===name?(p==='planograms'?'block':'block'):'none';
-  });
-  const h=PAGE_HEADERS[name]||PAGE_HEADERS.planograms;
-  document.getElementById('pageBreadcrumb').innerHTML=h.breadcrumb.replace('›','<span>›</span>');
-  document.getElementById('pageTitle').innerHTML=h.title;
-  document.getElementById('pageSubtitle').textContent=h.sub;
-  if(name==='planograms')switchCooler(currentCooler);
-  if(name==='vendors')renderVendors();
-  if(name==='invoices'){initDropArea();renderInvoices();}
-}
-
-// ── VENDORS ───────────────────────────────────────────────────────
-const VENDOR_DATA=[
-  {name:'Pepsi',color:'#004B93',products:['Poppi','Alani Nu','Gatorade','Good2Grow']},
-  {name:'Coca-Cola',color:'#B71C1C',products:['Topo Chico','Smart Water','Gold Peak','Mexican Sprite','Mexican Coca-Cola','Vitamin Water','Fanta','Minute Maid','Diet Coke','Dr Pepper','Sprite']},
-  {name:'Choice Beverage',color:'#E65100',products:['Electrolit','Cheerwine','Bloom Energy','La Colombe','Snapple','Canada Dry','A&W','Nehi','Tahitian Treat','Sunkist','Sun Drop','Core Water','Aloevine']},
-  {name:'Adams Beverage',color:'#2E7D32',products:['Liquid Death','Calypso','NoDa','White Claw','Blue Moon','Stella Artois','Michelob Ultra','Bold Rock','Clubtails','Happy Dad','Bud Light','Budweiser']},
-  {name:'United Carolina Beverage',color:'#1B5E20',products:['Corona Extra','Fat Tire','Heineken','Modelo Especial','Miller High Life','Voodoo Ranger','Lagunitas','Coors Light','Guinness','Pabst Blue Ribbon']},
-  {name:'Johnston Brothers',color:'#5E35B1',products:['BuzzBallz','Sabe']},
-  {name:'Empire Distributors',color:'#B71C1C',products:['Jack Daniels']},
-  {name:'Herbal Oasis',color:'#2E7D32',products:['Oasis']},
-  {name:'HopFly',color:'#E65100',products:['HopFly']},
-  {name:'US Foods',color:'#F57F17',products:['Acqua Panna','Saratoga Still','Jarritos']},
-  {name:"Sam's Club",color:'#007DC6',products:['Red Bull']},
-  {name:'Restaurant Depot',color:'#6A1B9A',products:['Saratoga Sparkling']},
+const WINE_SHELVES_INIT=[
+  {id:'ws1',label:'shelf 1 — top',note:'sparkling',
+   catName:'sparkling',catColor:'#EEEDFE',catText:'#3C3489',catHdr:'#534AB7',
+   catDesc:'prosecco, champagne, cava, sparkling rosé, flavored sparkling',
+   belongs:['prosecco','champagne','cava','sparkling rosé','moscato d\'asti','crémant','flavored sparkling'],
+   bottles:[
+    {id:'w1',name:'Vandor',          type:'prosecco',       price:15.99,cat:'sparkling'},
+    {id:'w2',name:'XXL Straw/Grape', type:'sparkling',      price:18.99,cat:'sparkling'},
+    {id:'w3',name:'XXL Guava',       type:'sparkling',      price:18.99,cat:'sparkling'},
+    {id:'w4',name:'XXL Pineapple',   type:'sparkling',      price:18.99,cat:'sparkling'},
+    {id:'w5',name:'Ca\'Momboli',     type:'prosecco',       price:21.99,cat:'sparkling'},
+    {id:'w6',name:'Ca\'Momboli Rosé',type:'prosecco rosé',  price:21.99,cat:'sparkling'},
+    {id:'w7',name:'Bartenura',       type:'moscato d\'asti',price:24.99,cat:'sparkling'},
+  ]},
+  {id:'ws2',label:'shelf 2',note:'whites & sweets',
+   catName:'whites & sweets',catColor:'#E6F1FB',catText:'#0C447C',catHdr:'#185FA5',
+   catDesc:'chardonnay, sauvignon blanc, riesling, moscato, pinot gris, rosé',
+   belongs:['chardonnay','sauvignon blanc','pinot grigio','riesling','moscato','rosé','white zinfandel','pinot gris'],
+   bottles:[
+    {id:'w8', name:'Cono Sur',        type:'sauvignon blanc',price:15.99,cat:'whites'},
+    {id:'w9', name:'Coastal Estates', type:'chardonnay',     price:15.99,cat:'whites'},
+    {id:'w10',name:'19 Crimes',       type:'chardonnay',     price:16.99,cat:'whites'},
+    {id:'w11',name:'Fetzer',          type:'riesling',       price:17.99,cat:'sweet'},
+    {id:'w12',name:'Cavit',           type:'moscato',        price:17.99,cat:'sweet'},
+    {id:'w13',name:'Cupcake',         type:'moscato',        price:17.99,cat:'sweet'},
+    {id:'w14',name:'Archetype A',     type:'pinot gris',     price:21.99,cat:'whites'},
+  ]},
+  {id:'ws3',label:'shelf 3',note:'light reds & blends',
+   catName:'light reds & blends',catColor:'#EAF3DE',catText:'#27500A',catHdr:'#3B6D11',
+   catDesc:'pinot noir, merlot, red blend, malbec, cab/merlot',
+   belongs:['pinot noir','merlot','red blend','malbec','grenache','gamay','cab/merlot blend'],
+   bottles:[
+    {id:'w15',name:'Sideshow',        type:'red blend',  price:14.99,cat:'lightred'},
+    {id:'w16',name:'Cloud Watcher',   type:'red blend',  price:14.99,cat:'lightred'},
+    {id:'w17',name:'Wines Til Friday',type:'merlot',     price:14.99,cat:'lightred'},
+    {id:'w18',name:'House Wine',      type:'red blend',  price:14.99,cat:'lightred'},
+    {id:'w19',name:'Frontera',        type:'cab/merlot', price:14.99,cat:'lightred'},
+    {id:'w20',name:'Josh',            type:'pinot noir', price:17.99,cat:'lightred'},
+    {id:'w21',name:'Dreaming Tree',   type:'red blend',  price:18.99,cat:'lightred'},
+  ]},
+  {id:'ws4',label:'shelf 4 — bottom',note:'bold reds',
+   catName:'bold reds',catColor:'#FCEBEB',catText:'#791F1F',catHdr:'#A32D2D',
+   catDesc:'cabernet, chianti, dark red, syrah, zinfandel, bold reds',
+   belongs:['cabernet sauvignon','chianti','syrah/shiraz','zinfandel','barolo','tempranillo','dark red','petite sirah'],
+   bottles:[
+    {id:'w22',name:'Frontera',       type:'cab sauv',    price:14.99,cat:'boldred'},
+    {id:'w23',name:'Foodies',        type:'cab sauv',    price:14.99,cat:'boldred'},
+    {id:'w24',name:'Aconga',         type:'cab sauv',    price:14.99,cat:'boldred'},
+    {id:'w25',name:'Yellow Tail',    type:'pink moscato',price:14.99,cat:'rose'},
+    {id:'w26',name:'Cococho',        type:'dark red',    price:15.99,cat:'boldred'},
+    {id:'w27',name:'The Federalist', type:'red blend',   price:17.99,cat:'boldred'},
+    {id:'w28',name:'Chianti',        type:'sangiovese',  price:21.99,cat:'boldred'},
+  ]},
 ];
-const VENDOR_DEFAULTS={
-  'Coca-Cola':{rep:'Michael',phone:'7044412381',email:'',terms:'Net 20',orderDay:'Every Friday',deliveryDay:'Every Tuesday',account:'',minOrder:'',notes:'',orderUrl:'https://www.my-coke.com'},
-};
-let vendorContacts=JSON.parse(localStorage.getItem('sm-vendor-contacts')||'{}');
-Object.entries(VENDOR_DEFAULTS).forEach(([name,data])=>{
-  if(!vendorContacts[name])vendorContacts[name]=data;
-  else vendorContacts[name]={...data,...vendorContacts[name]};
-});
-function saveVendorContacts(){localStorage.setItem('sm-vendor-contacts',JSON.stringify(vendorContacts));}
-function vField(vname,field,val,placeholder){
-  const safe=val||'';
-  if(managerUnlocked){
-    const vSafe=vname.replace(/'/g,"\\'");
-    return `<input class="vendor-info-input" placeholder="${placeholder}" value="${safe}" onchange="updateVendorContact('${vSafe}','${field}',this.value)"/>`;
-  }
-  return `<span class="vendor-info-val">${safe||`<span style="color:var(--gray-mid);font-style:italic">—</span>`}</span>`;
+let wineData=JSON.parse(JSON.stringify(WINE_SHELVES_INIT));
+let wineSel=null,wineHist=[];
+function wineSnap(){wineHist.push(JSON.stringify(wineData));if(wineHist.length>20)wineHist.shift();document.getElementById('wine-undo').disabled=false;}
+function wineUndo(){if(!wineHist.length)return;wineData=JSON.parse(wineHist.pop());document.getElementById('wine-undo').disabled=wineHist.length===0;wineSel=null;wineRender();}
+function wineUpdBottle(id,key,val){wineData.forEach(sh=>sh.bottles.forEach(b=>{if(b.id===id){if(key==='price'){b[key]=parseFloat(val)||b[key];setTimeout(()=>wineRender(),0);}else b[key]=val;}}));}
+function wineDone(){wineSel=null;wineRender();}
+function wineGroupByPrice(bottles){
+  const g={};bottles.forEach(b=>{const k=b.price.toFixed(2);if(!g[k])g[k]=[];g[k].push(b);});
+  return Object.entries(g).sort((a,b)=>parseFloat(a[0])-parseFloat(b[0]));
 }
-function renderVendors(){
-  const grid=document.getElementById('vendor-grid');
-  grid.innerHTML=VENDOR_DATA.map(v=>{
-    const c=vendorContacts[v.name]||{};
-    return `<div class="vendor-card">
-      <div class="vendor-card-head">
-        <div class="vendor-card-dot" style="background:${v.color}"></div>
-        <div class="vendor-card-name">${v.name}</div>
-        ${managerUnlocked?'<span style="font-size:10px;padding:2px 8px;border-radius:20px;background:var(--green-light);color:var(--green);font-weight:600">editing</span>':''}
+function wineExport(){
+  const rows=[['Shelf','Category','Bottle','Type','Price']];
+  wineData.forEach(sh=>[...sh.bottles].sort((a,b)=>a.price-b.price).forEach(b=>rows.push([sh.label,sh.catName,b.name,b.type,'$'+b.price.toFixed(2)])));
+  const csv=rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='surefire-wine-planogram.csv';a.click();
+}
+function wineRender(){
+  const sw=document.getElementById('wine-sw');if(!sw)return;sw.innerHTML='';
+  const allPrices=wineData.flatMap(sh=>sh.bottles.map(b=>b.price));
+  wineData.forEach(sh=>{
+    const sorted=[...sh.bottles].sort((a,b)=>a.price-b.price);
+    const groups=wineGroupByPrice(sorted);
+    const minP='$'+Math.min(...sh.bottles.map(b=>b.price)).toFixed(2);
+    const maxP='$'+Math.max(...sh.bottles.map(b=>b.price)).toFixed(2);
+    const tagHtml=sh.belongs.map(t=>`<span style="font-size:10px;padding:3px 8px;border-radius:20px;font-weight:500;white-space:nowrap;background:${sh.catColor};color:${sh.catText};display:inline-block;margin:2px">${t}</span>`).join('');
+    const sd=document.createElement('div');sd.className='shelf';
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note} · ${minP}–${maxP}</span><span class="shelf-faces">${sh.bottles.length} bottles</span></div>
+    <div style="display:flex;align-items:stretch;border-bottom:0.5px solid var(--border)">
+      <div style="min-width:140px;flex-shrink:0;padding:8px 10px;border-right:0.5px solid var(--border);display:flex;flex-direction:column;justify-content:center;gap:3px;background:${sh.catColor}">
+        <div style="font-size:11px;font-weight:600;color:${sh.catText}">${sh.catName}</div>
+        <div style="font-size:10px;font-weight:600;font-family:monospace;color:${sh.catHdr}">${minP} — ${maxP}</div>
+        <div style="font-size:9px;color:${sh.catText};opacity:.7;line-height:1.4">${sh.catDesc}</div>
       </div>
-      <div class="vendor-card-body">
-        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--gray-dark);text-transform:uppercase;margin-bottom:8px">Contact</div>
-        <div class="vendor-info-row"><span class="vendor-info-label">Rep</span>${vField(v.name,'rep',c.rep,'Rep name')}</div>
-        <div class="vendor-info-row"><span class="vendor-info-label">Phone</span>${vField(v.name,'phone',c.phone,'Phone number')}</div>
-        <div class="vendor-info-row"><span class="vendor-info-label">Email</span>${vField(v.name,'email',c.email,'Email address')}</div>
-        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--gray-dark);text-transform:uppercase;margin:12px 0 8px">Schedule</div>
-        <div class="vendor-info-row"><span class="vendor-info-label">Order Day</span>${vField(v.name,'orderDay',c.orderDay,'e.g. Every Friday')}</div>
-        <div class="vendor-info-row"><span class="vendor-info-label">Delivery</span>${vField(v.name,'deliveryDay',c.deliveryDay,'e.g. Every Tuesday')}</div>
-        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--gray-dark);text-transform:uppercase;margin:12px 0 8px">Account</div>
-        <div class="vendor-info-row"><span class="vendor-info-label">Terms</span>${vField(v.name,'terms',c.terms,'e.g. Net 30')}</div>
-        <div class="vendor-info-row"><span class="vendor-info-label">Account #</span>${vField(v.name,'account',c.account,'Account number')}</div>
-        <div class="vendor-info-row"><span class="vendor-info-label">Min Order</span>${vField(v.name,'minOrder',c.minOrder,'e.g. $250')}</div>
-        <div class="vendor-info-row"><span class="vendor-info-label">Notes</span>${vField(v.name,'notes',c.notes,'Any notes...')}</div>
-        ${managerUnlocked?`<div class="vendor-info-row"><span class="vendor-info-label">Order Site</span><div style="display:flex;flex-direction:column;gap:4px;flex:1">${c.orderUrl?`<a href="${c.orderUrl}" target="_blank" style="font-size:12px;color:var(--green-mid);text-decoration:none;font-weight:500">${c.orderUrl}</a>`:''}<input class="vendor-info-input" placeholder="https://..." value="${c.orderUrl||''}" onchange="updateVendorContact('${v.name.replace(/'/g,"\\'")}','orderUrl',this.value);renderVendors()"/></div></div>`:''}
-        <div class="vendor-products">
-          <div class="vendor-products-label">Items Ordered</div>
-          <div class="vendor-tag-list">${v.products.map(p=>`<span class="vendor-tag-pill">${p}</span>`).join('')}</div>
-        </div>
+      <div style="flex:1;padding:8px 10px;border-right:0.5px solid var(--border)">
+        <div style="font-size:9px;font-weight:600;letter-spacing:.06em;color:#6B6860;text-transform:uppercase;margin-bottom:5px">new bottles that belong here</div>
+        <div>${tagHtml}</div>
       </div>
-    </div>`;
-  }).join('');
-}
-function updateVendorContact(vendor,field,val){
-  if(!vendorContacts[vendor])vendorContacts[vendor]={};
-  vendorContacts[vendor][field]=val;
-  saveVendorContacts();
-}
-
-// ── INVOICES ──────────────────────────────────────────────────────
-let invoiceFiles=[];
-let invoiceMeta=JSON.parse(localStorage.getItem('sm-invoices')||'[]');
-function handleInvoiceFiles(files){
-  Array.from(files).forEach(file=>{
-    const id='inv-'+Date.now()+'-'+Math.random().toString(36).slice(2);
-    const meta={id,name:file.name,size:file.size,type:file.type,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})};
-    invoiceMeta.unshift(meta);
-    invoiceFiles.push({id,file});
+      <div style="min-width:56px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;background:${sh.catColor}">
+        <div style="font-size:24px;font-weight:600;color:${sh.catText};font-family:monospace;line-height:1">${sh.bottles.length}</div>
+        <div style="font-size:9px;color:${sh.catText};opacity:.7;margin-top:2px">bottles</div>
+      </div>
+    </div>
+    <div style="font-size:9px;color:#6B6860;padding:3px 8px;display:flex;align-items:center;gap:6px;border-top:0.5px dashed var(--border);background:#FAFAF8">
+      <span style="font-family:monospace">${minP}</span>
+      <div style="flex:1;height:1px;background:#E2E0DA"></div>
+      <span style="font-size:8px;color:#9E9E9E">price low → high</span>
+      <div style="flex:1;height:1px;background:#E2E0DA"></div>
+      <span style="font-family:monospace">${maxP}</span>
+    </div>
+    <div class="shelf-row" id="wine-row-${sh.id}"></div>`;
+    sw.appendChild(sd);
+    const row=document.getElementById('wine-row-'+sh.id);
+    groups.forEach(([priceKey,bottles])=>{
+      const c=WINE_CAT_COLORS[bottles[0].cat]||WINE_CAT_COLORS.boldred;
+      const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bottles.length;grp.style.minWidth='0';
+      grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">$${priceKey}</div></div><div class="brand-total">${bottles.length} bottle${bottles.length!==1?'s':''}</div><div class="brand-flavors" id="wine-fl-${sh.id}-${priceKey.replace('.','_')}"></div>`;
+      row.appendChild(grp);
+      const flRow=document.getElementById(`wine-fl-${sh.id}-${priceKey.replace('.','_')}`);
+      bottles.forEach(b=>{
+        const isSel=wineSel===b.id;
+        const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=1;
+        fb.onclick=(e)=>{e.stopPropagation();wineSel=wineSel===b.id?null:b.id;wineRender();};
+        fb.innerHTML=`<div class="facings"><div class="f" style="background:${c.bg};color:${c.tx};height:54px">${b.name.split(' ')[0]}</div></div>
+          <div class="ffoot">
+            <div class="fname" title="${b.name}">${b.name}</div>
+            <div class="fmeta"><span class="fprice" style="color:#1A6B45">$${b.price.toFixed(2)}</span><span class="ffaces">${b.type}</span></div>
+            <span class="vendor-tag" style="background:${c.hdr}">${sh.catName}</span>
+          </div>
+          <div class="dp${isSel?' open':''}">
+            <div class="dgrid">
+              <div class="dfield"><label>name</label><input value="${b.name}" onchange="wineSnap();wineUpdBottle('${b.id}','name',this.value)"/></div>
+              <div class="dfield"><label>price</label><input type="number" step="0.01" value="${b.price.toFixed(2)}" onchange="wineSnap();wineUpdBottle('${b.id}','price',this.value)"/></div>
+              <div class="dfield full"><label>type</label><input value="${b.type}" onchange="wineSnap();wineUpdBottle('${b.id}','type',this.value)"/></div>
+            </div>
+            <div class="dact"><button class="tb-btn pri" style="font-size:10px;height:24px" onclick="wineDone()">done</button></div>
+          </div>`;
+        flRow.appendChild(fb);
+      });
+    });
   });
-  localStorage.setItem('sm-invoices',JSON.stringify(invoiceMeta));
-  renderInvoices();
+  const avg='$'+(allPrices.reduce((a,b)=>a+b,0)/allPrices.length).toFixed(2);
+  const leg=document.getElementById('wine-legend');
+  if(leg)leg.innerHTML=`<div class="legend-title-row">Category Color Key</div>`+
+    [['#534AB7','sparkling — prosecco, champagne, cava, flavored sparkling'],
+     ['#185FA5','whites — chardonnay, sauvignon blanc, pinot grigio, riesling'],
+     ['#639922','sweets — moscato, riesling, sweet whites'],
+     ['#D4537E','rosé — rosé, white zinfandel, pink moscato'],
+     ['#3B6D11','light reds — pinot noir, merlot, red blend, malbec'],
+     ['#A32D2D','bold reds — cabernet, chianti, syrah, dark red, zinfandel'],
+    ].map(([c,desc])=>`<div class="legend-item"><div class="legend-swatch" style="background:${c}"></div><span class="legend-sub">· ${desc}</span></div>`).join('');
+  const sumEl=document.getElementById('wine-sum');
+  if(sumEl)sumEl.innerHTML=`<div class="stat-pill"><strong>28</strong>bottles</div><div class="stat-pill"><strong>4</strong>shelves</div><div class="stat-pill"><strong>${avg}</strong>avg price</div><div class="stat-pill"><strong>$14.99</strong>lowest</div><div class="stat-pill"><strong>$24.99</strong>highest</div>`;
 }
-function deleteInvoice(id){
-  invoiceMeta=invoiceMeta.filter(m=>m.id!==id);
-  invoiceFiles=invoiceFiles.filter(f=>f.id!==id);
-  localStorage.setItem('sm-invoices',JSON.stringify(invoiceMeta));
-  renderInvoices();
-}
-function downloadInvoice(id){
-  const f=invoiceFiles.find(x=>x.id===id);
-  if(!f)return;
-  const a=document.createElement('a');a.href=URL.createObjectURL(f.file);a.download=f.file.name;a.click();
-}
-function fmtSize(b){if(b<1024)return b+'B';if(b<1048576)return (b/1024).toFixed(1)+'KB';return (b/1048576).toFixed(1)+'MB';}
-function fileIcon(type){if(type.includes('pdf'))return '📋';if(type.includes('image'))return '🖼️';return '📊';}
-function renderInvoices(){
-  const list=document.getElementById('invoice-list');
-  if(!invoiceMeta.length){list.innerHTML='<div class="invoice-empty">No invoices uploaded yet</div>';return;}
-  list.innerHTML=invoiceMeta.map(m=>{
-    const canDownload=invoiceFiles.some(f=>f.id===m.id);
-    return `<div class="invoice-item">
-      <div class="invoice-file-icon">${fileIcon(m.type)}</div>
-      <div class="invoice-info">
-        <div class="invoice-name" title="${m.name}">${m.name}</div>
-        <div class="invoice-meta">${m.date} · ${fmtSize(m.size)}</div>
-      </div>
-      ${canDownload?`<span class="invoice-badge">Ready</span>`:''}
-      ${canDownload?`<button class="invoice-del" onclick="downloadInvoice('${m.id}')">↓ download</button>`:''}
-      <button class="invoice-del" onclick="deleteInvoice('${m.id}')">remove</button>
-    </div>`;
-  }).join('');
-}
-function initDropArea(){const dropArea=document.getElementById('invoice-drop');if(!dropArea||dropArea._init)return;dropArea._init=true;dropArea.addEventListener('dragover',e=>{e.preventDefault();dropArea.classList.add('drag-over');});dropArea.addEventListener('dragleave',()=>dropArea.classList.remove('drag-over'));dropArea.addEventListener('drop',e=>{e.preventDefault();dropArea.classList.remove('drag-over');handleInvoiceFiles(e.dataTransfer.files);});}
 
 // ── INIT ─────────────────────────────────────────────────────────
-cswRender();
 c1Render();
 c2Render();
 c3Render();
 c4Render();
 c5Render();
 c5RenderDoor();
+wineRender();
 </script>
 </body>
 </html>
