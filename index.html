@@ -764,18 +764,19 @@ function _pfxCurrentVendor(b,pfx){
 // COOLER 1 — TURBO AIR
 // ════════════════════════════════════════════════════════════════
 const C1_VENDORS={'Pepsi':{hdr:'#004B93',bg:'#E8F0FB',tx:'#003070'},'Choice':{hdr:'#E65100',bg:'#FFF3E0',tx:'#BF360C'},"Sam's Club":{hdr:'#007DC6',bg:'#E3F4FC',tx:'#005A8E'},'US Foods':{hdr:'#F57F17',bg:'#FFF8E1',tx:'#7B4800'},'Coca-Cola':{hdr:'#B71C1C',bg:'#FFEBEE',tx:'#7A0000'},'Adams Beverage':{hdr:'#2E7D32',bg:'#E8F5E9',tx:'#1B5E20'},'Restaurant Depot':{hdr:'#6A1B9A',bg:'#F3E5F5',tx:'#4A148C'},'Unknown':{hdr:'#9E9E9E',bg:'#F5F5F5',tx:'#616161'}};
-const C1_BRAND_VENDOR={'Poppi':'Pepsi','Alani Nu':'Pepsi','Gatorade':'Pepsi','Good2Grow':'Pepsi','Celsius':'Pepsi','Electrolit':'Choice','Red Bull':"Sam's Club",'Acqua Panna':'US Foods','Saratoga Still':'US Foods','Jarritos':'US Foods','Topo Chico':'Coca-Cola','Smart Water':'Coca-Cola','Gold Peak':'Coca-Cola','Mexican Sprite':'Coca-Cola','Mexican Coca-Cola':'Coca-Cola','Liquid Death':'Adams Beverage','Calypso':'Adams Beverage','Ocean Spray':'Adams Beverage','Saratoga Sparkling':'Restaurant Depot'};
+const C1_BRAND_VENDOR={'Poppi':'Pepsi','Alani Nu':'Pepsi','Gatorade':'Pepsi','Good2Grow':'Pepsi','Celsius':'Pepsi','Electrolit':'Choice','Red Bull':"Sam's Club",'Acqua Panna':'US Foods','Saratoga Still':'US Foods','Jarritos':'US Foods','Topo Chico':'Coca-Cola','Smart Water':'Coca-Cola','Gold Peak':'Coca-Cola','Mexican Sprite':'Coca-Cola','Mexican Coca-Cola':'Coca-Cola','Liquid Death':'Adams Beverage','Calypso':'Adams Beverage','Ocean Spray':'Adams Beverage','Yerba Madre':'Adams Beverage','Bluephoria':'Adams Beverage','Saratoga Sparkling':'Restaurant Depot'};
 function c1Color(n,vo){const v=vo||(C1_BRAND_VENDOR[n]||'Unknown');return C1_VENDORS[v]||CUSTOM_VENDORS[v]||C1_VENDORS['Unknown'];}
 function c1Vendor(n,vo){return vo||(C1_BRAND_VENDOR[n]||'Unknown');}
-const C1_H={p10a:72,p6a:64,p7a:64,p8a:58,p9a:54,p5a:48,p11a:60,p11b:60,p12a:52,p12b:62,p13a:62,p13b:62,p13c:62,p14a:62,p15a:62,p16a:62,p17a:44,p17b:44,p20a:58};
+const C1_H={p10a:72,p6a:64,p7a:64,p8a:58,p9a:54,p5a:48,p11a:60,p11b:60,p12a:52,p12b:62,p13a:62,p13b:62,p13c:62,p14a:62,p15a:62,p16a:62,p17a:44,p17b:44,p20a:58,p22a:56};
 let c1Sel=null,c1Pid=40,c1Hist=[];
 let c1data={shelves:[
   {id:'s1',label:'shelf 1 — top',note:'functional & energy',brands:[
     {id:'b1',name:'Poppi',oz:'12oz can',flavors:[{id:'p1a',name:'Wild Berry',facings:2,price:'$4.09',img:''},{id:'p1b',name:'Raspberry Rose',facings:2,price:'$4.09',img:''},{id:'p1c',name:'Cherry Limeade',facings:2,price:'$4.09',img:''},{id:'p1d',name:'Shirley Temple',facings:2,price:'$4.09',img:''}]},
     {id:'b2',name:'Electrolit',oz:'21oz',flavors:[{id:'p2a',name:'Strawberry',facings:2,price:'$4.49',img:''},{id:'p2b',name:'Fruit Punch',facings:2,price:'$4.49',img:''}]},
     {id:'b3',name:'Alani Nu',oz:'12oz can',flavors:[{id:'p3a',name:'Tropsicle',facings:1,price:'$3.49',img:''},{id:'p3b',name:'Breezeberry',facings:1,price:'$3.49',img:''}]},
-    {id:'b4',name:'Red Bull',oz:'8.4oz can',flavors:[{id:'p4a',name:'Original',facings:2,price:'$3.49',img:''}]},
-    {id:'b19',name:'Celsius',oz:'12oz can',flavors:[{id:'p19a',name:'Kiwi Guava',facings:2,price:'$3.49',img:''},{id:'p19b',name:'Fiji Apple Pear',facings:2,price:'$3.49',img:''}]},
+    {id:'b4',name:'Red Bull',oz:'8.4oz can',flavors:[{id:'p4a',name:'Original',facings:1,price:'$3.49',img:''}]},
+    {id:'b19',name:'Celsius',oz:'12oz can',flavors:[{id:'p19a',name:'Kiwi Guava',facings:2,price:'$3.49',img:''},{id:'p19b',name:'Fiji Apple Pear',facings:1,price:'$3.49',img:''}]},
+    {id:'b21',name:'Yerba Madre',oz:'12oz can',flavors:[{id:'p21a',name:'Revel Berry',facings:2,price:'$4.19',img:''}]},
   ]},
   {id:'s2',label:'shelf 2',note:'tall → short, left → right',brands:[
     {id:'b10',name:'Acqua Panna',oz:'1L glass',flavors:[{id:'p10a',name:'Still',facings:4,price:'$4.99',img:''}]},
@@ -786,10 +787,11 @@ let c1data={shelves:[
     {id:'b5',name:'Gold Peak',oz:'18.5oz',flavors:[{id:'p5a',name:'Sweet Tea',facings:3,price:'$3.49',img:''}]},
   ]},
   {id:'s3',label:'shelf 3',note:'sports & juice',brands:[
-    {id:'b11',name:'Liquid Death',oz:'19.2oz',flavors:[{id:'p11a',name:'Still',facings:3,price:'$3.09',img:''},{id:'p11b',name:'Sparkling',facings:3,price:'$3.09',img:''}]},
+    {id:'b11',name:'Liquid Death',oz:'19.2oz',flavors:[{id:'p11a',name:'Still',facings:2,price:'$3.09',img:''},{id:'p11b',name:'Sparkling',facings:2,price:'$3.09',img:''}]},
     {id:'b12',name:'Gatorade',oz:'28oz',flavors:[{id:'p12a',name:'Orange',facings:2,price:'$3.09',img:''},{id:'p12b',name:'Cool Blue',facings:2,price:'$3.09',img:''}]},
     {id:'b13',name:'Calypso',oz:'16oz',flavors:[{id:'p13a',name:'Ocean Blue Lemonade',facings:2,price:'$4.09',img:''},{id:'p13b',name:'Strawberry Lemonade',facings:2,price:'$4.09',img:''},{id:'p13c',name:'Southern Peach Lemonade',facings:2,price:'$4.09',img:''}]},
     {id:'b20',name:'Ocean Spray',oz:'15.2oz',flavors:[{id:'p20a',name:'Cranberry',facings:2,price:'$2.99',img:''}]},
+    {id:'b22',name:'Bluephoria',oz:'15.2oz',flavors:[{id:'p22a',name:'Original',facings:2,price:'$4.19',img:''}]},
   ]},
   {id:'s4',label:'shelf 4 — bottom',note:'sodas · kids grab zone',brands:[
     {id:'b18',name:'Mexican Sprite',oz:'12oz',flavors:[{id:'p18a',name:'Original',facings:5,price:'$3.49',img:''}]},
