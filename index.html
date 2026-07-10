@@ -19,6 +19,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--black);disp
 .nav-links{display:flex;align-items:center;gap:2px}
 .nav-link{font-size:12px;font-weight:500;color:#888;padding:6px 14px;border-radius:6px;cursor:pointer;text-decoration:none;transition:color .15s,background .15s;letter-spacing:.02em;}
 .nav-link:hover{color:var(--white);background:#1a1a1a}
+.publish-btn{display:flex;align-items:center;gap:7px;margin-left:12px;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;font-family:var(--font);letter-spacing:.02em;cursor:pointer;transition:.15s;border:1px solid #2a2a2a;background:#141414;color:#6f6f6f}
+.publish-btn svg{width:15px;height:15px;flex-shrink:0}
+.publish-btn.clean:hover{color:#9a9a9a;background:#1a1a1a}
+.publish-btn.dirty{background:var(--green);color:#fff;border-color:var(--green)}
+.publish-btn.dirty:hover{background:#155638}
+.publish-btn.saved{color:var(--green-mid);border-color:#204a34}
+@media(max-width:720px){.publish-btn span{display:none}.publish-btn{padding:6px 9px}}
 .nav-dropdown{position:relative}
 .nav-dropdown-btn{font-size:12px;font-weight:500;color:#888;padding:6px 14px;border-radius:6px;cursor:pointer;background:none;border:none;display:flex;align-items:center;gap:6px;transition:color .15s,background .15s;letter-spacing:.02em;font-family:var(--font);}
 .nav-dropdown-btn:hover,.nav-dropdown-btn.open{color:var(--white);background:#1a1a1a}
@@ -246,6 +253,180 @@ body.manager-mode .mgr-only{display:flex!important}
 .invoice-del{font-size:11px;color:#A32D2D;cursor:pointer;padding:4px 8px;border-radius:6px;border:1px solid #F5BBBB;background:none;font-family:var(--font)}
 .invoice-del:hover{background:#fff0f0}
 .invoice-empty{text-align:center;padding:40px;color:var(--gray-dark);font-size:13px}
+
+/* ============ ORDER GENERATOR (scoped to #page-ordering) ============ */
+.nav-link.active{color:var(--white);background:#1a1a1a}
+#page-ordering{--red:#C0392B;--red-bg:#FBEAE8;--yellow:#B7791F;--yellow-bg:#FBF3E2;max-width:1200px;margin:0 auto;padding:28px}
+#page-ordering .og-hidden{display:none!important}
+#page-ordering .og-subnav{display:flex;gap:2px;margin-bottom:22px;background:var(--gray);border-radius:10px;padding:3px;width:fit-content}
+#page-ordering .og-subnav-btn{font-size:12px;font-weight:500;padding:6px 16px;border-radius:7px;cursor:pointer;color:var(--gray-dark);border:none;background:none;font-family:var(--font)}
+#page-ordering .og-subnav-btn.active{background:var(--white);color:var(--black);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+#page-ordering .steps{display:flex;margin-bottom:28px;background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+#page-ordering .step{flex:1;padding:14px 18px;display:flex;align-items:center;gap:10px;border-right:1px solid var(--border);transition:.2s}
+#page-ordering .step:last-child{border-right:none}
+#page-ordering .step-num{width:26px;height:26px;border-radius:50%;background:var(--gray);color:var(--gray-dark);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+#page-ordering .step.active{background:var(--green-light)}
+#page-ordering .step.active .step-num{background:var(--green);color:#fff}
+#page-ordering .step.done .step-num{background:var(--green-mid);color:#fff}
+#page-ordering .step-label{font-size:13px;font-weight:500}
+#page-ordering .step-sub{font-size:10px;color:var(--gray-dark);font-family:var(--mono)}
+#page-ordering .card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:26px}
+#page-ordering .card+.card{margin-top:18px}
+#page-ordering .card-title{font-size:19px;font-weight:600;letter-spacing:-.02em;margin-bottom:5px;color:var(--black)}
+#page-ordering .card-desc{font-size:13px;color:var(--gray-dark);margin-bottom:20px}
+#page-ordering .section-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:var(--gray-dark);margin-bottom:12px;font-weight:500}
+#page-ordering .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:500;transition:.15s;font-family:var(--font)}
+#page-ordering .btn-primary{background:var(--green);color:#fff}
+#page-ordering .btn-primary:hover{background:#155638}
+#page-ordering .btn-ghost{background:var(--gray);color:var(--black)}
+#page-ordering .btn-ghost:hover{background:var(--gray-mid)}
+#page-ordering .btn-outline{border:1px solid var(--border);background:#fff;color:var(--black)}
+#page-ordering .btn-outline:hover{border-color:var(--gray-dark)}
+#page-ordering .btn-danger{background:var(--red-bg);color:var(--red)}
+#page-ordering .btn-lg{padding:14px 28px;font-size:14px}
+#page-ordering .btn-sm{padding:7px 13px;font-size:12px}
+#page-ordering .btn:disabled{opacity:.4;cursor:not-allowed}
+#page-ordering .btn-row{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+#page-ordering .gate{text-align:center;padding:18px 0}
+#page-ordering .gate-q{font-size:21px;font-weight:600;margin-bottom:8px;letter-spacing:-.02em;color:var(--black)}
+#page-ordering .gate-desc{font-size:14px;color:var(--gray-dark);margin-bottom:26px;max-width:520px;margin-left:auto;margin-right:auto}
+#page-ordering .gate-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+#page-ordering .gate-big{padding:18px 34px;font-size:15px;border-radius:12px;font-weight:600}
+#page-ordering .vendor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+#page-ordering .vendor-card{border:1px solid var(--border);border-radius:14px;padding:20px;background:#fff;transition:.15s;position:relative;cursor:pointer;overflow:hidden}
+#page-ordering .vendor-card:hover{border-color:var(--gray-dark);box-shadow:0 6px 20px rgba(10,10,10,.07)}
+#page-ordering .vendor-card.selected{border-color:var(--green);box-shadow:0 0 0 2px var(--green-light)}
+#page-ordering .vendor-accent{position:absolute;top:0;left:0;right:0;height:4px}
+#page-ordering .vc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;margin-top:4px}
+#page-ordering .vc-name{font-size:16px;font-weight:600;color:var(--black)}
+#page-ordering .vc-cat{font-size:11px;color:var(--gray-dark);font-family:var(--mono);margin-top:2px}
+#page-ordering .vc-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.15s}
+#page-ordering .vendor-card.selected .vc-check{background:var(--green);border-color:var(--green)}
+#page-ordering .vc-check svg{opacity:0;transition:.15s}
+#page-ordering .vendor-card.selected .vc-check svg{opacity:1}
+#page-ordering .vc-row{display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-top:1px solid var(--border)}
+#page-ordering .vc-row-label{color:var(--gray-dark)}
+#page-ordering .vc-row-val{font-weight:500;font-family:var(--mono);font-size:11px;color:var(--black)}
+#page-ordering .vc-countdowns{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+#page-ordering .countdown{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:10px;font-size:12px}
+#page-ordering .countdown-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:500;opacity:.8}
+#page-ordering .countdown-time{font-family:var(--mono);font-weight:500;margin-left:auto;font-size:12px}
+#page-ordering .cd-green{background:var(--green-light);color:var(--green)}
+#page-ordering .cd-yellow{background:var(--yellow-bg);color:var(--yellow)}
+#page-ordering .cd-red{background:var(--red-bg);color:var(--red);animation:ogpulse 1.5s infinite}
+#page-ordering .cd-gray{background:var(--gray);color:var(--gray-dark)}
+@keyframes ogpulse{0%,100%{opacity:1}50%{opacity:.55}}
+#page-ordering .ws-vendor-block{border:1px solid var(--border);border-radius:14px;margin-bottom:20px;overflow:hidden}
+#page-ordering .ws-vendor-head{padding:15px 20px;display:flex;align-items:center;justify-content:space-between;color:#fff}
+#page-ordering .ws-vendor-name{font-size:15px;font-weight:600}
+#page-ordering .ws-vendor-meta{font-size:11px;font-family:var(--mono);opacity:.85}
+#page-ordering .ws-table{width:100%;border-collapse:collapse;font-size:13px}
+#page-ordering .ws-table th{text-align:left;padding:10px 14px;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-dark);border-bottom:1px solid var(--border);font-weight:500;background:var(--gray)}
+#page-ordering .ws-table th.num,#page-ordering .ws-table td.num{text-align:right}
+#page-ordering .ws-table th.ctr,#page-ordering .ws-table td.ctr{text-align:center}
+#page-ordering .ws-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--black)}
+#page-ordering .ws-table tr:last-child td{border-bottom:none}
+#page-ordering .ws-prod{font-weight:500}
+#page-ordering .ws-prod-oz{font-size:10px;color:var(--gray-dark);font-family:var(--mono)}
+#page-ordering .fast-tag{display:inline-block;font-size:8px;font-family:var(--mono);background:var(--green-light);color:var(--green);padding:2px 6px;border-radius:4px;margin-left:6px;text-transform:uppercase;letter-spacing:.04em;vertical-align:middle}
+#page-ordering .qty-input{width:62px;padding:6px 8px;border:1px solid var(--border);border-radius:8px;text-align:center;font-family:var(--mono);font-size:13px;font-weight:500}
+#page-ordering .qty-input:focus{outline:none;border-color:var(--green)}
+#page-ordering .qty-suggest{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--green)}
+#page-ordering .note-input{width:100%;max-width:220px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;margin-top:4px;font-family:var(--font)}
+#page-ordering .toggle{position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0}
+#page-ordering .toggle input{opacity:0;width:0;height:0}
+#page-ordering .toggle-slide{position:absolute;inset:0;background:var(--gray-mid);border-radius:22px;transition:.2s;cursor:pointer}
+#page-ordering .toggle-slide:before{content:'';position:absolute;height:16px;width:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+#page-ordering .toggle input:checked+.toggle-slide{background:var(--green)}
+#page-ordering .toggle input:checked+.toggle-slide:before{transform:translateX(18px)}
+#page-ordering .toggle-wrap{display:flex;align-items:center;gap:10px}
+#page-ordering .toggle-label{font-size:12px;font-weight:500;color:var(--black)}
+#page-ordering .toggle-desc{font-size:10px;color:var(--gray-dark)}
+#page-ordering .ws-vendor-controls{padding:13px 20px;background:var(--gray);display:flex;align-items:center;gap:24px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+#page-ordering .ws-minimum-flag{font-size:11px;padding:7px 13px;border-radius:8px;display:flex;align-items:center;gap:8px}
+#page-ordering .min-ok{background:var(--green-light);color:var(--green)}
+#page-ordering .min-under{background:var(--red-bg);color:var(--red)}
+#page-ordering .summary-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;flex-wrap:wrap;gap:16px}
+#page-ordering .summary-total{text-align:right}
+#page-ordering .summary-total-num{font-size:30px;font-weight:600;letter-spacing:-.02em;color:var(--black)}
+#page-ordering .summary-total-label{font-size:11px;font-family:var(--mono);color:var(--gray-dark);text-transform:uppercase}
+#page-ordering .sum-vendor{border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden}
+#page-ordering .sum-vendor-head{padding:13px 18px;color:#fff;display:flex;justify-content:space-between;align-items:center}
+#page-ordering .sum-line{padding:10px 18px;display:flex;justify-content:space-between;border-bottom:1px solid var(--border);font-size:13px;color:var(--black)}
+#page-ordering .sum-line:last-child{border-bottom:none}
+#page-ordering .sum-line-qty{font-family:var(--mono);font-weight:500}
+#page-ordering .setup-vendor{border:1px solid var(--border);border-radius:12px;margin-bottom:14px;overflow:hidden}
+#page-ordering .setup-head{padding:13px 18px;background:var(--gray);display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+#page-ordering .setup-body{padding:18px;display:none}
+#page-ordering .setup-body.open{display:block}
+#page-ordering .field-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:16px}
+#page-ordering .field label{display:block;font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--gray-dark);margin-bottom:5px}
+#page-ordering .field input,#page-ordering .field select{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font)}
+#page-ordering .field input:focus,#page-ordering .field select:focus{outline:none;border-color:var(--green)}
+#page-ordering .prod-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;flex-wrap:wrap}
+#page-ordering .prod-item input{padding:6px 9px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:var(--font)}
+#page-ordering .hist-order{border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden}
+#page-ordering .hist-head{padding:13px 18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:#fff}
+#page-ordering .hist-head:hover{background:var(--gray)}
+#page-ordering .hist-date{font-weight:500;font-size:13px;color:var(--black)}
+#page-ordering .hist-meta{font-size:11px;color:var(--gray-dark);font-family:var(--mono)}
+#page-ordering .hist-body{display:none;background:var(--gray)}
+#page-ordering .hist-body.open{display:block;padding:13px 18px}
+#page-ordering .hist-line{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;color:var(--black)}
+#page-ordering .empty{text-align:center;padding:56px 20px;color:var(--gray-dark)}
+#page-ordering .empty-icon{font-size:38px;margin-bottom:12px}
+#page-ordering .pill{display:inline-block;font-size:10px;font-family:var(--mono);padding:3px 9px;border-radius:20px;background:var(--gray);color:var(--gray-dark)}
+#og-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--black);color:#fff;padding:14px 24px;border-radius:12px;font-size:14px;font-weight:500;z-index:200;transition:.3s;box-shadow:0 8px 30px rgba(0,0,0,.25);opacity:0}
+#og-toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+#page-ordering .print-header{display:none}
+/* inventory-status bar */
+#page-ordering .og-invbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:12px 16px;border-radius:10px;margin-bottom:20px;font-size:13px;border:1px solid var(--border)}
+#page-ordering .og-invbar.ok{background:var(--green-light);border-color:#BFE3CF;color:var(--green)}
+#page-ordering .og-invbar.warn{background:var(--yellow-bg);border-color:#EAD6A8;color:var(--yellow)}
+#page-ordering .og-invbar.bad{background:var(--red-bg);border-color:#EEC3BD;color:var(--red)}
+#page-ordering .og-invbar-txt{flex:1;min-width:200px}
+#page-ordering .og-invbar-actions{display:flex;gap:8px;flex-shrink:0}
+/* editable on-hand */
+#page-ordering .oh-input{width:58px;padding:6px 6px;border:1px dashed var(--gray-mid);border-radius:8px;text-align:center;font-family:var(--mono);font-size:13px;font-weight:500;background:#fff}
+#page-ordering .oh-input:focus{outline:none;border-color:var(--green);border-style:solid}
+/* qty stepper */
+#page-ordering .qty-stepper{display:inline-flex;align-items:center;gap:0;border:1px solid var(--border);border-radius:9px;overflow:hidden}
+#page-ordering .qty-step{width:32px;height:34px;background:var(--gray);font-size:17px;font-weight:600;color:var(--gray-dark);line-height:1;display:flex;align-items:center;justify-content:center}
+#page-ordering .qty-step:hover{background:var(--gray-mid);color:var(--black)}
+#page-ordering .qty-stepper .qty-input{width:52px;border:none;border-left:1px solid var(--border);border-right:1px solid var(--border);border-radius:0;height:34px}
+/* "why this number" explainer */
+#page-ordering .og-why{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--gray);color:var(--gray-dark);font-size:10px;font-weight:600;cursor:help;vertical-align:middle;font-family:var(--font)}
+#page-ordering .og-why:hover{background:var(--green);color:#fff}
+@media print{
+  body.og-printing nav,body.og-printing .page-header,body.og-printing .og-subnav,body.og-printing .steps,body.og-printing .btn-row,body.og-printing .no-print{display:none!important}
+  body.og-printing #page-planograms,body.og-printing #page-vendors,body.og-printing #page-invoices{display:none!important}
+  body.og-printing #page-ordering .card{border:none;padding:0}
+  body.og-printing #page-ordering .print-header{display:block!important;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid #000}
+  body.og-printing #page-ordering .sum-vendor{break-inside:avoid;border:1px solid #000}
+  body.og-printing #page-ordering .sum-vendor-head{color:#000!important;background:#eee!important}
+}
+@media(max-width:720px){
+  #page-ordering .steps{flex-direction:column}
+  #page-ordering .step{border-right:none;border-bottom:1px solid var(--border)}
+}
+/* worksheet reflows to stacked cards on phones */
+@media(max-width:640px){
+  #page-ordering{padding:16px}
+  #page-ordering .ws-table thead{display:none}
+  #page-ordering .ws-table,#page-ordering .ws-table tbody,#page-ordering .ws-table tr,#page-ordering .ws-table td{display:block;width:100%}
+  #page-ordering .ws-table tr{padding:10px 0;border-bottom:2px solid var(--border)}
+  #page-ordering .ws-table tr:last-child{border-bottom:none}
+  #page-ordering .ws-table td{display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:right;padding:7px 16px;border:none}
+  #page-ordering .ws-table td::before{content:attr(data-label);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--gray-dark);text-align:left;flex-shrink:0}
+  #page-ordering .ws-table td.prodcell{display:block;text-align:left;padding-bottom:2px}
+  #page-ordering .ws-table td.prodcell::before{display:none}
+  #page-ordering .ws-table td.prodcell .ws-prod{font-size:15px}
+  #page-ordering .qty-step{width:40px;height:40px;font-size:19px}
+  #page-ordering .qty-stepper .qty-input{width:60px;height:40px;font-size:15px}
+  #page-ordering .note-input{max-width:none}
+  #page-ordering .og-invbar-actions{width:100%}
+  #page-ordering .og-invbar-actions .btn{flex:1}
+}
 </style>
 </head>
 <body>
@@ -265,8 +446,13 @@ body.manager-mode .mgr-only{display:flex!important}
         <a class="dropdown-item" onclick="showPage('invoices');closeDropdown()"><span class="dropdown-item-dot"></span>Invoices</a>
       </div>
     </div>
+    <a class="nav-link" id="orderingNavLink" onclick="showPage('ordering')">Ordering</a>
     <a class="nav-link" href="#">Inventory</a>
     <a class="nav-link" href="#">Reports</a>
+    <button class="publish-btn clean" id="publishBtn" onclick="publishAll()" title="Save & publish all changes">
+      <svg id="publishIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0018 8h-1.26A8 8 0 104 16.25"/><polyline points="8 12 12 8 16 12"/><line x1="12" y1="8" x2="12" y2="20"/></svg>
+      <span id="publishLabel">Saved</span>
+    </button>
   </div>
 </nav>
 
@@ -429,7 +615,96 @@ body.manager-mode .mgr-only{display:flex!important}
     <div class="invoice-list" id="invoice-list"></div>
   </div>
 
+  <!-- ORDERING PAGE -->
+  <div id="page-ordering" style="display:none">
+    <div class="og-subnav">
+      <button class="og-subnav-btn active" id="og-nav-generator" onclick="OG.showView('generator')">Generator</button>
+      <button class="og-subnav-btn" id="og-nav-setup" onclick="OG.showView('setup')">Vendor Setup</button>
+      <button class="og-subnav-btn" id="og-nav-history" onclick="OG.showView('history')">Order History</button>
+    </div>
+
+    <!-- GENERATOR VIEW -->
+    <div id="view-generator">
+      <div class="steps" id="stepBar">
+        <div class="step active" data-step="1"><div class="step-num">1</div><div><div class="step-label">Select Vendors</div><div class="step-sub">who's due</div></div></div>
+        <div class="step" data-step="2"><div class="step-num">2</div><div><div class="step-label">Order Worksheet</div><div class="step-sub">count &amp; review</div></div></div>
+        <div class="step" data-step="3"><div class="step-num">3</div><div><div class="step-label">Finalize</div><div class="step-sub">confirm &amp; log</div></div></div>
+      </div>
+
+      <div class="card" id="s1">
+        <div class="og-invbar" id="ogInvBar"></div>
+        <div class="card-title">Select vendors to order from</div>
+        <div class="card-desc">Cards are sorted by urgency. The countdown shows time left until each vendor's order cutoff.</div>
+        <div class="vendor-grid" id="vendorGrid"></div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="toStep2" onclick="OG.gotoStep(2)" disabled>Build worksheet →</button>
+        </div>
+      </div>
+
+      <div class="card og-hidden" id="s2">
+        <div class="card-title">Order worksheet</div>
+        <div class="card-desc">Update on-hand counts as you go — suggestions recalculate live. Toggle a buffer to pad for spikes, or override any quantity (a note is required).</div>
+        <div id="worksheet"></div>
+        <div class="btn-row">
+          <button class="btn btn-outline" onclick="OG.gotoStep(1)">Back</button>
+          <button class="btn btn-primary" onclick="OG.gotoStep(3)">Review order →</button>
+        </div>
+      </div>
+
+      <div class="card og-hidden" id="s3">
+        <div class="print-header">
+          <div style="font-size:22px;font-weight:600;color:#000">Surefire Market — Purchase Order</div>
+          <div style="font-family:var(--mono);font-size:13px;color:#444" id="printDate"></div>
+        </div>
+        <div class="summary-head no-print">
+          <div>
+            <div class="card-title">Order summary</div>
+            <div class="card-desc" style="margin-bottom:0">Review before finalizing. Once logged, the order is saved to history and inventory expectations update.</div>
+          </div>
+          <div class="summary-total">
+            <div class="summary-total-num" id="grandTotal">$0.00</div>
+            <div class="summary-total-label">Estimated total</div>
+          </div>
+        </div>
+        <div id="summary"></div>
+        <div class="btn-row no-print">
+          <button class="btn btn-outline" onclick="OG.gotoStep(2)">Back</button>
+          <button class="btn btn-ghost" onclick="OG.print()">Print sheet</button>
+          <button class="btn btn-ghost" onclick="OG.exportCSV()">Export CSV</button>
+          <button class="btn btn-primary" onclick="OG.finalizeOrder()">Confirm &amp; log order</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETUP VIEW -->
+    <div id="view-setup" class="og-hidden">
+      <div class="card">
+        <div class="card-title">Vendor setup</div>
+        <div class="card-desc">Edit delivery schedules, minimums, default buffers, and product lists. Changes save automatically and drive the generator's calculations.</div>
+        <div id="setupList"></div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="OG.showView('generator')">← Back to generator</button>
+          <button class="btn btn-danger btn-sm" onclick="OG.resetData()">Reset to defaults</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORY VIEW -->
+    <div id="view-history" class="og-hidden">
+      <div class="card">
+        <div class="card-title">Order history</div>
+        <div class="card-desc">The last 10 orders per vendor. Days-since-last-order feeds the velocity calculation on the next order.</div>
+        <div id="historyList"></div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="OG.showView('generator')">← Back to generator</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
+
+<div id="og-toast"></div>
 
 <div id="csw-edit-modal" onclick="if(event.target===this)cswModalClose()">
   <div id="csw-edit-box">
@@ -460,6 +735,58 @@ body.manager-mode .mgr-only{display:flex!important}
 </div>
 
 <script>
+// ── MANAGER AUTH ─────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════
+// CLOUD SYNC — Supabase shared storage (mirrors localStorage -> cloud)
+// ══════════════════════════════════════════════════════════════════
+var SB_URL='https://rcvfgqwcyiewspuiejle.supabase.co';
+var SB_KEY='sb_publishable_dEWvZ9V8akvchzOTX9ewYA_gVUkQX73';
+var SB_HEAD={apikey:SB_KEY,Authorization:'Bearer '+SB_KEY};
+var _cloudReady=false;                 // becomes true after first hydrate (gates writes)
+var SYNC_SKIP={'sm-og-draft':1};       // keys kept local-only (personal, not shared)
+function _isSyncKey(k){return typeof k==='string'&&k.indexOf('sm-')===0&&!SYNC_SKIP[k];}
+var _lsSetRaw=localStorage.setItem.bind(localStorage);
+localStorage.setItem=function(k,v){_lsSetRaw(k,v);if(_cloudReady&&_isSyncKey(k))cloudSet(k,v);};
+function cloudSet(key,rawStr){
+  fetch(SB_URL+'/rest/v1/app_state',{method:'POST',
+    headers:Object.assign({'Content-Type':'application/json',Prefer:'resolution=merge-duplicates'},SB_HEAD),
+    body:JSON.stringify({key:key,value:rawStr,updated_at:new Date().toISOString()})
+  }).catch(function(){});
+}
+function cloudFetchAll(){
+  return fetch(SB_URL+'/rest/v1/app_state?select=key,value',{headers:SB_HEAD})
+    .then(function(r){return r.ok?r.json():[];}).catch(function(){return[];});
+}
+function cloudApply(rows){
+  var changed={};
+  rows.forEach(function(row){
+    if(SYNC_SKIP[row.key])return;
+    var str=(typeof row.value==='string')?row.value:JSON.stringify(row.value);
+    if(localStorage.getItem(row.key)!==str){_lsSetRaw(row.key,str);changed[row.key]=1;}
+  });
+  return changed;
+}
+function cloudRefreshUI(changed){
+  try{if(changed['sm-vendor-contacts']){vendorContacts=JSON.parse(localStorage.getItem('sm-vendor-contacts')||'{}');}}catch(e){}
+  try{if(changed['sm-winedata']){var w=localStorage.getItem('sm-winedata');if(w)wineData=JSON.parse(w);wineRender();}}catch(e){}
+  try{if(changed['sm-cswdata']){var cs=localStorage.getItem('sm-cswdata');if(cs)cswdata=JSON.parse(cs);cswRender();}}catch(e){}
+  try{if(changed['sm-invoices']){invoiceMeta=JSON.parse(localStorage.getItem('sm-invoices')||'[]');if(typeof renderInvoices==='function')renderInvoices();}}catch(e){}
+  try{if(changed['sm-c1data'])c1Render();if(changed['sm-c2data'])c2Render();if(changed['sm-c3data'])c3Render();if(changed['sm-c4data'])c4Render();if(changed['sm-c5data']){c5Render();c5RenderDoor();}}catch(e){}
+  try{var pv=document.getElementById('page-vendors');if(changed['sm-vendor-contacts']&&pv&&pv.style.display!=='none')renderVendors();}catch(e){}
+}
+async function cloudHydrate(){var rows=await cloudFetchAll();var ch=cloudApply(rows);_cloudReady=true;return ch;}
+function cloudPoll(){
+  if(typeof _pubDirty!=='undefined'&&_pubDirty)return;                 // unsaved local edits
+  var a=document.activeElement;
+  if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return;            // user is typing
+  if(document.querySelector('.dp.open'))return;                        // an inline edit panel is open
+  var ov=document.getElementById('mgr-overlay');if(ov&&ov.classList.contains('open'))return;
+  cloudFetchAll().then(function(rows){var ch=cloudApply(rows);if(Object.keys(ch).length)cloudRefreshUI(ch);});
+}
+var SYNC_KEYS=['sm-c1data','sm-c2data','sm-c3data','sm-c4data','sm-c5data','sm-cswdata','sm-winedata','sm-vendor-contacts','sm-invoices','sm-og-vendors','sm-og-history','sm-og-lastorder','sm-og-invcount'];
+// upload any local data the cloud doesn't have yet (first-run seed)
+function cloudSeed(cloudKeys){SYNC_KEYS.forEach(function(k){var v=localStorage.getItem(k);if(v!=null&&!cloudKeys[k])cloudSet(k,v);});}
+
 // ── MANAGER AUTH ─────────────────────────────────────────────────
 let managerUnlocked=false,mgrCallback=null;
 function requireManager(fn){if(managerUnlocked){fn();return;}mgrCallback=fn;document.getElementById('mgr-overlay').classList.add('open');document.getElementById('mgr-input').value='';document.getElementById('mgr-err').textContent='';setTimeout(()=>document.getElementById('mgr-input').focus(),50);}
@@ -1479,19 +1806,22 @@ const PAGE_HEADERS={
   planograms:{breadcrumb:'Retail › Planograms',title:'Surefire Market <strong>Planograms</strong>',sub:'5 coolers + snack wall · vendor color coded · click any product to edit'},
   vendors:{breadcrumb:'Retail › Vendors',title:'Surefire Market <strong>Vendors</strong>',sub:'vendor contacts & purchased items'},
   invoices:{breadcrumb:'Retail › Invoices',title:'Surefire Market <strong>Invoices</strong>',sub:'upload and manage incoming invoices'},
+  ordering:{breadcrumb:'Operations › Ordering',title:'Order <strong>Generator</strong>',sub:'vendor purchase orders driven by sales velocity, inventory & delivery windows'},
 };
 function showPage(name){
-  ['planograms','vendors','invoices'].forEach(p=>{
+  ['planograms','vendors','invoices','ordering'].forEach(p=>{
     const el=document.getElementById('page-'+p);
-    if(el)el.style.display=p===name?(p==='planograms'?'block':'block'):'none';
+    if(el)el.style.display=p===name?'block':'none';
   });
   const h=PAGE_HEADERS[name]||PAGE_HEADERS.planograms;
   document.getElementById('pageBreadcrumb').innerHTML=h.breadcrumb.replace('›','<span>›</span>');
   document.getElementById('pageTitle').innerHTML=h.title;
   document.getElementById('pageSubtitle').textContent=h.sub;
+  var oNav=document.getElementById('orderingNavLink');if(oNav)oNav.classList.toggle('active',name==='ordering');
   if(name==='planograms')switchCooler(currentCooler);
   if(name==='vendors')renderVendors();
   if(name==='invoices'){initDropArea();renderInvoices();}
+  if(name==='ordering')OG.init();
 }
 
 // ── VENDORS ───────────────────────────────────────────────────────
@@ -1522,7 +1852,7 @@ function vField(vname,field,val,placeholder){
   const safe=val||'';
   if(managerUnlocked){
     const vSafe=vname.replace(/'/g,"\\'");
-    return `<input class="vendor-info-input" placeholder="${placeholder}" value="${safe}" onchange="updateVendorContact('${vSafe}','${field}',this.value)"/>`;
+    return `<input class="vendor-info-input" placeholder="${placeholder}" value="${safe}" oninput="updateVendorContact('${vSafe}','${field}',this.value)"/>`;
   }
   return `<span class="vendor-info-val">${safe||`<span style="color:var(--gray-mid);font-style:italic">—</span>`}</span>`;
 }
@@ -1674,11 +2004,12 @@ const WINE_SHELVES_INIT=[
     {id:'w28',name:'Chianti',        type:'sangiovese',  price:21.99,cat:'boldred'},
   ]},
 ];
-let wineData=JSON.parse(JSON.stringify(WINE_SHELVES_INIT));
+let wineData=(function(){try{var s=localStorage.getItem('sm-winedata');return s?JSON.parse(s):JSON.parse(JSON.stringify(WINE_SHELVES_INIT));}catch(e){return JSON.parse(JSON.stringify(WINE_SHELVES_INIT));}})();
+function saveWine(){localStorage.setItem('sm-winedata',JSON.stringify(wineData));}
 let wineSel=null,wineHist=[];
 function wineSnap(){wineHist.push(JSON.stringify(wineData));if(wineHist.length>20)wineHist.shift();document.getElementById('wine-undo').disabled=false;}
-function wineUndo(){if(!wineHist.length)return;wineData=JSON.parse(wineHist.pop());document.getElementById('wine-undo').disabled=wineHist.length===0;wineSel=null;wineRender();}
-function wineUpdBottle(id,key,val){wineData.forEach(sh=>sh.bottles.forEach(b=>{if(b.id===id){if(key==='price'){b[key]=parseFloat(val)||b[key];setTimeout(()=>wineRender(),0);}else b[key]=val;}}));}
+function wineUndo(){if(!wineHist.length)return;wineData=JSON.parse(wineHist.pop());saveWine();document.getElementById('wine-undo').disabled=wineHist.length===0;wineSel=null;wineRender();}
+function wineUpdBottle(id,key,val){wineData.forEach(sh=>sh.bottles.forEach(b=>{if(b.id===id){if(key==='price'){b[key]=parseFloat(val)||b[key];setTimeout(()=>wineRender(),0);}else b[key]=val;}}));saveWine();}
 function wineDone(){wineSel=null;wineRender();}
 function wineGroupByPrice(bottles){
   const g={};bottles.forEach(b=>{const k=b.price.toFixed(2);if(!g[k])g[k]=[];g[k].push(b);});
@@ -1777,6 +2108,346 @@ c4Render();
 c5Render();
 c5RenderDoor();
 wineRender();
+
+/* ============================================================
+   GLOBAL PUBLISH — Toast-style "save everything" button
+   ============================================================ */
+var _pubDirty=false,_pubFlash=null;
+function _pubSet(state,label){
+  var b=document.getElementById('publishBtn'),l=document.getElementById('publishLabel');
+  if(!b||!l)return;b.classList.remove('clean','dirty','saved');b.classList.add(state);l.textContent=label;
+}
+function markDirty(){if(_pubDirty)return;_pubDirty=true;_pubSet('dirty','Publish');}
+function publishAll(){
+  try{if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();}catch(e){}
+  ['saveC1','saveC2','saveC3','saveC4','saveC5','saveCSW','saveWine','saveVendorContacts'].forEach(function(fn){try{window[fn]&&window[fn]();}catch(e){}});
+  try{localStorage.setItem('sm-invoices',JSON.stringify(invoiceMeta));}catch(e){}
+  try{if(window.OG&&OG.saveNow)OG.saveNow();}catch(e){}
+  _pubDirty=false;_pubSet('saved','Published ✓');
+  clearTimeout(_pubFlash);_pubFlash=setTimeout(function(){_pubSet('clean','Saved');},2200);
+}
+/* any edit anywhere (except the manager passcode) flips the button to "Publish" */
+function _pubWatch(e){var t=e.target;if(!t)return;if(t.closest&&t.closest('#mgr-overlay'))return;if(t.id==='publishBtn')return;markDirty();}
+document.addEventListener('input',_pubWatch,true);
+document.addEventListener('change',_pubWatch,true);
+
+/* ============================================================
+   ORDER GENERATOR — isolated module (exposed as window.OG)
+   ============================================================ */
+var OG=(function(){
+  var FAST_MOVERS={'Poppi':0.50,'Calypso':0.50,'Modelo Especial':0.40,'Good2Grow':0.40};
+  var DEFAULT_VENDORS=[
+    {id:'pepsi',name:'Pepsi',cat:'Beverage DSD',color:'#004B93',cutoffDay:2,cutoffTime:'14:00',deliveryDay:4,deliveryFrom:'08:00',deliveryTo:'12:00',minimum:0,buffer:0.15,byCase:false,caseSize:1,products:[{name:'Gatorade',oz:'28oz',cost:1.35,sold:38,inv:9},{name:'Poppi',oz:'12oz can',cost:1.65,sold:64,inv:12},{name:'Celsius',oz:'12oz can',cost:1.55,sold:41,inv:8}]},
+    {id:'cocacola',name:'Coca-Cola',cat:'Beverage DSD',color:'#B71C1C',cutoffDay:1,cutoffTime:'12:00',deliveryDay:3,deliveryFrom:'07:00',deliveryTo:'11:00',minimum:0,buffer:0.15,byCase:false,caseSize:1,products:[{name:'Core Water',oz:'20oz',cost:0.95,sold:52,inv:14},{name:'Bodyarmor',oz:'16oz',cost:1.25,sold:29,inv:7}]},
+    {id:'choice',name:'Choice',cat:'Distributor',color:'#E65100',cutoffDay:3,cutoffTime:'16:00',deliveryDay:5,deliveryFrom:'09:00',deliveryTo:'14:00',minimum:250,buffer:0.10,byCase:false,caseSize:1,products:[{name:'Calypso',oz:'16oz',cost:0.88,sold:70,inv:16},{name:'Liquid Death',oz:'19.2oz',cost:1.10,sold:33,inv:9},{name:'Alani Nu',oz:'12oz can',cost:1.45,sold:24,inv:6}]},
+    {id:'adams',name:'Adams Beverage',cat:'Beer / Juice',color:'#2E7D32',cutoffDay:1,cutoffTime:'15:00',deliveryDay:4,deliveryFrom:'06:00',deliveryTo:'10:00',minimum:0,buffer:0.15,byCase:true,caseSize:24,products:[{name:'Modelo Especial',oz:'12oz can',cost:1.05,sold:96,inv:22},{name:'Ocean Spray',oz:'15.2oz',cost:0.92,sold:20,inv:5},{name:'Yerba Madre',oz:'12oz can',cost:1.30,sold:18,inv:4},{name:'Bluephoria',oz:'15.2oz',cost:1.30,sold:15,inv:3}]},
+    {id:'usfoods',name:'US Foods',cat:'Broadline',color:'#0D47A1',cutoffDay:2,cutoffTime:'10:00',deliveryDay:5,deliveryFrom:'05:00',deliveryTo:'09:00',minimum:400,buffer:0.10,byCase:true,caseSize:12,products:[{name:'Good2Grow',oz:'6oz',cost:0.78,sold:58,inv:15},{name:'Vita Coco',oz:'16.9oz',cost:1.40,sold:26,inv:6},{name:'Aloevine',oz:'16.9oz',cost:1.15,sold:22,inv:5}]},
+    {id:'samsclub',name:"Sam's Club",cat:'Cash & Carry',color:'#0071CE',cutoffDay:4,cutoffTime:'18:00',deliveryDay:5,deliveryFrom:'10:00',deliveryTo:'16:00',minimum:0,buffer:0.10,byCase:false,caseSize:1,products:[{name:'Electrolit',oz:'21oz',cost:1.55,sold:31,inv:8},{name:'Red Bull',oz:'8.4oz can',cost:1.75,sold:44,inv:11}]},
+    {id:'usc',name:'United Carolina',cat:'Beer Distributor',color:'#5D4037',cutoffDay:0,cutoffTime:'20:00',deliveryDay:2,deliveryFrom:'07:00',deliveryTo:'12:00',minimum:0,buffer:0.15,byCase:true,caseSize:24,products:[{name:'Corona Extra',oz:'12oz',cost:1.10,sold:72,inv:18},{name:'White Claw',oz:'12oz can',cost:1.35,sold:60,inv:15}]},
+    {id:'empire',name:'Empire Distributors',cat:'Beer / Wine',color:'#6A1B9A',cutoffDay:3,cutoffTime:'11:00',deliveryDay:5,deliveryFrom:'08:00',deliveryTo:'13:00',minimum:0,buffer:0.15,byCase:true,caseSize:24,products:[{name:'Truly',oz:'12oz can',cost:1.30,sold:48,inv:12},{name:'Michelob Ultra',oz:'12oz',cost:1.05,sold:55,inv:14}]},
+    {id:'hopfly',name:'HopFly Brewing',cat:'Craft Beer',color:'#00695C',cutoffDay:2,cutoffTime:'13:00',deliveryDay:4,deliveryFrom:'11:00',deliveryTo:'15:00',minimum:150,buffer:0.10,byCase:true,caseSize:24,products:[{name:'HopFly IPA',oz:'12oz can',cost:1.50,sold:28,inv:7},{name:'HopFly Lager',oz:'12oz can',cost:1.45,sold:24,inv:6}]},
+    {id:'restdepot',name:'Restaurant Depot',cat:'Cash & Carry',color:'#C62828',cutoffDay:5,cutoffTime:'12:00',deliveryDay:6,deliveryFrom:'08:00',deliveryTo:'14:00',minimum:0,buffer:0.10,byCase:false,caseSize:1,products:[{name:'Bottled Water 24pk',oz:'16.9oz',cost:2.90,sold:40,inv:10},{name:'Powerade',oz:'28oz',cost:0.95,sold:34,inv:9}]},
+    {id:'frito',name:'Frito-Lay',cat:'Snack DSD',color:'#E4002B',cutoffDay:1,cutoffTime:'09:00',deliveryDay:3,deliveryFrom:'06:00',deliveryTo:'10:00',minimum:0,buffer:0.15,byCase:false,caseSize:1,products:[{name:'Lays Classic',oz:'2.5oz',cost:0.85,sold:66,inv:16},{name:'Doritos Nacho',oz:'2.75oz',cost:0.88,sold:59,inv:14},{name:'Cheetos',oz:'2.5oz',cost:0.85,sold:47,inv:12}]},
+    {id:'mclane',name:'McLane',cat:'Broadline',color:'#455A64',cutoffDay:0,cutoffTime:'23:00',deliveryDay:3,deliveryFrom:'05:00',deliveryTo:'09:00',minimum:500,buffer:0.10,byCase:true,caseSize:12,products:[{name:'Snickers',oz:'1.86oz',cost:0.72,sold:52,inv:13},{name:'M&Ms Peanut',oz:'1.74oz',cost:0.72,sold:44,inv:11},{name:'Trident Gum',oz:'14ct',cost:0.60,sold:30,inv:8}]}
+  ];
+  var LS_VENDORS='sm-og-vendors',LS_HISTORY='sm-og-history',LS_LASTORDER='sm-og-lastorder';
+  function load(key,def){try{var v=localStorage.getItem(key);return v?JSON.parse(v):JSON.parse(JSON.stringify(def));}catch(e){return JSON.parse(JSON.stringify(def));}}
+  function saveKey(key,val){localStorage.setItem(key,JSON.stringify(val));}
+
+  /* Product placeholder stats keyed by name (until real Toast/manual data). */
+  var PROD_STATS={};DEFAULT_VENDORS.forEach(function(v){v.products.forEach(function(p){PROD_STATS[p.name]={oz:p.oz,cost:p.cost,sold:p.sold,inv:p.inv};});});
+  /* Ordering schedule/category defaults per vendor NAME (matches planogram VENDOR_DATA). */
+  var SCHED={
+    'Pepsi':{cat:'Beverage DSD',cutoffDay:2,cutoffTime:'14:00',deliveryDay:4,deliveryFrom:'08:00',deliveryTo:'12:00',minimum:0,buffer:0.15,byCase:false,caseSize:1},
+    'Coca-Cola':{cat:'Beverage DSD',cutoffDay:5,cutoffTime:'12:00',deliveryDay:2,deliveryFrom:'07:00',deliveryTo:'11:00',minimum:0,buffer:0.15,byCase:false,caseSize:1},
+    'Choice Beverage':{cat:'Distributor',cutoffDay:3,cutoffTime:'16:00',deliveryDay:5,deliveryFrom:'09:00',deliveryTo:'14:00',minimum:250,buffer:0.10,byCase:false,caseSize:1},
+    'Adams Beverage':{cat:'Beer / Juice',cutoffDay:1,cutoffTime:'15:00',deliveryDay:4,deliveryFrom:'06:00',deliveryTo:'10:00',minimum:0,buffer:0.15,byCase:true,caseSize:24},
+    'United Carolina Beverage':{cat:'Beer Distributor',cutoffDay:0,cutoffTime:'20:00',deliveryDay:2,deliveryFrom:'07:00',deliveryTo:'12:00',minimum:0,buffer:0.15,byCase:true,caseSize:24},
+    'Johnston Brothers':{cat:'Beer / Spirits',cutoffDay:2,cutoffTime:'12:00',deliveryDay:4,deliveryFrom:'08:00',deliveryTo:'13:00',minimum:0,buffer:0.10,byCase:false,caseSize:1},
+    'Empire Distributors':{cat:'Beer / Wine',cutoffDay:3,cutoffTime:'11:00',deliveryDay:5,deliveryFrom:'08:00',deliveryTo:'13:00',minimum:0,buffer:0.10,byCase:false,caseSize:1},
+    'Herbal Oasis':{cat:'Specialty',cutoffDay:4,cutoffTime:'12:00',deliveryDay:1,deliveryFrom:'09:00',deliveryTo:'14:00',minimum:0,buffer:0.10,byCase:false,caseSize:1},
+    'HopFly':{cat:'Craft Beer',cutoffDay:2,cutoffTime:'13:00',deliveryDay:4,deliveryFrom:'11:00',deliveryTo:'15:00',minimum:150,buffer:0.10,byCase:true,caseSize:24},
+    'US Foods':{cat:'Broadline',cutoffDay:2,cutoffTime:'10:00',deliveryDay:5,deliveryFrom:'05:00',deliveryTo:'09:00',minimum:400,buffer:0.10,byCase:true,caseSize:12},
+    "Sam's Club":{cat:'Cash & Carry',cutoffDay:4,cutoffTime:'18:00',deliveryDay:5,deliveryFrom:'10:00',deliveryTo:'16:00',minimum:0,buffer:0.10,byCase:false,caseSize:1},
+    'Restaurant Depot':{cat:'Cash & Carry',cutoffDay:5,cutoffTime:'12:00',deliveryDay:6,deliveryFrom:'08:00',deliveryTo:'14:00',minimum:0,buffer:0.10,byCase:false,caseSize:1}
+  };
+  var GENERIC_SCHED={cat:'Distributor',cutoffDay:2,cutoffTime:'12:00',deliveryDay:4,deliveryFrom:'08:00',deliveryTo:'12:00',minimum:0,buffer:0.10,byCase:false,caseSize:1};
+  function slug(s){return String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
+  /* Vendor-name normalization + colors so cooler names line up with schedules. */
+  var VNORM={'Choice':'Choice Beverage'};
+  function normVendor(n){return VNORM[n]||n||'Unknown';}
+  var VCOLOR={};(typeof VENDOR_DATA!=='undefined'?VENDOR_DATA:[]).forEach(function(v){VCOLOR[v.name]=v.color;});VCOLOR['Unknown']='#9E9E9E';
+  /* Read every brand currently on the beverage-cooler planograms (c1–c5), live. */
+  function planogramBrands(){
+    var out=[],coolers=[
+      ['c1',typeof c1data!=='undefined'?c1data:null],['c2',typeof c2data!=='undefined'?c2data:null],
+      ['c3',typeof c3data!=='undefined'?c3data:null],['c4',typeof c4data!=='undefined'?c4data:null],
+      ['c5',typeof c5data!=='undefined'?c5data:null]];
+    coolers.forEach(function(pair){var pfx=pair[0],data=pair[1];if(!data||!data.shelves)return;
+      data.shelves.forEach(function(sh){(sh.brands||[]).forEach(function(b){
+        var vn='Unknown';try{vn=normVendor(_pfxCurrentVendor(b,pfx));}catch(e){}
+        out.push({name:b.name,oz:b.oz||'',vendor:vn});
+      });});
+    });
+    return out;
+  }
+  /* Build the ordering vendor list from what's actually on the planograms (source of truth). */
+  function buildVendors(){
+    var brands=planogramBrands(),byV={};
+    brands.forEach(function(b){if(!b.name||b.name==='new brand')return;if(!byV[b.vendor])byV[b.vendor]=[];if(!byV[b.vendor].some(function(x){return x.name===b.name;}))byV[b.vendor].push({name:b.name,oz:b.oz});});
+    var order=(typeof VENDOR_DATA!=='undefined'?VENDOR_DATA:[]).map(function(v){return v.name;});
+    var names=Object.keys(byV).sort(function(a,b){var ia=order.indexOf(a),ib=order.indexOf(b);if(ia<0)ia=990;if(ib<0)ib=990;if(a==='Unknown')ia=999;if(b==='Unknown')ib=999;return ia-ib;});
+    return names.map(function(vn){
+      var sc=SCHED[vn]||GENERIC_SCHED;
+      return {id:slug(vn),name:vn,color:VCOLOR[vn]||'#9E9E9E',cat:sc.cat,cutoffDay:sc.cutoffDay,cutoffTime:sc.cutoffTime,deliveryDay:sc.deliveryDay,deliveryFrom:sc.deliveryFrom,deliveryTo:sc.deliveryTo,minimum:sc.minimum,buffer:sc.buffer,byCase:sc.byCase,caseSize:sc.caseSize,
+        products:byV[vn].map(function(p){var st=PROD_STATS[p.name]||{};return{name:p.name,oz:p.oz||st.oz||'',cost:st.cost!=null?st.cost:1.25,sold:st.sold!=null?st.sold:20,inv:st.inv!=null?st.inv:6};})};
+    });
+  }
+  /* Re-sync from the planograms (called whenever the Ordering tab opens). */
+  function refreshVendors(){VENDORS=mergeSaved(buildVendors());saveKey(LS_VENDORS,VENDORS);}
+  /* Overlay any saved edits (schedules, costs, counts) onto the freshly-built list. */
+  function mergeSaved(base){
+    var saved=load(LS_VENDORS,null);if(!saved||!Array.isArray(saved))return base;
+    var byId={};saved.forEach(function(sv){byId[sv.id]=sv;});
+    base.forEach(function(v){var sv=byId[v.id];if(!sv)return;
+      ['cat','cutoffDay','cutoffTime','deliveryDay','deliveryFrom','deliveryTo','minimum','buffer','byCase','caseSize'].forEach(function(k){if(sv[k]!=null)v[k]=sv[k];});
+      if(sv.products){var pn={};sv.products.forEach(function(sp){pn[sp.name]=sp;});
+        v.products.forEach(function(p){var sp=pn[p.name];if(sp){if(sp.oz)p.oz=sp.oz;if(sp.cost!=null)p.cost=sp.cost;if(sp.sold!=null)p.sold=sp.sold;if(sp.inv!=null)p.inv=sp.inv;}});}
+    });
+    return base;
+  }
+  var VENDORS=mergeSaved(buildVendors()),HISTORY=load(LS_HISTORY,{}),LASTORDER=load(LS_LASTORDER,{});
+  saveKey(LS_VENDORS,VENDORS);
+  var selectedVendors=new Set(),worksheetData={},started=false,tickTimer=null;
+  function saveAll(){saveKey(LS_VENDORS,VENDORS);saveKey(LS_HISTORY,HISTORY);saveKey(LS_LASTORDER,LASTORDER);}
+
+  var DAYNAMES=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  function parseHM(s){var p=s.split(':');return{h:+p[0],m:+p[1]};}
+  function nextWeekdayTime(from,day,timeStr){var t=parseHM(timeStr),d=new Date(from);d.setSeconds(0,0);var add=(day-d.getDay()+7)%7;d.setDate(d.getDate()+add);d.setHours(t.h,t.m,0,0);if(d<from)d.setDate(d.getDate()+7);return d;}
+  function nextCutoff(v,from){return nextWeekdayTime(from||new Date(),v.cutoffDay,v.cutoffTime);}
+  function nextDelivery(v,afterCutoff){var d=nextWeekdayTime(afterCutoff,v.deliveryDay,v.deliveryFrom);if(d<=afterCutoff)d.setDate(d.getDate()+7);return d;}
+  function daysUntil(date,from){return Math.max(0,(date-(from||new Date()))/86400000);}
+  function daysSince(iso){if(!iso)return 7;var ms=Date.now()-new Date(iso).getTime();return Math.max(1,ms/86400000);}
+  function fmtCountdown(ms){if(ms<=0)return'Cutoff passed';var t=Math.floor(ms/1000),d=Math.floor(t/86400),h=Math.floor(t%86400/3600),m=Math.floor(t%3600/60);if(d>0)return d+'d '+h+'h';if(h>0)return h+'h '+m+'m';return m+'m';}
+  function cdClass(ms){if(ms<=0)return'cd-gray';var hrs=ms/3600000;if(hrs<12)return'cd-red';if(hrs<24)return'cd-yellow';return'cd-green';}
+  function fmtDate(d){return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});}
+  function fmtDateTime(d){return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});}
+  function fmtTime(hm){var t=parseHM(hm),ap=t.h>=12?'PM':'AM',hh=t.h%12||12;return hh+(t.m?':'+String(t.m).padStart(2,'0'):'')+ap;}
+
+  function calcSuggest(v,p){var since=daysSince(LASTORDER[v.id]),dailyAvg=p.sold/since,cutoff=nextCutoff(v),delivery=nextDelivery(v,cutoff),daysToDelivery=daysUntil(delivery)+1,base=Math.max(0,Math.ceil(dailyAvg*daysToDelivery-p.inv));return{dailyAvg:dailyAvg,daysToDelivery:daysToDelivery,base:base,delivery:delivery,cutoff:cutoff};}
+  function applyBuffer(v,p,base,bufferOn){if(!bufferOn)return base;var pct=FAST_MOVERS[p.name]!=null?FAST_MOVERS[p.name]:v.buffer;return Math.ceil(base*(1+pct));}
+  function roundToCase(v,qty){if(!v.byCase||v.caseSize<=1)return qty;return Math.ceil(qty/v.caseSize)*v.caseSize;}
+
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+
+  function showView(name){
+    ['generator','setup','history'].forEach(function(v){var el=document.getElementById('view-'+v);if(el)el.classList.toggle('og-hidden',v!==name);});
+    ['generator','setup','history'].forEach(function(v){var b=document.getElementById('og-nav-'+v);if(b)b.classList.toggle('active',v===name);});
+    if(name==='setup')renderSetup();
+    if(name==='history')renderHistory();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function gotoStep(n){
+    [1,2,3].forEach(function(i){var el=document.getElementById('s'+i);if(el)el.classList.toggle('og-hidden',i!==n);});
+    Array.prototype.forEach.call(document.querySelectorAll('#stepBar .step'),function(s){var st=+s.dataset.step;s.classList.toggle('active',st===n);s.classList.toggle('done',st<n);});
+    if(n===1){renderInvBar();renderVendors();}
+    if(n===2)renderWorksheet();
+    if(n===3)renderSummary();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  /* inventory-status bar (replaces the old Step-1 gate) */
+  var LS_INVCOUNT='sm-og-invcount';
+  function lastCounted(){try{return localStorage.getItem(LS_INVCOUNT);}catch(e){return null;}}
+  function markCounted(){try{localStorage.setItem(LS_INVCOUNT,new Date().toISOString());}catch(e){}renderInvBar();showToast('Inventory marked as counted ✓');}
+  function renderInvBar(){
+    var bar=document.getElementById('ogInvBar');if(!bar)return;
+    var iso=lastCounted(),cls='ok',txt;
+    if(!iso){cls='warn';txt='Inventory has not been counted yet — suggestions may be off.';}
+    else{var days=daysSince(iso),d=Math.floor(days);
+      var rel=d<1?'today':(d===1?'yesterday':d+' days ago');
+      if(days>=4)cls='bad';else if(days>=2)cls='warn';else cls='ok';
+      txt='Inventory last counted <strong>'+rel+'</strong>'+(cls!=='ok'?' — a fresh count keeps suggestions accurate.':'.');}
+    bar.className='og-invbar '+cls;
+    bar.innerHTML='<span class="og-invbar-txt">'+txt+'</span><span class="og-invbar-actions"><button class="btn btn-sm btn-outline" onclick="showPage(\'planograms\')">Update counts</button><button class="btn btn-sm btn-primary" onclick="OG.markCounted()">Mark counted now</button></span>';
+  }
+
+  function renderVendors(){
+    var grid=document.getElementById('vendorGrid'),now=new Date();
+    var sorted=VENDORS.map(function(v){var c=nextCutoff(v,now);return{v:v,cutoff:c,ms:c-now};}).sort(function(a,b){return a.ms-b.ms;});
+    grid.innerHTML=sorted.map(function(o){
+      var v=o.v,cutoff=o.cutoff,cutoffMs=cutoff-new Date(),delivery=nextDelivery(v,cutoff),sel=selectedVendors.has(v.id)?'selected':'';
+      return '<div class="vendor-card '+sel+'" data-vid="'+v.id+'" onclick="OG.toggleVendor(\''+v.id+'\')">'
+        +'<div class="vendor-accent" style="background:'+v.color+'"></div>'
+        +'<div class="vc-head"><div><div class="vc-name">'+esc(v.name)+'</div><div class="vc-cat">'+esc(v.cat)+'</div></div>'
+        +'<div class="vc-check"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6l3 3 5-6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>'
+        +'<div class="vc-row"><span class="vc-row-label">Cutoff</span><span class="vc-row-val">'+DAYNAMES[v.cutoffDay]+' '+fmtTime(v.cutoffTime)+'</span></div>'
+        +'<div class="vc-row"><span class="vc-row-label">Delivery</span><span class="vc-row-val">'+DAYNAMES[v.deliveryDay]+' '+fmtTime(v.deliveryFrom)+'–'+fmtTime(v.deliveryTo)+'</span></div>'
+        +'<div class="vc-row"><span class="vc-row-label">Products</span><span class="vc-row-val">'+v.products.length+' items</span></div>'
+        +(v.minimum>0?'<div class="vc-row"><span class="vc-row-label">Minimum</span><span class="vc-row-val">$'+v.minimum+'</span></div>':'')
+        +'<div class="vc-countdowns"><div class="countdown '+cdClass(cutoffMs)+'" data-cutoff="'+cutoff.toISOString()+'"><span class="countdown-label">Order cutoff</span><span class="countdown-time">'+fmtCountdown(cutoffMs)+'</span></div>'
+        +'<div class="countdown cd-gray"><span class="countdown-label">Est. delivery</span><span class="countdown-time">'+fmtDate(delivery)+'</span></div></div></div>';
+    }).join('');
+    document.getElementById('toStep2').disabled=selectedVendors.size===0;
+  }
+  function toggleVendor(id){if(selectedVendors.has(id))selectedVendors.delete(id);else selectedVendors.add(id);var c=document.querySelector('.vendor-card[data-vid="'+id+'"]');if(c)c.classList.toggle('selected');document.getElementById('toStep2').disabled=selectedVendors.size===0;saveDraft();}
+
+  function renderWorksheet(){
+    var host=document.getElementById('worksheet'),vids=Array.from(selectedVendors);
+    host.innerHTML=vids.map(function(vid){
+      var v=VENDORS.find(function(x){return x.id===vid;});
+      if(!worksheetData[vid])worksheetData[vid]={buffer:false,lines:[]};
+      var wd=worksheetData[vid];
+      wd.lines=v.products.map(function(p){
+        var c=calcSuggest(v,p),suggest=roundToCase(v,applyBuffer(v,p,c.base,wd.buffer));
+        var existing=wd.lines.find(function(l){return l.name===p.name;});
+        return{name:p.name,oz:p.oz,cost:p.cost,base:c.base,suggest:suggest,qty:existing&&existing.override?existing.qty:suggest,override:existing?existing.override:false,note:existing?existing.note:'',dailyAvg:c.dailyAvg,daysToDelivery:Math.round(c.daysToDelivery),inv:p.inv};
+      });
+      var rows=wd.lines.map(function(l,i){
+        var fast=FAST_MOVERS[l.name]!=null,hasVel=l.dailyAvg>0;
+        var vel=hasVel?l.dailyAvg.toFixed(1)+'/day':'<span class="ws-prod-oz">no history</span>';
+        var formula=hasVel?(l.dailyAvg.toFixed(1)+'/day × '+l.daysToDelivery+'d − '+l.inv+' on hand'+(wd.buffer?' + buffer':'')):'No sales history yet — suggested 0. Enter a quantity manually.';
+        return '<tr>'
+          +'<td class="prodcell" data-label="Product"><span class="ws-prod">'+esc(l.name)+'</span>'+(fast?'<span class="fast-tag">fast</span>':'')+'<div class="ws-prod-oz">'+esc(l.oz)+'</div></td>'
+          +'<td class="num" data-label="On hand"><input class="oh-input" type="number" min="0" value="'+l.inv+'" onchange="OG.setOnHand(\''+vid+'\','+i+',this.value)" title="Editable — update as you count"></td>'
+          +'<td class="num" data-label="Velocity">'+vel+'</td>'
+          +'<td class="num" data-label="Suggested"><span class="qty-suggest">'+l.suggest+(v.byCase?' u':'')+'</span> <span class="og-why" title="'+esc(formula)+'">?</span></td>'
+          +'<td class="ctr" data-label="Order qty"><div class="qty-stepper"><button class="qty-step" onclick="OG.bumpQty(\''+vid+'\','+i+',-1)">−</button>'
+          +'<input class="qty-input" type="number" min="0" value="'+l.qty+'" onchange="OG.overrideQty(\''+vid+'\','+i+',this.value)">'
+          +'<button class="qty-step" onclick="OG.bumpQty(\''+vid+'\','+i+',1)">+</button></div>'
+          +'<input class="note-input '+(l.override?'':'og-hidden')+'" placeholder="Reason for override (required)" value="'+esc(l.note)+'" onchange="OG.overrideNote(\''+vid+'\','+i+',this.value)" data-note="'+vid+'-'+i+'"></td>'
+          +'<td class="num" data-label="Est. cost">$'+(l.qty*l.cost).toFixed(2)+'</td></tr>';
+      }).join('');
+      var total=wd.lines.reduce(function(s,l){return s+l.qty*l.cost;},0),minOk=v.minimum===0||total>=v.minimum;
+      var units=wd.lines.reduce(function(s,l){return s+l.qty;},0);
+      return '<div class="ws-vendor-block"><div class="ws-vendor-head" style="background:'+v.color+'"><div><div class="ws-vendor-name">'+esc(v.name)+'</div><div class="ws-vendor-meta">Cutoff '+DAYNAMES[v.cutoffDay]+' '+fmtTime(v.cutoffTime)+' · Delivery '+DAYNAMES[v.deliveryDay]+'</div></div><div style="text-align:right"><div class="ws-vendor-name">$'+total.toFixed(2)+'</div><div class="ws-vendor-meta">'+units+(v.byCase?' units · '+(units/v.caseSize).toFixed(units%v.caseSize?1:0)+' cs':' units')+'</div></div></div>'
+        +'<div class="ws-vendor-controls"><div class="toggle-wrap"><label class="toggle"><input type="checkbox" '+(wd.buffer?'checked':'')+' onchange="OG.toggleBuffer(\''+vid+'\',this.checked)"><span class="toggle-slide"></span></label><div><div class="toggle-label">Demand buffer</div><div class="toggle-desc">Pad for spikes ('+Math.round(v.buffer*100)+'% default, fast movers higher)</div></div></div>'
+        +(v.minimum>0?'<div class="ws-minimum-flag '+(minOk?'min-ok':'min-under')+'">'+(minOk?'✓ Meets':'⚠ Under')+' $'+v.minimum+' minimum</div>':'')+'</div>'
+        +'<table class="ws-table"><thead><tr><th>Product</th><th class="num">On hand</th><th class="num">Velocity</th><th class="num">Suggested</th><th class="ctr">Order qty</th><th class="num">Est. cost</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+    }).join('');
+  }
+  function toggleBuffer(vid,on){worksheetData[vid].buffer=on;worksheetData[vid].lines.forEach(function(l){l.override=false;});renderWorksheet();saveDraft();}
+  function overrideQty(vid,i,val){var l=worksheetData[vid].lines[i],q=Math.max(0,parseInt(val)||0);l.qty=q;l.override=(q!==l.suggest);renderWorksheet();saveDraft();if(l.override){var n=document.querySelector('[data-note="'+vid+'-'+i+'"]');if(n)n.focus();}}
+  function bumpQty(vid,i,delta){var l=worksheetData[vid].lines[i],q=Math.max(0,(parseInt(l.qty)||0)+delta);l.qty=q;l.override=(q!==l.suggest);renderWorksheet();saveDraft();}
+  function overrideNote(vid,i,val){worksheetData[vid].lines[i].note=val;saveDraft();}
+  function setOnHand(vid,i,val){var v=VENDORS.find(function(x){return x.id===vid;}),line=worksheetData[vid].lines[i],q=Math.max(0,parseInt(val)||0);var p=v.products.find(function(x){return x.name===line.name;});if(p)p.inv=q;saveKey(LS_VENDORS,VENDORS);try{localStorage.setItem(LS_INVCOUNT,new Date().toISOString());}catch(e){}renderWorksheet();}
+
+  /* draft autosave — survives closing the tab mid-order */
+  var LS_DRAFT='sm-og-draft';
+  function saveDraft(){try{var d={vendors:Array.from(selectedVendors),data:{}};Object.keys(worksheetData).forEach(function(vid){var wd=worksheetData[vid];d.data[vid]={buffer:!!wd.buffer,lines:(wd.lines||[]).map(function(l){return{name:l.name,qty:l.qty,override:l.override,note:l.note};})};});localStorage.setItem(LS_DRAFT,JSON.stringify(d));}catch(e){}}
+  function loadDraft(){try{var d=JSON.parse(localStorage.getItem(LS_DRAFT)||'null');if(!d)return;selectedVendors=new Set(d.vendors||[]);worksheetData={};Object.keys(d.data||{}).forEach(function(vid){worksheetData[vid]={buffer:!!d.data[vid].buffer,lines:(d.data[vid].lines||[]).map(function(l){return{name:l.name,qty:l.qty,override:l.override,note:l.note};})};});}catch(e){}}
+  function clearDraft(){try{localStorage.removeItem(LS_DRAFT);}catch(e){}}
+
+  function renderSummary(){
+    var host=document.getElementById('summary');document.getElementById('printDate').textContent='Generated '+fmtDateTime(new Date());
+    var grand=0,vids=Array.from(selectedVendors).filter(function(vid){var wd=worksheetData[vid];return wd&&wd.lines.some(function(l){return l.qty>0;});});
+    if(vids.length===0){host.innerHTML='<div class="empty"><div class="empty-icon">📋</div>No quantities entered. Go back and set order amounts.</div>';document.getElementById('grandTotal').textContent='$0.00';return;}
+    host.innerHTML=vids.map(function(vid){
+      var v=VENDORS.find(function(x){return x.id===vid;}),wd=worksheetData[vid],lines=wd.lines.filter(function(l){return l.qty>0;}),vtotal=lines.reduce(function(s,l){return s+l.qty*l.cost;},0);grand+=vtotal;
+      var cutoff=nextCutoff(v),delivery=nextDelivery(v,cutoff),minWarn=v.minimum>0&&vtotal<v.minimum;
+      return '<div class="sum-vendor"><div class="sum-vendor-head" style="background:'+v.color+'"><div><div class="ws-vendor-name">'+esc(v.name)+'</div><div class="ws-vendor-meta">Deliver '+fmtDate(delivery)+' · order by '+fmtDate(cutoff)+' '+fmtTime(v.cutoffTime)+'</div></div><div style="text-align:right"><div class="ws-vendor-name">$'+vtotal.toFixed(2)+'</div>'+(minWarn?'<div class="ws-vendor-meta">⚠ under $'+v.minimum+' min</div>':'')+'</div></div>'
+        +lines.map(function(l){return '<div class="sum-line"><span>'+esc(l.name)+' <span class="ws-prod-oz">'+esc(l.oz)+'</span>'+(l.override?' <span class="pill">override: '+esc(l.note||'—')+'</span>':'')+'</span><span class="sum-line-qty">'+l.qty+(v.byCase?' u ('+(l.qty/v.caseSize).toFixed(l.qty%v.caseSize?1:0)+' cs)':'')+' · $'+(l.qty*l.cost).toFixed(2)+'</span></div>';}).join('')+'</div>';
+    }).join('');
+    document.getElementById('grandTotal').textContent='$'+grand.toFixed(2);
+  }
+
+  function finalizeOrder(){
+    var vids=Array.from(selectedVendors),grand=0;
+    var active=vids.filter(function(vid){var wd=worksheetData[vid];return wd&&wd.lines.some(function(l){return l.qty>0;});});
+    active.forEach(function(vid){worksheetData[vid].lines.forEach(function(l){if(l.qty>0)grand+=l.qty*l.cost;});});
+    if(active.length===0){showToast('Nothing to order — set some quantities first');return;}
+    if(!confirm('Place order for $'+grand.toFixed(2)+' across '+active.length+' vendor'+(active.length>1?'s':'')+'?'))return;
+    var now=new Date().toISOString(),logged=0;
+    vids.forEach(function(vid){
+      var wd=worksheetData[vid];if(!wd)return;
+      var lines=wd.lines.filter(function(l){return l.qty>0;}).map(function(l){return{name:l.name,oz:l.oz,qty:l.qty,cost:l.cost,note:l.override?l.note:''};});
+      if(lines.length===0)return;
+      var total=lines.reduce(function(s,l){return s+l.qty*l.cost;},0);
+      if(!HISTORY[vid])HISTORY[vid]=[];HISTORY[vid].unshift({date:now,lines:lines,total:total});HISTORY[vid]=HISTORY[vid].slice(0,10);LASTORDER[vid]=now;logged++;
+    });
+    saveAll();clearDraft();showToast('Order logged for '+logged+' vendor'+(logged>1?'s':'')+' ✓');
+    selectedVendors.clear();worksheetData={};setTimeout(function(){gotoStep(1);},900);
+  }
+
+  function exportCSV(){
+    var rows=[['Vendor','Product','Size','Order Qty','Unit','Unit Cost','Line Total','Override Note','Cutoff','Delivery']];
+    Array.from(selectedVendors).forEach(function(vid){var v=VENDORS.find(function(x){return x.id===vid;}),wd=worksheetData[vid];if(!wd)return;var cutoff=nextCutoff(v),delivery=nextDelivery(v,cutoff);wd.lines.filter(function(l){return l.qty>0;}).forEach(function(l){rows.push([v.name,l.name,l.oz,l.qty,v.byCase?'unit':'each',l.cost.toFixed(2),(l.qty*l.cost).toFixed(2),l.override?l.note:'',fmtDateTime(cutoff),fmtDate(delivery)]);});});
+    if(rows.length===1){showToast('Nothing to export');return;}
+    var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+    var blob=new Blob([csv],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='surefire-order-'+new Date().toISOString().slice(0,10)+'.csv';a.click();showToast('CSV exported ✓');
+  }
+  function doPrint(){document.body.classList.add('og-printing');window.print();setTimeout(function(){document.body.classList.remove('og-printing');},500);}
+
+  function daySelect(sel){return DAYNAMES.map(function(d,i){return '<option value="'+i+'"'+(i===sel?' selected':'')+'>'+d+'</option>';}).join('');}
+  function renderSetup(){
+    var host=document.getElementById('setupList');
+    host.innerHTML=VENDORS.map(function(v,vi){
+      return '<div class="setup-vendor"><div class="setup-head" onclick="this.nextElementSibling.classList.toggle(\'open\')"><div style="display:flex;align-items:center;gap:12px"><span style="width:10px;height:10px;border-radius:50%;background:'+v.color+'"></span><strong>'+esc(v.name)+'</strong><span class="pill">'+esc(v.cat)+'</span></div><span class="hist-meta">'+v.products.length+' products · cutoff '+DAYNAMES[v.cutoffDay]+'</span></div>'
+        +'<div class="setup-body"><div class="field-grid">'
+        +'<div class="field"><label>Cutoff day</label><select onchange="OG.editVendor('+vi+',\'cutoffDay\',+this.value)">'+daySelect(v.cutoffDay)+'</select></div>'
+        +'<div class="field"><label>Cutoff time</label><input type="time" value="'+v.cutoffTime+'" onchange="OG.editVendor('+vi+',\'cutoffTime\',this.value)"></div>'
+        +'<div class="field"><label>Delivery day</label><select onchange="OG.editVendor('+vi+',\'deliveryDay\',+this.value)">'+daySelect(v.deliveryDay)+'</select></div>'
+        +'<div class="field"><label>Delivery from</label><input type="time" value="'+v.deliveryFrom+'" onchange="OG.editVendor('+vi+',\'deliveryFrom\',this.value)"></div>'
+        +'<div class="field"><label>Delivery to</label><input type="time" value="'+v.deliveryTo+'" onchange="OG.editVendor('+vi+',\'deliveryTo\',this.value)"></div>'
+        +'<div class="field"><label>Minimum ($)</label><input type="number" value="'+v.minimum+'" onchange="OG.editVendor('+vi+',\'minimum\',+this.value)"></div>'
+        +'<div class="field"><label>Default buffer (%)</label><input type="number" value="'+Math.round(v.buffer*100)+'" onchange="OG.editVendor('+vi+',\'buffer\',this.value/100)"></div>'
+        +'<div class="field"><label>Order by case</label><select onchange="OG.editVendor('+vi+',\'byCase\',this.value===\'yes\')"><option value="no"'+(!v.byCase?' selected':'')+'>No</option><option value="yes"'+(v.byCase?' selected':'')+'>Yes</option></select></div>'
+        +'<div class="field"><label>Case size</label><input type="number" value="'+v.caseSize+'" onchange="OG.editVendor('+vi+',\'caseSize\',+this.value)"></div></div>'
+        +'<div class="section-label">Products <span style="text-transform:none;letter-spacing:0;color:var(--green)">· synced from planograms</span></div><div class="prod-list">'
+        +v.products.map(function(p,pi){return '<div class="prod-item"><input style="flex:2;min-width:120px;background:var(--gray);color:var(--gray-dark)" value="'+esc(p.name)+'" readonly title="Managed on the planograms"><input style="width:70px" value="'+esc(p.oz)+'" title="size" onchange="OG.editProd('+vi+','+pi+',\'oz\',this.value)"><input style="width:70px" type="number" step="0.01" value="'+p.cost+'" title="unit cost" onchange="OG.editProd('+vi+','+pi+',\'cost\',+this.value)"><input style="width:60px" type="number" value="'+p.sold+'" title="units sold" onchange="OG.editProd('+vi+','+pi+',\'sold\',+this.value)"><input style="width:55px" type="number" value="'+p.inv+'" title="on hand" onchange="OG.editProd('+vi+','+pi+',\'inv\',+this.value)"></div>';}).join('')
+        +'</div><div style="font-size:10px;color:var(--gray-dark);margin-top:6px;font-family:var(--mono)">size · unit cost · units sold · on hand — editable. Add or remove products on the planograms.</div></div></div>';
+    }).join('');
+  }
+  function editVendor(vi,key,val){VENDORS[vi][key]=val;saveKey(LS_VENDORS,VENDORS);}
+  function editProd(vi,pi,key,val){VENDORS[vi].products[pi][key]=val;saveKey(LS_VENDORS,VENDORS);}
+  function delProd(vi,pi){VENDORS[vi].products.splice(pi,1);saveKey(LS_VENDORS,VENDORS);renderSetup();}
+  function addProd(vi){VENDORS[vi].products.push({name:'New Product',oz:'12oz',cost:1.00,sold:0,inv:0});saveKey(LS_VENDORS,VENDORS);renderSetup();}
+  function resetData(){if(confirm('Reset all vendors and products to match the planograms? Order history is kept.')){VENDORS=buildVendors();saveKey(LS_VENDORS,VENDORS);renderSetup();showToast('Reset to planogram vendors');}}
+
+  function renderHistory(){
+    var host=document.getElementById('historyList'),vids=Object.keys(HISTORY).filter(function(vid){return HISTORY[vid]&&HISTORY[vid].length;});
+    if(vids.length===0){host.innerHTML='<div class="empty"><div class="empty-icon">🗂️</div>No orders logged yet. Finalize an order to see it here.</div>';return;}
+    host.innerHTML=vids.map(function(vid){
+      var v=VENDORS.find(function(x){return x.id===vid;}),name=v?v.name:vid,color=v?v.color:'#999';
+      return '<div style="margin-bottom:26px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:10px;height:10px;border-radius:50%;background:'+color+'"></span><strong>'+esc(name)+'</strong><span class="hist-meta">last order '+new Date(LASTORDER[vid]).toLocaleDateString()+'</span></div>'
+        +HISTORY[vid].map(function(o){return '<div class="hist-order"><div class="hist-head" onclick="this.nextElementSibling.classList.toggle(\'open\')"><div><div class="hist-date">'+new Date(o.date).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'})+'</div><div class="hist-meta">'+o.lines.length+' line items</div></div><div class="hist-date">$'+o.total.toFixed(2)+'</div></div><div class="hist-body">'+o.lines.map(function(l){return '<div class="hist-line"><span>'+esc(l.name)+' <span class="ws-prod-oz">'+esc(l.oz)+'</span>'+(l.note?' <span class="pill">'+esc(l.note)+'</span>':'')+'</span><span class="sum-line-qty">'+l.qty+' · $'+(l.qty*l.cost).toFixed(2)+'</span></div>';}).join('')+'</div></div>';}).join('')+'</div>';
+    }).join('');
+  }
+
+  var toastT;
+  function showToast(msg){var t=document.getElementById('og-toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show');},2600);}
+
+  function saveNow(){try{saveAll();saveDraft();}catch(e){}}
+  function init(){
+    try{HISTORY=load(LS_HISTORY,{});LASTORDER=load(LS_LASTORDER,{});}catch(e){}
+    refreshVendors();loadDraft();showView('generator');gotoStep(1);
+    if(!started){started=true;tickTimer=setInterval(function(){Array.prototype.forEach.call(document.querySelectorAll('#page-ordering .countdown[data-cutoff]'),function(el){var ms=new Date(el.dataset.cutoff)-new Date();el.querySelector('.countdown-time').textContent=fmtCountdown(ms);el.className='countdown '+cdClass(ms);});},30000);}
+  }
+
+  return{init:init,saveNow:saveNow,showView:showView,gotoStep:gotoStep,toggleVendor:toggleVendor,toggleBuffer:toggleBuffer,overrideQty:overrideQty,bumpQty:bumpQty,overrideNote:overrideNote,setOnHand:setOnHand,markCounted:markCounted,finalizeOrder:finalizeOrder,exportCSV:exportCSV,print:doPrint,resetData:resetData,editVendor:editVendor,editProd:editProd,delProd:delProd,addProd:addProd};
+})();
+
+// ══════════════════════════════════════════════════════════════════
+// CLOUD BOOT — pull shared data, refresh the screen, start live sync
+// ══════════════════════════════════════════════════════════════════
+(async function(){
+  var rows=[];
+  try{ rows=await cloudFetchAll(); }catch(e){}
+  var changed=cloudApply(rows);            // pull cloud -> localStorage
+  _cloudReady=true;                         // future edits now mirror to the cloud
+  var cloudKeys={};rows.forEach(function(r){cloudKeys[r.key]=1;});
+  try{cloudSeed(cloudKeys);}catch(e){}      // upload anything the cloud doesn't have yet
+  // re-sync module vars whose renders don't re-read localStorage
+  try{vendorContacts=JSON.parse(localStorage.getItem('sm-vendor-contacts')||'{}');Object.entries(VENDOR_DEFAULTS).forEach(function(e){if(!vendorContacts[e[0]])vendorContacts[e[0]]=e[1];});}catch(e){}
+  try{var _w=localStorage.getItem('sm-winedata');if(_w)wineData=JSON.parse(_w);}catch(e){}
+  try{var _cs=localStorage.getItem('sm-cswdata');if(_cs)cswdata=JSON.parse(_cs);}catch(e){}
+  try{invoiceMeta=JSON.parse(localStorage.getItem('sm-invoices')||'[]');}catch(e){}
+  // repaint everything from the freshly pulled cloud data
+  try{c1Render();c2Render();c3Render();c4Render();c5Render();c5RenderDoor();wineRender();}catch(e){}
+  try{if(typeof renderInvoices==='function')renderInvoices();}catch(e){}
+  // start gentle live sync — pulls others' edits every 10s while you're idle
+  setInterval(cloudPoll,10000);
+})();
 </script>
 </body>
 </html>
