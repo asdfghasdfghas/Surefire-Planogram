@@ -776,7 +776,6 @@ function cloudRefreshUI(changed){
 }
 async function cloudHydrate(){var rows=await cloudFetchAll();var ch=cloudApply(rows);_cloudReady=true;return ch;}
 function cloudPoll(){
-  if(typeof _pubDirty!=='undefined'&&_pubDirty)return;                 // unsaved local edits
   var a=document.activeElement;
   if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return;            // user is typing
   if(document.querySelector('.dp.open'))return;                        // an inline edit panel is open
@@ -1134,7 +1133,7 @@ function c1UpdF(id,k,v){c1data.shelves.forEach(sh=>sh.brands.forEach(b=>{const f
 function c1UpdB(id,k,v){c1data.shelves.forEach(sh=>{const b=sh.brands.find(x=>x.id===id);if(b)b[k]=v;});saveC1();}
 function c1UpdImg(id,v){c1data.shelves.forEach(sh=>sh.brands.forEach(b=>{const f=b.flavors.find(x=>x.id===id);if(f)f.img=v;}));saveC1();c1Render();}
 function c1Done(){saveC1();c1Sel=null;c1Render();}
-function c1RemFlavor(sid,bid,fid){const sh=c1data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);if(!b.flavors.length)sh.brands=sh.brands.filter(x=>x.id!==bid);c1Sel=null;saveC1();c1Render();}
+function c1RemFlavor(sid,bid,fid){const sh=c1data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);c1Sel=null;saveC1();c1Render();}
 function c1AddFlavor(sid){c1Snap();const sh=c1data.shelves.find(s=>s.id===sid);if(!sh||!sh.brands.length)return;const b=sh.brands[sh.brands.length-1];const id='p'+(c1Pid++);b.flavors.push({id,name:'new flavor',facings:2,price:'',img:''});c1Sel=id;saveC1();c1Render();}
 function c1AddBrand(sid){c1Snap();const sh=c1data.shelves.find(s=>s.id===sid);if(!sh)return;const bid='b'+(c1Pid++);const fid='p'+(c1Pid++);sh.brands.push({id:bid,name:'new brand',oz:'',flavors:[{id:fid,name:'new flavor',facings:2,price:'',img:''}]});c1Sel=fid;saveC1();c1Render();}
 function c1Export(){const blob=new Blob([JSON.stringify(c1data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cooler1-planogram.json';a.click();}
@@ -1150,7 +1149,7 @@ function c1Render(){
     sh.brands.forEach(b=>{
       const c=c1Color(b.name,b.vendor);const vendor=c1Vendor(b.name,b.vendor);
       const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
-      const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf;grp.style.minWidth='0';
+      const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf||1;grp.style.minWidth=bf?'0':'120px';
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} faces</div><div class="brand-flavors" id="c1-fl-${b.id}"></div>`;
       row.appendChild(grp);
       const flRow=document.getElementById('c1-fl-'+b.id);
@@ -1206,7 +1205,7 @@ function c2UpdF(id,k,v){c2data.shelves.forEach(sh=>sh.brands.forEach(b=>{const f
 function c2UpdB(id,k,v){c2data.shelves.forEach(sh=>{const b=sh.brands.find(x=>x.id===id);if(b)b[k]=v;});saveC2();}
 function c2UpdImg(id,v){c2data.shelves.forEach(sh=>sh.brands.forEach(b=>{const f=b.flavors.find(x=>x.id===id);if(f)f.img=v;}));saveC2();c2Render();}
 function c2Done(){saveC2();c2Sel=null;c2Render();}
-function c2RemFlavor(sid,bid,fid){const sh=c2data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);if(!b.flavors.length)sh.brands=sh.brands.filter(x=>x.id!==bid);c2Sel=null;saveC2();c2Render();}
+function c2RemFlavor(sid,bid,fid){const sh=c2data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);c2Sel=null;saveC2();c2Render();}
 function c2AddFlavor(sid){c2Snap();const sh=c2data.shelves.find(s=>s.id===sid);if(!sh||!sh.brands.length)return;const b=sh.brands[sh.brands.length-1];const id='f'+(c2Pid++);b.flavors.push({id,name:'new flavor',facings:2,price:'',img:''});c2Sel=id;saveC2();c2Render();}
 function c2AddBrand(sid){c2Snap();const sh=c2data.shelves.find(s=>s.id===sid);if(!sh)return;const bid='b'+(c2Pid++);const fid='f'+(c2Pid++);sh.brands.push({id:bid,name:'new brand',oz:'',flavors:[{id:fid,name:'new flavor',facings:2,price:'',img:''}]});c2Sel=fid;saveC2();c2Render();}
 function c2Export(){const blob=new Blob([JSON.stringify(c2data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cooler2-planogram.json';a.click();}
@@ -1222,7 +1221,7 @@ function c2Render(){
     sh.brands.forEach(b=>{
       const c=c2Color(b.name,b.vendor);const vendor=c2Vendor(b.name,b.vendor);
       const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
-      const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf;grp.style.minWidth='0';
+      const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf||1;grp.style.minWidth=bf?'0':'120px';
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} faces</div><div class="brand-flavors" id="c2-fl-${b.id}"></div>`;
       row.appendChild(grp);
       const flRow=document.getElementById('c2-fl-'+b.id);
@@ -1278,7 +1277,7 @@ function c3UpdF(id,k,v){c3data.shelves.forEach(sh=>sh.brands.forEach(b=>{const f
 function c3UpdB(id,k,v){c3data.shelves.forEach(sh=>{const b=sh.brands.find(x=>x.id===id);if(b)b[k]=v;});saveC3();}
 function c3UpdImg(id,v){c3data.shelves.forEach(sh=>sh.brands.forEach(b=>{const f=b.flavors.find(x=>x.id===id);if(f)f.img=v;}));saveC3();c3Render();}
 function c3Done(){saveC3();c3Sel=null;c3Render();}
-function c3RemFlavor(sid,bid,fid){const sh=c3data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);if(!b.flavors.length)sh.brands=sh.brands.filter(x=>x.id!==bid);c3Sel=null;saveC3();c3Render();}
+function c3RemFlavor(sid,bid,fid){const sh=c3data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);c3Sel=null;saveC3();c3Render();}
 function c3AddFlavor(sid){c3Snap();const sh=c3data.shelves.find(s=>s.id===sid);if(!sh||!sh.brands.length)return;const b=sh.brands[sh.brands.length-1];const id='f'+(c3Pid++);b.flavors.push({id,name:'new flavor',facings:2,price:'',img:''});c3Sel=id;saveC3();c3Render();}
 function c3AddBrand(sid){c3Snap();const sh=c3data.shelves.find(s=>s.id===sid);if(!sh)return;const bid='b'+(c3Pid++);const fid='f'+(c3Pid++);sh.brands.push({id:bid,name:'new brand',oz:'',flavors:[{id:fid,name:'new flavor',facings:2,price:'',img:''}]});c3Sel=fid;saveC3();c3Render();}
 function c3Export(){const blob=new Blob([JSON.stringify(c3data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cooler3-planogram.json';a.click();}
@@ -1294,7 +1293,7 @@ function c3Render(){
     sh.brands.forEach(b=>{
       const c=c3Color(b.vendor);const vendor=c3Vendor(b.vendor);
       const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
-      const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf;grp.style.minWidth='0';
+      const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf||1;grp.style.minWidth=bf?'0':'120px';
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} faces</div><div class="brand-flavors" id="c3-fl-${b.id}"></div>`;
       row.appendChild(grp);
       const flRow=document.getElementById('c3-fl-'+b.id);
@@ -1347,7 +1346,7 @@ function c4OpenEmptyModal(){
     <button class="tb-btn pri" onclick="c4Snap();saveC4();cswModalClose();c4Render()">✓ done</button>`;
   document.getElementById('csw-edit-modal').classList.add('open');
 }
-function c4RemFlavor(sid,bid,fid){const sh=c4data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);if(!b.flavors.length)sh.brands=sh.brands.filter(x=>x.id!==bid);c4Sel=null;saveC4();c4Render();}
+function c4RemFlavor(sid,bid,fid){const sh=c4data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);c4Sel=null;saveC4();c4Render();}
 function c4AddBrand(sid){c4Snap();const sh=c4data.shelves.find(s=>s.id===sid);if(!sh)return;const bid='b'+(c4Pid++);const fid='f'+(c4Pid++);sh.brands.push({id:bid,name:'new brand',oz:'12pk',flavors:[{id:fid,name:'Original',facings:1,price:'',img:''}]});c4Sel=fid;saveC4();c4Render();}
 function c4Export(){const blob=new Blob([JSON.stringify(c4data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cooler4-planogram.json';a.click();}
 function c4Render(){
@@ -1372,7 +1371,7 @@ function c4Render(){
     sh.brands.forEach(b=>{
       const c=c4Color(b.name,b.vendor);const vendor=c4Vendor(b.name,b.vendor);
       const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
-      const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf;grp.style.minWidth='0';
+      const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf||1;grp.style.minWidth=bf?'0':'120px';
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} face${bf!==1?'s':''}</div><div class="brand-flavors" id="c4-fl-${b.id}"></div>`;
       row.appendChild(grp);
       const flRow=document.getElementById('c4-fl-'+b.id);
@@ -1491,7 +1490,7 @@ function c5DoorOpenModal(slot,slotType,label){
   document.getElementById('csw-edit-modal').classList.add('open');
   _attachImgDrop('imgdrop-door-'+slot.id);
 }
-function c5RemFlavor(sid,bid,fid){const sh=c5data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);if(!b.flavors.length)sh.brands=sh.brands.filter(x=>x.id!==bid);c5Sel=null;saveC5();c5Render();}
+function c5RemFlavor(sid,bid,fid){const sh=c5data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);c5Sel=null;saveC5();c5Render();}
 function c5AddFlavor(sid){c5Snap();const sh=c5data.shelves.find(s=>s.id===sid);if(!sh||!sh.brands.length)return;const b=sh.brands[sh.brands.length-1];const id='f'+(c5Pid++);b.flavors.push({id,name:'new flavor',facings:1,price:'',img:''});c5Sel=id;saveC5();c5Render();}
 function c5AddBrand(sid){c5Snap();const sh=c5data.shelves.find(s=>s.id===sid);if(!sh)return;const bid='b'+(c5Pid++);const fid='f'+(c5Pid++);sh.brands.push({id:bid,name:'new brand',oz:'',flavors:[{id:fid,name:'Original',facings:1,price:'',img:''}]});c5Sel=fid;saveC5();c5Render();}
 function c5Export(){const blob=new Blob([JSON.stringify({c5data,c5S3Slot,buzzSlots,oasisSlots},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cooler5-planogram.json';a.click();}
@@ -1529,7 +1528,7 @@ function c5Render(){
     sh.brands.forEach(b=>{
       const c=c5Color(b.name,b.vendor);const vendor=c5Vendor(b.name,b.vendor);
       const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
-      const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf;grp.style.minWidth='0';
+      const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf||1;grp.style.minWidth=bf?'0':'120px';
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf}f</div><div class="brand-flavors" id="c5-fl-${b.id}"></div>`;
       row.appendChild(grp);
       const flRow=document.getElementById('c5-fl-'+b.id);
@@ -2135,6 +2134,10 @@ document.addEventListener('change',_pubWatch,true);
    ORDER GENERATOR — isolated module (exposed as window.OG)
    ============================================================ */
 var OG=(function(){
+  // Shared secret sent with every /api/toast-* call. Set an identical APP_SHARED_KEY
+  // env var in Vercel — this only gates our own proxy, the real Toast secret never
+  // reaches the browser (it lives server-side in api/_toastClient.js).
+  var OG_APP_KEY='4ca6fbc41a08a7620afd979590e805a129eefe1e10f2e5b7';
   var FAST_MOVERS={'Poppi':0.50,'Calypso':0.50,'Modelo Especial':0.40,'Good2Grow':0.40};
   var DEFAULT_VENDORS=[
     {id:'pepsi',name:'Pepsi',cat:'Beverage DSD',color:'#004B93',cutoffDay:2,cutoffTime:'14:00',deliveryDay:4,deliveryFrom:'08:00',deliveryTo:'12:00',minimum:0,buffer:0.15,byCase:false,caseSize:1,products:[{name:'Gatorade',oz:'28oz',cost:1.35,sold:38,inv:9},{name:'Poppi',oz:'12oz can',cost:1.65,sold:64,inv:12},{name:'Celsius',oz:'12oz can',cost:1.55,sold:41,inv:8}]},
@@ -2177,8 +2180,9 @@ var OG=(function(){
   var VNORM={'Choice':'Choice Beverage'};
   function normVendor(n){return VNORM[n]||n||'Unknown';}
   var VCOLOR={};(typeof VENDOR_DATA!=='undefined'?VENDOR_DATA:[]).forEach(function(v){VCOLOR[v.name]=v.color;});VCOLOR['Unknown']='#9E9E9E';
-  /* Read every brand currently on the beverage-cooler planograms (c1–c5), live. */
-  function planogramBrands(){
+  /* Read every flavor/bottle/item currently on the planograms — coolers, wine, snack wall — live.
+     One entry per exact SKU (not per brand), so par levels + Toast GUIDs can be set per flavor. */
+  function planogramProducts(){
     var out=[],coolers=[
       ['c1',typeof c1data!=='undefined'?c1data:null],['c2',typeof c2data!=='undefined'?c2data:null],
       ['c3',typeof c3data!=='undefined'?c3data:null],['c4',typeof c4data!=='undefined'?c4data:null],
@@ -2186,33 +2190,56 @@ var OG=(function(){
     coolers.forEach(function(pair){var pfx=pair[0],data=pair[1];if(!data||!data.shelves)return;
       data.shelves.forEach(function(sh){(sh.brands||[]).forEach(function(b){
         var vn='Unknown';try{vn=normVendor(_pfxCurrentVendor(b,pfx));}catch(e){}
-        out.push({name:b.name,oz:b.oz||'',vendor:vn});
+        (b.flavors||[]).forEach(function(f){
+          if(!f.name||f.name==='new flavor')return;
+          out.push({id:f.id,name:(b.name+' '+f.name).trim(),oz:b.oz||'',vendor:vn});
+        });
       });});
     });
+    try{(typeof wineData!=='undefined'?wineData:[]).forEach(function(sh){(sh.bottles||[]).forEach(function(w){
+      if(!w.name)return;
+      out.push({id:w.id,name:(w.name+' '+(w.type||'')).trim(),oz:'750ml',vendor:'Wine'});
+    });});}catch(e){}
+    try{var csw=typeof cswdata!=='undefined'?cswdata:null;(csw&&csw.shelves||[]).forEach(function(sh){
+      (sh.rows||[]).forEach(function(row){(row.products||[]).forEach(function(p){
+        if(!p.name||p.name==='New Item')return;
+        var vn=normVendor(CSW_BV[p.name]||'Unknown');
+        out.push({id:p.id,name:(p.name+(p.variety?' '+p.variety:'')).trim(),oz:p.oz||'',vendor:vn});
+      });});
+      ['leftHanger','rightHanger'].forEach(function(side){(sh[side]||[]).forEach(function(p){
+        if(!p.name)return;
+        var vn=normVendor(CSW_BV[p.name]||'Unknown');
+        out.push({id:p.id,name:(p.name+(p.variety?' '+p.variety:'')).trim(),oz:p.oz||'',vendor:vn});
+      });});
+    });}catch(e){}
     return out;
   }
   /* Build the ordering vendor list from what's actually on the planograms (source of truth). */
   function buildVendors(){
-    var brands=planogramBrands(),byV={};
-    brands.forEach(function(b){if(!b.name||b.name==='new brand')return;if(!byV[b.vendor])byV[b.vendor]=[];if(!byV[b.vendor].some(function(x){return x.name===b.name;}))byV[b.vendor].push({name:b.name,oz:b.oz});});
+    var prods=planogramProducts(),byV={};
+    prods.forEach(function(p){if(!byV[p.vendor])byV[p.vendor]=[];if(!byV[p.vendor].some(function(x){return x.id===p.id;}))byV[p.vendor].push(p);});
     var order=(typeof VENDOR_DATA!=='undefined'?VENDOR_DATA:[]).map(function(v){return v.name;});
     var names=Object.keys(byV).sort(function(a,b){var ia=order.indexOf(a),ib=order.indexOf(b);if(ia<0)ia=990;if(ib<0)ib=990;if(a==='Unknown')ia=999;if(b==='Unknown')ib=999;return ia-ib;});
     return names.map(function(vn){
       var sc=SCHED[vn]||GENERIC_SCHED;
       return {id:slug(vn),name:vn,color:VCOLOR[vn]||'#9E9E9E',cat:sc.cat,cutoffDay:sc.cutoffDay,cutoffTime:sc.cutoffTime,deliveryDay:sc.deliveryDay,deliveryFrom:sc.deliveryFrom,deliveryTo:sc.deliveryTo,minimum:sc.minimum,buffer:sc.buffer,byCase:sc.byCase,caseSize:sc.caseSize,
-        products:byV[vn].map(function(p){var st=PROD_STATS[p.name]||{};return{name:p.name,oz:p.oz||st.oz||'',cost:st.cost!=null?st.cost:1.25,sold:st.sold!=null?st.sold:20,inv:st.inv!=null?st.inv:6};})};
+        products:byV[vn].map(function(p){var st=PROD_STATS[p.name]||{};return{id:p.id,name:p.name,oz:p.oz||st.oz||'',cost:st.cost!=null?st.cost:1.25,sold:st.sold!=null?st.sold:0,inv:st.inv!=null?st.inv:0,parMin:null,parMax:null,toastGuid:''};})};
     });
   }
   /* Re-sync from the planograms (called whenever the Ordering tab opens). */
   function refreshVendors(){VENDORS=mergeSaved(buildVendors());saveKey(LS_VENDORS,VENDORS);}
-  /* Overlay any saved edits (schedules, costs, counts) onto the freshly-built list. */
+  /* Overlay any saved edits (schedules, par levels, Toast matches, counts) onto the freshly-built list.
+     Matches products by stable id, not name — flavor names like "Original" repeat across brands. */
   function mergeSaved(base){
     var saved=load(LS_VENDORS,null);if(!saved||!Array.isArray(saved))return base;
     var byId={};saved.forEach(function(sv){byId[sv.id]=sv;});
     base.forEach(function(v){var sv=byId[v.id];if(!sv)return;
       ['cat','cutoffDay','cutoffTime','deliveryDay','deliveryFrom','deliveryTo','minimum','buffer','byCase','caseSize'].forEach(function(k){if(sv[k]!=null)v[k]=sv[k];});
-      if(sv.products){var pn={};sv.products.forEach(function(sp){pn[sp.name]=sp;});
-        v.products.forEach(function(p){var sp=pn[p.name];if(sp){if(sp.oz)p.oz=sp.oz;if(sp.cost!=null)p.cost=sp.cost;if(sp.sold!=null)p.sold=sp.sold;if(sp.inv!=null)p.inv=sp.inv;}});}
+      if(sv.products){var pById={};sv.products.forEach(function(sp){if(sp.id!=null)pById[sp.id]=sp;});
+        v.products.forEach(function(p){var sp=pById[p.id];if(sp){
+          if(sp.oz)p.oz=sp.oz;if(sp.cost!=null)p.cost=sp.cost;if(sp.sold!=null)p.sold=sp.sold;if(sp.inv!=null)p.inv=sp.inv;
+          if(sp.parMin!=null)p.parMin=sp.parMin;if(sp.parMax!=null)p.parMax=sp.parMax;if(sp.toastGuid)p.toastGuid=sp.toastGuid;
+        }});}
     });
     return base;
   }
@@ -2234,7 +2261,15 @@ var OG=(function(){
   function fmtDateTime(d){return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});}
   function fmtTime(hm){var t=parseHM(hm),ap=t.h>=12?'PM':'AM',hh=t.h%12||12;return hh+(t.m?':'+String(t.m).padStart(2,'0'):'')+ap;}
 
-  function calcSuggest(v,p){var since=daysSince(LASTORDER[v.id]),dailyAvg=p.sold/since,cutoff=nextCutoff(v),delivery=nextDelivery(v,cutoff),daysToDelivery=daysUntil(delivery)+1,base=Math.max(0,Math.ceil(dailyAvg*daysToDelivery-p.inv));return{dailyAvg:dailyAvg,daysToDelivery:daysToDelivery,base:base,delivery:delivery,cutoff:cutoff};}
+  /* Par min/max drives the order quantity: order back up to par max once on-hand drops to/below par min.
+     dailyAvg/velocity is kept purely as display context (from Toast sales, when available) — it no
+     longer feeds the suggested quantity. */
+  function calcSuggest(v,p){
+    var since=daysSince(LASTORDER[v.id]),dailyAvg=p.sold/since,cutoff=nextCutoff(v),delivery=nextDelivery(v,cutoff),daysToDelivery=daysUntil(delivery)+1;
+    var configured=p.parMin!=null&&p.parMax!=null;
+    var base=(configured&&p.inv<=p.parMin)?Math.max(0,p.parMax-p.inv):0;
+    return{dailyAvg:dailyAvg,daysToDelivery:daysToDelivery,base:base,delivery:delivery,cutoff:cutoff,configured:configured};
+  }
   function applyBuffer(v,p,base,bufferOn){if(!bufferOn)return base;var pct=FAST_MOVERS[p.name]!=null?FAST_MOVERS[p.name]:v.buffer;return Math.ceil(base*(1+pct));}
   function roundToCase(v,qty){if(!v.byCase||v.caseSize<=1)return qty;return Math.ceil(qty/v.caseSize)*v.caseSize;}
 
@@ -2251,7 +2286,7 @@ var OG=(function(){
     [1,2,3].forEach(function(i){var el=document.getElementById('s'+i);if(el)el.classList.toggle('og-hidden',i!==n);});
     Array.prototype.forEach.call(document.querySelectorAll('#stepBar .step'),function(s){var st=+s.dataset.step;s.classList.toggle('active',st===n);s.classList.toggle('done',st<n);});
     if(n===1){renderInvBar();renderVendors();}
-    if(n===2)renderWorksheet();
+    if(n===2){renderWorksheet();pullToastStock();}
     if(n===3)renderSummary();
     window.scrollTo({top:0,behavior:'smooth'});
   }
@@ -2301,15 +2336,16 @@ var OG=(function(){
       wd.lines=v.products.map(function(p){
         var c=calcSuggest(v,p),suggest=roundToCase(v,applyBuffer(v,p,c.base,wd.buffer));
         var existing=wd.lines.find(function(l){return l.name===p.name;});
-        return{name:p.name,oz:p.oz,cost:p.cost,base:c.base,suggest:suggest,qty:existing&&existing.override?existing.qty:suggest,override:existing?existing.override:false,note:existing?existing.note:'',dailyAvg:c.dailyAvg,daysToDelivery:Math.round(c.daysToDelivery),inv:p.inv};
+        return{name:p.name,oz:p.oz,cost:p.cost,base:c.base,suggest:suggest,qty:existing&&existing.override?existing.qty:suggest,override:existing?existing.override:false,note:existing?existing.note:'',dailyAvg:c.dailyAvg,daysToDelivery:Math.round(c.daysToDelivery),inv:p.inv,parMin:p.parMin,parMax:p.parMax,configured:c.configured,toastGuid:p.toastGuid};
       });
       var rows=wd.lines.map(function(l,i){
         var fast=FAST_MOVERS[l.name]!=null,hasVel=l.dailyAvg>0;
         var vel=hasVel?l.dailyAvg.toFixed(1)+'/day':'<span class="ws-prod-oz">no history</span>';
-        var formula=hasVel?(l.dailyAvg.toFixed(1)+'/day × '+l.daysToDelivery+'d − '+l.inv+' on hand'+(wd.buffer?' + buffer':'')):'No sales history yet — suggested 0. Enter a quantity manually.';
+        var formula=!l.configured?'Par min/max not set for this product — set it in Vendor Setup. Suggested 0 until then.'
+          :('on hand '+l.inv+' ≤ par min '+l.parMin+' → order up to par max '+l.parMax+(wd.buffer?' + buffer':''));
         return '<tr>'
-          +'<td class="prodcell" data-label="Product"><span class="ws-prod">'+esc(l.name)+'</span>'+(fast?'<span class="fast-tag">fast</span>':'')+'<div class="ws-prod-oz">'+esc(l.oz)+'</div></td>'
-          +'<td class="num" data-label="On hand"><input class="oh-input" type="number" min="0" value="'+l.inv+'" onchange="OG.setOnHand(\''+vid+'\','+i+',this.value)" title="Editable — update as you count"></td>'
+          +'<td class="prodcell" data-label="Product"><span class="ws-prod">'+esc(l.name)+'</span>'+(fast?'<span class="fast-tag">fast</span>':'')+(l.toastGuid?'<span class="fast-tag" style="background:var(--gray);color:var(--gray-dark)">toast live</span>':'')+'<div class="ws-prod-oz">'+esc(l.oz)+'</div></td>'
+          +'<td class="num" data-label="On hand"><input class="oh-input" type="number" min="0" value="'+l.inv+'" onchange="OG.setOnHand(\''+vid+'\','+i+',this.value)" title="Editable — update as you count'+(l.toastGuid?'; syncs to Toast':'')+'"></td>'
           +'<td class="num" data-label="Velocity">'+vel+'</td>'
           +'<td class="num" data-label="Suggested"><span class="qty-suggest">'+l.suggest+(v.byCase?' u':'')+'</span> <span class="og-why" title="'+esc(formula)+'">?</span></td>'
           +'<td class="ctr" data-label="Order qty"><div class="qty-stepper"><button class="qty-step" onclick="OG.bumpQty(\''+vid+'\','+i+',-1)">−</button>'
@@ -2330,7 +2366,38 @@ var OG=(function(){
   function overrideQty(vid,i,val){var l=worksheetData[vid].lines[i],q=Math.max(0,parseInt(val)||0);l.qty=q;l.override=(q!==l.suggest);renderWorksheet();saveDraft();if(l.override){var n=document.querySelector('[data-note="'+vid+'-'+i+'"]');if(n)n.focus();}}
   function bumpQty(vid,i,delta){var l=worksheetData[vid].lines[i],q=Math.max(0,(parseInt(l.qty)||0)+delta);l.qty=q;l.override=(q!==l.suggest);renderWorksheet();saveDraft();}
   function overrideNote(vid,i,val){worksheetData[vid].lines[i].note=val;saveDraft();}
-  function setOnHand(vid,i,val){var v=VENDORS.find(function(x){return x.id===vid;}),line=worksheetData[vid].lines[i],q=Math.max(0,parseInt(val)||0);var p=v.products.find(function(x){return x.name===line.name;});if(p)p.inv=q;saveKey(LS_VENDORS,VENDORS);try{localStorage.setItem(LS_INVCOUNT,new Date().toISOString());}catch(e){}renderWorksheet();}
+  function setOnHand(vid,i,val){
+    var v=VENDORS.find(function(x){return x.id===vid;}),line=worksheetData[vid].lines[i],q=Math.max(0,parseInt(val)||0);
+    var p=v.products.find(function(x){return x.name===line.name;});
+    if(p){p.inv=q;
+      if(p.toastGuid)pushToastStock(p.toastGuid,q);
+    }
+    saveKey(LS_VENDORS,VENDORS);try{localStorage.setItem(LS_INVCOUNT,new Date().toISOString());}catch(e){}renderWorksheet();
+  }
+
+  /* Live Toast stock sync — read on entering the worksheet, write whenever a physical count is logged.
+     Both are best-effort: a Toast hiccup falls back to the last known local count, never blocks ordering. */
+  function pullToastStock(){
+    var vids=Array.from(selectedVendors),guids=[];
+    vids.forEach(function(vid){var v=VENDORS.find(function(x){return x.id===vid;});if(!v)return;v.products.forEach(function(p){if(p.toastGuid)guids.push(p.toastGuid);});});
+    guids=Array.from(new Set(guids));
+    if(!guids.length)return;
+    fetch('/api/toast-stock?guids='+encodeURIComponent(guids.join(',')),{headers:{'x-app-key':OG_APP_KEY}})
+      .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+      .then(function(map){
+        var changed=false;
+        vids.forEach(function(vid){var v=VENDORS.find(function(x){return x.id===vid;});if(!v)return;
+          v.products.forEach(function(p){if(p.toastGuid&&map[p.toastGuid]!=null&&map[p.toastGuid]!==p.inv){p.inv=map[p.toastGuid];changed=true;}});
+        });
+        if(changed){saveKey(LS_VENDORS,VENDORS);renderWorksheet();showToast('On-hand synced from Toast ✓');}
+      })
+      .catch(function(){showToast('Could not reach Toast for live counts — using last known.');});
+  }
+  function pushToastStock(guid,qty){
+    fetch('/api/toast-stock-update',{method:'POST',headers:{'Content-Type':'application/json','x-app-key':OG_APP_KEY},body:JSON.stringify([{guid:guid,quantity:qty}])})
+      .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);showToast('Count saved to Toast ✓');})
+      .catch(function(){showToast('Saved here, but could not push to Toast — will retry next sync.');});
+  }
 
   /* draft autosave — survives closing the tab mid-order */
   var LS_DRAFT='sm-og-draft';
@@ -2394,15 +2461,64 @@ var OG=(function(){
         +'<div class="field"><label>Order by case</label><select onchange="OG.editVendor('+vi+',\'byCase\',this.value===\'yes\')"><option value="no"'+(!v.byCase?' selected':'')+'>No</option><option value="yes"'+(v.byCase?' selected':'')+'>Yes</option></select></div>'
         +'<div class="field"><label>Case size</label><input type="number" value="'+v.caseSize+'" onchange="OG.editVendor('+vi+',\'caseSize\',+this.value)"></div></div>'
         +'<div class="section-label">Products <span style="text-transform:none;letter-spacing:0;color:var(--green)">· synced from planograms</span></div><div class="prod-list">'
-        +v.products.map(function(p,pi){return '<div class="prod-item"><input style="flex:2;min-width:120px;background:var(--gray);color:var(--gray-dark)" value="'+esc(p.name)+'" readonly title="Managed on the planograms"><input style="width:70px" value="'+esc(p.oz)+'" title="size" onchange="OG.editProd('+vi+','+pi+',\'oz\',this.value)"><input style="width:70px" type="number" step="0.01" value="'+p.cost+'" title="unit cost" onchange="OG.editProd('+vi+','+pi+',\'cost\',+this.value)"><input style="width:60px" type="number" value="'+p.sold+'" title="units sold" onchange="OG.editProd('+vi+','+pi+',\'sold\',+this.value)"><input style="width:55px" type="number" value="'+p.inv+'" title="on hand" onchange="OG.editProd('+vi+','+pi+',\'inv\',+this.value)"></div>';}).join('')
-        +'</div><div style="font-size:10px;color:var(--gray-dark);margin-top:6px;font-family:var(--mono)">size · unit cost · units sold · on hand — editable. Add or remove products on the planograms.</div></div></div>';
+        +v.products.map(function(p,pi){
+          var matchLabel=p.toastGuid?'✓ Matched':'Match to Toast';
+          return '<div class="prod-item"><input style="flex:2;min-width:120px;background:var(--gray);color:var(--gray-dark)" value="'+esc(p.name)+'" readonly title="Managed on the planograms">'
+            +'<input style="width:70px" value="'+esc(p.oz)+'" title="size" onchange="OG.editProd('+vi+','+pi+',\'oz\',this.value)">'
+            +'<input style="width:70px" type="number" step="0.01" value="'+p.cost+'" title="unit cost" onchange="OG.editProd('+vi+','+pi+',\'cost\',+this.value)">'
+            +'<input style="width:55px" type="number" value="'+(p.parMin==null?'':p.parMin)+'" placeholder="par min" title="par min — reorder when on-hand drops to this" onchange="OG.editProd('+vi+','+pi+',\'parMin\',this.value===\'\'?null:+this.value)">'
+            +'<input style="width:55px" type="number" value="'+(p.parMax==null?'':p.parMax)+'" placeholder="par max" title="par max — order back up to this" onchange="OG.editProd('+vi+','+pi+',\'parMax\',this.value===\'\'?null:+this.value)">'
+            +'<input style="width:55px" type="number" value="'+p.inv+'" title="on hand" onchange="OG.editProd('+vi+','+pi+',\'inv\',+this.value)">'
+            +'<button class="btn btn-sm '+(p.toastGuid?'btn-outline':'btn-ghost')+'" style="white-space:nowrap" onclick="OG.matchToggle('+vi+','+pi+')">'+esc(matchLabel)+'</button>'
+            +'<div class="dp" id="og-match-'+vi+'-'+pi+'" style="flex-basis:100%"></div>'
+            +'</div>';
+        }).join('')
+        +'</div><div style="font-size:10px;color:var(--gray-dark);margin-top:6px;font-family:var(--mono)">size · unit cost · par min · par max · on hand — editable. "Match to Toast" links this SKU so on-hand syncs live. Add or remove products on the planograms.</div></div></div>';
     }).join('');
   }
   function editVendor(vi,key,val){VENDORS[vi][key]=val;saveKey(LS_VENDORS,VENDORS);}
   function editProd(vi,pi,key,val){VENDORS[vi].products[pi][key]=val;saveKey(LS_VENDORS,VENDORS);}
   function delProd(vi,pi){VENDORS[vi].products.splice(pi,1);saveKey(LS_VENDORS,VENDORS);renderSetup();}
-  function addProd(vi){VENDORS[vi].products.push({name:'New Product',oz:'12oz',cost:1.00,sold:0,inv:0});saveKey(LS_VENDORS,VENDORS);renderSetup();}
+  function addProd(vi){VENDORS[vi].products.push({name:'New Product',oz:'12oz',cost:1.00,sold:0,inv:0,parMin:null,parMax:null,toastGuid:''});saveKey(LS_VENDORS,VENDORS);renderSetup();}
   function resetData(){if(confirm('Reset all vendors and products to match the planograms? Order history is kept.')){VENDORS=buildVendors();saveKey(LS_VENDORS,VENDORS);renderSetup();showToast('Reset to planogram vendors');}}
+
+  /* Match-to-Toast picker — one lazy-loaded, session-cached list of Toast menu items,
+     filtered inline per product row so employees never touch Toast directly. */
+  var toastItemsCache=null,toastItemsLoading=null;
+  function loadToastItems(){
+    if(toastItemsCache)return Promise.resolve(toastItemsCache);
+    if(toastItemsLoading)return toastItemsLoading;
+    toastItemsLoading=fetch('/api/toast-menu-items',{headers:{'x-app-key':OG_APP_KEY}})
+      .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+      .then(function(items){toastItemsCache=items;toastItemsLoading=null;return items;})
+      .catch(function(err){toastItemsLoading=null;throw err;});
+    return toastItemsLoading;
+  }
+  function matchToggle(vi,pi){
+    var el=document.getElementById('og-match-'+vi+'-'+pi);if(!el)return;
+    var wasOpen=el.classList.contains('open');
+    Array.prototype.forEach.call(document.querySelectorAll('#page-ordering .dp.open'),function(d){d.classList.remove('open');});
+    if(wasOpen)return;
+    el.classList.add('open');
+    el.innerHTML='<div style="font-size:11px;color:var(--gray-dark)">Loading Toast menu items…</div>';
+    loadToastItems().then(function(){renderMatchPanel(vi,pi,'');}).catch(function(err){
+      el.innerHTML='<div style="font-size:11px;color:var(--red)">Could not load Toast items — check /api/toast-menu-items is deployed with Toast credentials set.</div>';
+    });
+  }
+  function renderMatchPanel(vi,pi,query){
+    var el=document.getElementById('og-match-'+vi+'-'+pi);if(!el)return;
+    var q=(query||'').toLowerCase(),p=VENDORS[vi].products[pi];
+    var items=(toastItemsCache||[]).filter(function(it){return !q||String(it.name||'').toLowerCase().indexOf(q)!==-1;}).slice(0,8);
+    el.innerHTML='<input placeholder="Search Toast items…" style="width:100%;margin-bottom:6px" value="'+esc(query||'')+'" oninput="OG.matchFilter('+vi+','+pi+',this.value)">'
+      +'<div style="max-height:170px;overflow:auto">'+(items.length?items.map(function(it){
+        var safeName=esc(it.name||'').replace(/'/g,"\\'");
+        return '<div style="padding:6px 4px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--border)" onclick="OG.matchPick('+vi+','+pi+',\''+it.guid+'\',\''+safeName+'\')">'+esc(it.name||it.guid)+'</div>';
+      }).join(''):'<div style="font-size:11px;color:var(--gray-dark);padding:6px 4px">No matches</div>')+'</div>'
+      +(p.toastGuid?'<div style="margin-top:6px"><button class="btn btn-sm btn-ghost" onclick="OG.matchClear('+vi+','+pi+')">Clear match</button></div>':'');
+  }
+  function matchFilter(vi,pi,q){renderMatchPanel(vi,pi,q);}
+  function matchPick(vi,pi,guid,name){editProd(vi,pi,'toastGuid',guid);var el=document.getElementById('og-match-'+vi+'-'+pi);if(el)el.classList.remove('open');renderSetup();showToast('Matched to "'+name+'" ✓');}
+  function matchClear(vi,pi){editProd(vi,pi,'toastGuid','');renderSetup();}
 
   function renderHistory(){
     var host=document.getElementById('historyList'),vids=Object.keys(HISTORY).filter(function(vid){return HISTORY[vid]&&HISTORY[vid].length;});
@@ -2424,7 +2540,7 @@ var OG=(function(){
     if(!started){started=true;tickTimer=setInterval(function(){Array.prototype.forEach.call(document.querySelectorAll('#page-ordering .countdown[data-cutoff]'),function(el){var ms=new Date(el.dataset.cutoff)-new Date();el.querySelector('.countdown-time').textContent=fmtCountdown(ms);el.className='countdown '+cdClass(ms);});},30000);}
   }
 
-  return{init:init,saveNow:saveNow,showView:showView,gotoStep:gotoStep,toggleVendor:toggleVendor,toggleBuffer:toggleBuffer,overrideQty:overrideQty,bumpQty:bumpQty,overrideNote:overrideNote,setOnHand:setOnHand,markCounted:markCounted,finalizeOrder:finalizeOrder,exportCSV:exportCSV,print:doPrint,resetData:resetData,editVendor:editVendor,editProd:editProd,delProd:delProd,addProd:addProd};
+  return{init:init,saveNow:saveNow,showView:showView,gotoStep:gotoStep,toggleVendor:toggleVendor,toggleBuffer:toggleBuffer,overrideQty:overrideQty,bumpQty:bumpQty,overrideNote:overrideNote,setOnHand:setOnHand,markCounted:markCounted,finalizeOrder:finalizeOrder,exportCSV:exportCSV,print:doPrint,resetData:resetData,editVendor:editVendor,editProd:editProd,delProd:delProd,addProd:addProd,matchToggle:matchToggle,matchFilter:matchFilter,matchPick:matchPick,matchClear:matchClear};
 })();
 
 // ══════════════════════════════════════════════════════════════════
@@ -2447,6 +2563,7 @@ var OG=(function(){
   try{if(typeof renderInvoices==='function')renderInvoices();}catch(e){}
   // start gentle live sync — pulls others' edits every 10s while you're idle
   setInterval(cloudPoll,10000);
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')cloudPoll();});
 })();
 </script>
 </body>
