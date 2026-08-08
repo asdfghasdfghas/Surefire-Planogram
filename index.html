@@ -1897,6 +1897,12 @@ function customVendorTypeName(id){
   v._typing=true;renderVendors();
   setTimeout(function(){var el=document.getElementById('cv-name-'+id);if(el)el.focus();},0);
 }
+/* Items on the snack wall tagged to this vendor name in CSW_BV — kept live
+   off the snack wall data instead of a hand-maintained list. */
+function vendorSnackItems(name){
+  if(!name)return[];
+  return Object.keys(CSW_BV).filter(function(p){return CSW_BV[p]===name;}).sort();
+}
 function addCustomVendor(){
   const palette=['#607D8B','#5D4037','#00838F','#6D4C41','#455A64','#4527A0','#00695C'];
   const id='cv'+Date.now();
@@ -1999,6 +2005,10 @@ function renderVendors(){
         <div class="vendor-info-row"><span class="vendor-info-label">Min Order</span>${cvField(v.id,'minOrder',v.minOrder,'e.g. $250')}</div>
         <div class="vendor-info-row"><span class="vendor-info-label">Notes</span>${cvField(v.id,'notes',v.notes,'Any notes...')}</div>
         ${managerUnlocked?`<div class="vendor-info-row"><span class="vendor-info-label">Order Site</span><div style="display:flex;flex-direction:column;gap:4px;flex:1">${v.orderUrl?`<a href="${escV(v.orderUrl)}" target="_blank" style="font-size:12px;color:var(--green-mid);text-decoration:none;font-weight:500">${escV(v.orderUrl)}</a>`:''}<input class="vendor-info-input" placeholder="https://..." value="${escV(v.orderUrl)}" onchange="updateCustomVendor('${v.id}','orderUrl',this.value);renderVendors()"/></div></div>`:''}
+        ${(function(){const items=vendorSnackItems(v.name);return items.length?`<div class="vendor-products">
+          <div class="vendor-products-label">Items Ordered <span style="text-transform:none;letter-spacing:0;color:var(--green-mid)">· from snack wall</span></div>
+          <div class="vendor-tag-list">${items.map(p=>`<span class="vendor-tag-pill">${escV(p)}</span>`).join('')}</div>
+        </div>`:'';})()}
       </div>
     </div>`;
   }).join('');
