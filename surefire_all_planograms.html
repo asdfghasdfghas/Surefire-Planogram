@@ -1882,6 +1882,21 @@ function saveVendorContacts(){localStorage.setItem('sm-vendor-contacts',JSON.str
 let customVendors=JSON.parse(localStorage.getItem('sm-custom-vendors')||'[]');
 function saveCustomVendors(){localStorage.setItem('sm-custom-vendors',JSON.stringify(customVendors));}
 function escV(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+/* Vendor names already referenced elsewhere (e.g. the snack wall's brand->vendor
+   map) that don't have a contact card yet — offered as dropdown picks so a
+   vendor already known to the system doesn't get retyped/duplicated. */
+function knownVendorNames(){
+  var known={};
+  Object.values(CSW_BV).forEach(function(n){known[n]=1;});
+  VENDOR_DATA.forEach(function(v){delete known[v.name];});
+  customVendors.forEach(function(v){if(v.name)delete known[v.name];});
+  return Object.keys(known).sort();
+}
+function customVendorTypeName(id){
+  const v=customVendors.find(x=>x.id===id);if(!v)return;
+  v._typing=true;renderVendors();
+  setTimeout(function(){var el=document.getElementById('cv-name-'+id);if(el)el.focus();},0);
+}
 function addCustomVendor(){
   const palette=['#607D8B','#5D4037','#00838F','#6D4C41','#455A64','#4527A0','#00695C'];
   const id='cv'+Date.now();
@@ -1951,10 +1966,23 @@ function renderVendors(){
     </div>`;
   }).join('');
   const custom=customVendors.map(v=>{
+    var nameField;
+    if(managerUnlocked&&!v.name&&!v._typing){
+      const opts=knownVendorNames().map(function(n){return `<option value="${escV(n)}">${escV(n)}</option>`;}).join('');
+      nameField=`<select id="cv-name-${v.id}" class="vendor-info-input" style="flex:1;font-weight:700;padding:4px 8px" onchange="if(this.value==='__other__')customVendorTypeName('${v.id}');else{updateCustomVendor('${v.id}','name',this.value);renderVendors();}">
+        <option value="" disabled selected>Select a vendor…</option>
+        ${opts}
+        <option value="__other__">Other / new vendor…</option>
+      </select>`;
+    }else if(managerUnlocked){
+      nameField=`<input id="cv-name-${v.id}" class="vendor-info-input" style="flex:1;font-weight:700;padding:4px 8px" placeholder="Vendor name" value="${escV(v.name)}" onchange="updateCustomVendor('${v.id}','name',this.value);renderVendors()"/>`;
+    }else{
+      nameField=`<div class="vendor-card-name">${escV(v.name)||'New vendor'}</div>`;
+    }
     return `<div class="vendor-card">
       <div class="vendor-card-head">
         <div class="vendor-card-dot" style="background:${v.color}"></div>
-        ${managerUnlocked?`<input id="cv-name-${v.id}" class="vendor-info-input" style="flex:1;font-weight:700;padding:4px 8px" placeholder="Vendor name" value="${escV(v.name)}" onchange="updateCustomVendor('${v.id}','name',this.value);renderVendors()"/>`:`<div class="vendor-card-name">${escV(v.name)||'New vendor'}</div>`}
+        ${nameField}
         ${managerUnlocked?`<button class="tb-btn" style="height:24px;padding:2px 9px;font-size:10px" onclick="delCustomVendor('${v.id}')">remove</button>`:''}
       </div>
       <div class="vendor-card-body">
