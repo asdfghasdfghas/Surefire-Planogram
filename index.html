@@ -25,6 +25,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--black);disp
 .publish-btn.dirty{background:var(--green);color:#fff;border-color:var(--green)}
 .publish-btn.dirty:hover{background:#155638}
 .publish-btn.saved{color:var(--green-mid);border-color:#204a34}
+.publish-btn.saving{background:#3a3a1a;color:#e0c840;border-color:#5a5a20}
+.publish-btn.error{background:#7a1f1f;color:#fff;border-color:#7a1f1f}
 @media(max-width:720px){.publish-btn span{display:none}.publish-btn{padding:6px 9px}}
 .nav-dropdown{position:relative}
 .nav-dropdown-btn{font-size:12px;font-weight:500;color:#888;padding:6px 14px;border-radius:6px;cursor:pointer;background:none;border:none;display:flex;align-items:center;gap:6px;transition:color .15s,background .15s;letter-spacing:.02em;font-family:var(--font);}
@@ -743,26 +745,48 @@ var SB_URL='https://rcvfgqwcyiewspuiejle.supabase.co';
 var SB_KEY='sb_publishable_dEWvZ9V8akvchzOTX9ewYA_gVUkQX73';
 var SB_HEAD={apikey:SB_KEY,Authorization:'Bearer '+SB_KEY};
 var _cloudReady=false;                 // becomes true after first hydrate (gates writes)
-var SYNC_SKIP={'sm-og-draft':1};       // keys kept local-only (personal, not shared)
+var SYNC_SKIP={'sm-og-draft':1,'sm-sync-ts':1};       // keys kept local-only (personal, not shared)
 function _isSyncKey(k){return typeof k==='string'&&k.indexOf('sm-')===0&&!SYNC_SKIP[k];}
 var _lsSetRaw=localStorage.setItem.bind(localStorage);
-localStorage.setItem=function(k,v){_lsSetRaw(k,v);if(_cloudReady&&_isSyncKey(k))cloudSet(k,v);};
+// Tracks when each key was last written *locally*, so a cloud pull can never
+// clobber an edit that's newer than what the cloud last had (see cloudApply).
+var _lsTS=(function(){try{return JSON.parse(localStorage.getItem('sm-sync-ts')||'{}');}catch(e){return{};}})();
+var _pendingWrites=0,_pendingPromises=[];
+localStorage.setItem=function(k,v){
+  _lsSetRaw(k,v);
+  if(!_isSyncKey(k))return;
+  _lsTS[k]=new Date().toISOString();_lsSetRaw('sm-sync-ts',JSON.stringify(_lsTS));
+  if(_cloudReady)_pendingPromises.push(cloudSetReliable(k,v));
+};
 function cloudSet(key,rawStr){
-  fetch(SB_URL+'/rest/v1/app_state',{method:'POST',
+  return fetch(SB_URL+'/rest/v1/app_state',{method:'POST',
     headers:Object.assign({'Content-Type':'application/json',Prefer:'resolution=merge-duplicates'},SB_HEAD),
     body:JSON.stringify({key:key,value:rawStr,updated_at:new Date().toISOString()})
-  }).catch(function(){});
+  }).then(function(r){if(!r.ok)throw new Error('cloud save failed ('+r.status+')');});
+}
+/* Retries a cloud write a few times before giving up, and tracks in-flight
+   writes (_pendingWrites) so the page can warn before you navigate away mid-save. */
+function cloudSetReliable(key,rawStr,attempt){
+  attempt=attempt||1;_pendingWrites++;
+  return cloudSet(key,rawStr).catch(function(err){
+    if(attempt>=3)throw err;
+    return new Promise(function(res){setTimeout(res,400*attempt);}).then(function(){return cloudSetReliable(key,rawStr,attempt+1);});
+  }).finally(function(){_pendingWrites--;});
 }
 function cloudFetchAll(){
-  return fetch(SB_URL+'/rest/v1/app_state?select=key,value',{headers:SB_HEAD})
+  return fetch(SB_URL+'/rest/v1/app_state?select=key,value,updated_at',{headers:SB_HEAD})
     .then(function(r){return r.ok?r.json():[];}).catch(function(){return[];});
 }
 function cloudApply(rows){
   var changed={};
   rows.forEach(function(row){
     if(SYNC_SKIP[row.key])return;
+    // If our local copy was written after this cloud row, it's already at
+    // least as new — don't let a stale/late pull stomp a fresher local edit.
+    if(_lsTS[row.key]&&row.updated_at&&new Date(_lsTS[row.key])>=new Date(row.updated_at))return;
     var str=(typeof row.value==='string')?row.value:JSON.stringify(row.value);
     if(localStorage.getItem(row.key)!==str){_lsSetRaw(row.key,str);changed[row.key]=1;}
+    if(row.updated_at){_lsTS[row.key]=row.updated_at;_lsSetRaw('sm-sync-ts',JSON.stringify(_lsTS));}
   });
   return changed;
 }
@@ -784,7 +808,10 @@ function cloudPoll(){
 }
 var SYNC_KEYS=['sm-c1data','sm-c2data','sm-c3data','sm-c4data','sm-c5data','sm-cswdata','sm-winedata','sm-vendor-contacts','sm-invoices','sm-og-vendors','sm-og-history','sm-og-lastorder','sm-og-invcount'];
 // upload any local data the cloud doesn't have yet (first-run seed)
-function cloudSeed(cloudKeys){SYNC_KEYS.forEach(function(k){var v=localStorage.getItem(k);if(v!=null&&!cloudKeys[k])cloudSet(k,v);});}
+function cloudSeed(cloudKeys){SYNC_KEYS.forEach(function(k){var v=localStorage.getItem(k);if(v!=null&&!cloudKeys[k])_pendingPromises.push(cloudSetReliable(k,v));});}
+// Refusing to close/refresh mid-save is what actually prevents "I published,
+// refreshed, and it was gone" — a save in flight now blocks the navigation.
+window.addEventListener('beforeunload',function(e){if(_pendingWrites>0){e.preventDefault();e.returnValue='';}});
 
 // ── MANAGER AUTH ─────────────────────────────────────────────────
 let managerUnlocked=false,mgrCallback=null;
@@ -2114,14 +2141,24 @@ wineRender();
 var _pubDirty=false,_pubFlash=null;
 function _pubSet(state,label){
   var b=document.getElementById('publishBtn'),l=document.getElementById('publishLabel');
-  if(!b||!l)return;b.classList.remove('clean','dirty','saved');b.classList.add(state);l.textContent=label;
+  if(!b||!l)return;b.classList.remove('clean','dirty','saved','saving','error');b.classList.add(state);l.textContent=label;
 }
 function markDirty(){if(_pubDirty)return;_pubDirty=true;_pubSet('dirty','Publish');}
-function publishAll(){
+async function publishAll(){
   try{if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();}catch(e){}
+  _pubSet('saving','Publishing…');
   ['saveC1','saveC2','saveC3','saveC4','saveC5','saveCSW','saveWine','saveVendorContacts'].forEach(function(fn){try{window[fn]&&window[fn]();}catch(e){}});
   try{localStorage.setItem('sm-invoices',JSON.stringify(invoiceMeta));}catch(e){}
   try{if(window.OG&&OG.saveNow)OG.saveNow();}catch(e){}
+  // Wait for every cloud write this publish triggered to actually confirm
+  // before declaring success — this is what "Published ✓" now actually means.
+  var batch=_pendingPromises.splice(0,_pendingPromises.length);
+  var results=await Promise.allSettled(batch);
+  if(results.some(function(r){return r.status==='rejected';})){
+    _pubDirty=true;_pubSet('error','Publish failed — tap to retry');
+    alert('Some changes could not be saved to the cloud. Check your internet connection and press Publish again — do not refresh until it says "Published ✓".');
+    return;
+  }
   _pubDirty=false;_pubSet('saved','Published ✓');
   clearTimeout(_pubFlash);_pubFlash=setTimeout(function(){_pubSet('clean','Saved');},2200);
 }
