@@ -603,6 +603,9 @@ body.manager-mode .mgr-only{display:flex!important}
 
   <!-- VENDORS PAGE -->
   <div id="page-vendors" style="display:none;padding:28px;max-width:1600px;margin:0 auto">
+    <div class="toolbar mgr-only">
+      <button class="tb-btn pri" onclick="requireManager(()=>addCustomVendor())">+ add vendor</button>
+    </div>
     <div class="vendor-grid" id="vendor-grid"></div>
   </div>
 
@@ -792,11 +795,12 @@ function cloudApply(rows){
 }
 function cloudRefreshUI(changed){
   try{if(changed['sm-vendor-contacts']){vendorContacts=JSON.parse(localStorage.getItem('sm-vendor-contacts')||'{}');}}catch(e){}
+  try{if(changed['sm-custom-vendors']){customVendors=JSON.parse(localStorage.getItem('sm-custom-vendors')||'[]');}}catch(e){}
   try{if(changed['sm-winedata']){var w=localStorage.getItem('sm-winedata');if(w)wineData=JSON.parse(w);wineRender();}}catch(e){}
   try{if(changed['sm-cswdata']){var cs=localStorage.getItem('sm-cswdata');if(cs)cswdata=JSON.parse(cs);cswRender();}}catch(e){}
   try{if(changed['sm-invoices']){invoiceMeta=JSON.parse(localStorage.getItem('sm-invoices')||'[]');if(typeof renderInvoices==='function')renderInvoices();}}catch(e){}
   try{if(changed['sm-c1data'])c1Render();if(changed['sm-c2data'])c2Render();if(changed['sm-c3data'])c3Render();if(changed['sm-c4data'])c4Render();if(changed['sm-c5data']){c5Render();c5RenderDoor();}}catch(e){}
-  try{var pv=document.getElementById('page-vendors');if(changed['sm-vendor-contacts']&&pv&&pv.style.display!=='none')renderVendors();}catch(e){}
+  try{var pv=document.getElementById('page-vendors');if((changed['sm-vendor-contacts']||changed['sm-custom-vendors'])&&pv&&pv.style.display!=='none')renderVendors();}catch(e){}
 }
 async function cloudHydrate(){var rows=await cloudFetchAll();var ch=cloudApply(rows);_cloudReady=true;return ch;}
 function cloudPoll(){
@@ -806,7 +810,7 @@ function cloudPoll(){
   var ov=document.getElementById('mgr-overlay');if(ov&&ov.classList.contains('open'))return;
   cloudFetchAll().then(function(rows){var ch=cloudApply(rows);if(Object.keys(ch).length)cloudRefreshUI(ch);});
 }
-var SYNC_KEYS=['sm-c1data','sm-c2data','sm-c3data','sm-c4data','sm-c5data','sm-cswdata','sm-winedata','sm-vendor-contacts','sm-invoices','sm-og-vendors','sm-og-history','sm-og-lastorder','sm-og-invcount'];
+var SYNC_KEYS=['sm-c1data','sm-c2data','sm-c3data','sm-c4data','sm-c5data','sm-cswdata','sm-winedata','sm-vendor-contacts','sm-custom-vendors','sm-invoices','sm-og-vendors','sm-og-history','sm-og-lastorder','sm-og-invcount'];
 // upload any local data the cloud doesn't have yet (first-run seed)
 function cloudSeed(cloudKeys){SYNC_KEYS.forEach(function(k){var v=localStorage.getItem(k);if(v!=null&&!cloudKeys[k])_pendingPromises.push(cloudSetReliable(k,v));});}
 // Refusing to close/refresh mid-save is what actually prevents "I published,
@@ -1874,6 +1878,41 @@ Object.entries(VENDOR_DEFAULTS).forEach(([name,data])=>{
   else vendorContacts[name]={...data,...vendorContacts[name]};
 });
 function saveVendorContacts(){localStorage.setItem('sm-vendor-contacts',JSON.stringify(vendorContacts));}
+/* Vendors added manually from the Vendors page (not tied to any planogram brand). */
+let customVendors=JSON.parse(localStorage.getItem('sm-custom-vendors')||'[]');
+function saveCustomVendors(){localStorage.setItem('sm-custom-vendors',JSON.stringify(customVendors));}
+function escV(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+function addCustomVendor(){
+  const name=(prompt('New vendor name:')||'').trim();
+  if(!name)return;
+  const dup=VENDOR_DATA.some(v=>v.name.toLowerCase()===name.toLowerCase())||customVendors.some(v=>v.name.toLowerCase()===name.toLowerCase());
+  if(dup){alert('A vendor named "'+name+'" already exists.');return;}
+  const palette=['#607D8B','#5D4037','#00838F','#6D4C41','#455A64','#4527A0','#00695C'];
+  customVendors.push({id:'cv'+Date.now(),name,color:palette[customVendors.length%palette.length],rep:'',phone:'',email:'',terms:'',orderDay:'',deliveryDay:'',account:'',minOrder:'',notes:'',orderUrl:''});
+  saveCustomVendors();renderVendors();
+}
+function updateCustomVendor(id,field,val){
+  const v=customVendors.find(x=>x.id===id);if(!v)return;
+  if(field==='name'){
+    const name=String(val).trim();
+    if(!name)return;
+    const dup=VENDOR_DATA.some(x=>x.name.toLowerCase()===name.toLowerCase())||customVendors.some(x=>x.id!==id&&x.name.toLowerCase()===name.toLowerCase());
+    if(dup)return;
+    v.name=name;
+  }else v[field]=val;
+  saveCustomVendors();
+}
+function delCustomVendor(id){
+  const v=customVendors.find(x=>x.id===id);
+  if(!v||!confirm('Remove vendor "'+v.name+'"? This cannot be undone.'))return;
+  customVendors=customVendors.filter(x=>x.id!==id);
+  saveCustomVendors();renderVendors();
+}
+function cvField(id,field,val,placeholder){
+  const safe=escV(val);
+  if(managerUnlocked)return `<input class="vendor-info-input" placeholder="${placeholder}" value="${safe}" oninput="updateCustomVendor('${id}','${field}',this.value)"/>`;
+  return `<span class="vendor-info-val">${safe||`<span style="color:var(--gray-mid);font-style:italic">—</span>`}</span>`;
+}
 function vField(vname,field,val,placeholder){
   const safe=val||'';
   if(managerUnlocked){
@@ -1884,7 +1923,7 @@ function vField(vname,field,val,placeholder){
 }
 function renderVendors(){
   const grid=document.getElementById('vendor-grid');
-  grid.innerHTML=VENDOR_DATA.map(v=>{
+  const builtIn=VENDOR_DATA.map(v=>{
     const c=vendorContacts[v.name]||{};
     return `<div class="vendor-card">
       <div class="vendor-card-head">
@@ -1913,6 +1952,31 @@ function renderVendors(){
       </div>
     </div>`;
   }).join('');
+  const custom=customVendors.map(v=>{
+    return `<div class="vendor-card">
+      <div class="vendor-card-head">
+        <div class="vendor-card-dot" style="background:${v.color}"></div>
+        ${managerUnlocked?`<input class="vendor-info-input" style="flex:1;font-weight:700;padding:4px 8px" value="${escV(v.name)}" onchange="updateCustomVendor('${v.id}','name',this.value);renderVendors()"/>`:`<div class="vendor-card-name">${escV(v.name)}</div>`}
+        ${managerUnlocked?`<button class="tb-btn" style="height:24px;padding:2px 9px;font-size:10px" onclick="delCustomVendor('${v.id}')">remove</button>`:''}
+      </div>
+      <div class="vendor-card-body">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--gray-dark);text-transform:uppercase;margin-bottom:8px">Contact</div>
+        <div class="vendor-info-row"><span class="vendor-info-label">Rep</span>${cvField(v.id,'rep',v.rep,'Rep name')}</div>
+        <div class="vendor-info-row"><span class="vendor-info-label">Phone</span>${cvField(v.id,'phone',v.phone,'Phone number')}</div>
+        <div class="vendor-info-row"><span class="vendor-info-label">Email</span>${cvField(v.id,'email',v.email,'Email address')}</div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--gray-dark);text-transform:uppercase;margin:12px 0 8px">Schedule</div>
+        <div class="vendor-info-row"><span class="vendor-info-label">Order Day</span>${cvField(v.id,'orderDay',v.orderDay,'e.g. Every Friday')}</div>
+        <div class="vendor-info-row"><span class="vendor-info-label">Delivery</span>${cvField(v.id,'deliveryDay',v.deliveryDay,'e.g. Every Tuesday')}</div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--gray-dark);text-transform:uppercase;margin:12px 0 8px">Account</div>
+        <div class="vendor-info-row"><span class="vendor-info-label">Terms</span>${cvField(v.id,'terms',v.terms,'e.g. Net 30')}</div>
+        <div class="vendor-info-row"><span class="vendor-info-label">Account #</span>${cvField(v.id,'account',v.account,'Account number')}</div>
+        <div class="vendor-info-row"><span class="vendor-info-label">Min Order</span>${cvField(v.id,'minOrder',v.minOrder,'e.g. $250')}</div>
+        <div class="vendor-info-row"><span class="vendor-info-label">Notes</span>${cvField(v.id,'notes',v.notes,'Any notes...')}</div>
+        ${managerUnlocked?`<div class="vendor-info-row"><span class="vendor-info-label">Order Site</span><div style="display:flex;flex-direction:column;gap:4px;flex:1">${v.orderUrl?`<a href="${escV(v.orderUrl)}" target="_blank" style="font-size:12px;color:var(--green-mid);text-decoration:none;font-weight:500">${escV(v.orderUrl)}</a>`:''}<input class="vendor-info-input" placeholder="https://..." value="${escV(v.orderUrl)}" onchange="updateCustomVendor('${v.id}','orderUrl',this.value);renderVendors()"/></div></div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  grid.innerHTML=builtIn+custom;
 }
 function updateVendorContact(vendor,field,val){
   if(!vendorContacts[vendor])vendorContacts[vendor]={};
@@ -2147,7 +2211,7 @@ function markDirty(){if(_pubDirty)return;_pubDirty=true;_pubSet('dirty','Publish
 async function publishAll(){
   try{if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();}catch(e){}
   _pubSet('saving','Publishing…');
-  ['saveC1','saveC2','saveC3','saveC4','saveC5','saveCSW','saveWine','saveVendorContacts'].forEach(function(fn){try{window[fn]&&window[fn]();}catch(e){}});
+  ['saveC1','saveC2','saveC3','saveC4','saveC5','saveCSW','saveWine','saveVendorContacts','saveCustomVendors'].forEach(function(fn){try{window[fn]&&window[fn]();}catch(e){}});
   try{localStorage.setItem('sm-invoices',JSON.stringify(invoiceMeta));}catch(e){}
   try{if(window.OG&&OG.saveNow)OG.saveNow();}catch(e){}
   // Wait for every cloud write this publish triggered to actually confirm
@@ -2592,6 +2656,7 @@ var OG=(function(){
   try{cloudSeed(cloudKeys);}catch(e){}      // upload anything the cloud doesn't have yet
   // re-sync module vars whose renders don't re-read localStorage
   try{vendorContacts=JSON.parse(localStorage.getItem('sm-vendor-contacts')||'{}');Object.entries(VENDOR_DEFAULTS).forEach(function(e){if(!vendorContacts[e[0]])vendorContacts[e[0]]=e[1];});}catch(e){}
+  try{customVendors=JSON.parse(localStorage.getItem('sm-custom-vendors')||'[]');}catch(e){}
   try{var _w=localStorage.getItem('sm-winedata');if(_w)wineData=JSON.parse(_w);}catch(e){}
   try{var _cs=localStorage.getItem('sm-cswdata');if(_cs)cswdata=JSON.parse(_cs);}catch(e){}
   try{invoiceMeta=JSON.parse(localStorage.getItem('sm-invoices')||'[]');}catch(e){}
