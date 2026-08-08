@@ -1883,13 +1883,11 @@ let customVendors=JSON.parse(localStorage.getItem('sm-custom-vendors')||'[]');
 function saveCustomVendors(){localStorage.setItem('sm-custom-vendors',JSON.stringify(customVendors));}
 function escV(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
 function addCustomVendor(){
-  const name=(prompt('New vendor name:')||'').trim();
-  if(!name)return;
-  const dup=VENDOR_DATA.some(v=>v.name.toLowerCase()===name.toLowerCase())||customVendors.some(v=>v.name.toLowerCase()===name.toLowerCase());
-  if(dup){alert('A vendor named "'+name+'" already exists.');return;}
   const palette=['#607D8B','#5D4037','#00838F','#6D4C41','#455A64','#4527A0','#00695C'];
-  customVendors.push({id:'cv'+Date.now(),name,color:palette[customVendors.length%palette.length],rep:'',phone:'',email:'',terms:'',orderDay:'',deliveryDay:'',account:'',minOrder:'',notes:'',orderUrl:''});
+  const id='cv'+Date.now();
+  customVendors.push({id,name:'',color:palette[customVendors.length%palette.length],rep:'',phone:'',email:'',terms:'',orderDay:'',deliveryDay:'',account:'',minOrder:'',notes:'',orderUrl:''});
   saveCustomVendors();renderVendors();
+  setTimeout(function(){var el=document.getElementById('cv-name-'+id);if(el){el.focus();el.scrollIntoView({behavior:'smooth',block:'center'});}},0);
 }
 function updateCustomVendor(id,field,val){
   const v=customVendors.find(x=>x.id===id);if(!v)return;
@@ -1956,7 +1954,7 @@ function renderVendors(){
     return `<div class="vendor-card">
       <div class="vendor-card-head">
         <div class="vendor-card-dot" style="background:${v.color}"></div>
-        ${managerUnlocked?`<input class="vendor-info-input" style="flex:1;font-weight:700;padding:4px 8px" value="${escV(v.name)}" onchange="updateCustomVendor('${v.id}','name',this.value);renderVendors()"/>`:`<div class="vendor-card-name">${escV(v.name)}</div>`}
+        ${managerUnlocked?`<input id="cv-name-${v.id}" class="vendor-info-input" style="flex:1;font-weight:700;padding:4px 8px" placeholder="Vendor name" value="${escV(v.name)}" onchange="updateCustomVendor('${v.id}','name',this.value);renderVendors()"/>`:`<div class="vendor-card-name">${escV(v.name)||'New vendor'}</div>`}
         ${managerUnlocked?`<button class="tb-btn" style="height:24px;padding:2px 9px;font-size:10px" onclick="delCustomVendor('${v.id}')">remove</button>`:''}
       </div>
       <div class="vendor-card-body">
