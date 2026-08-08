@@ -837,11 +837,29 @@ function switchCooler(i){
 }
 
 // ── CUSTOM VENDORS ────────────────────────────────────────────────
-let CUSTOM_VENDORS={};
+// Single source of truth for "vendors not in the fixed VENDOR_DATA list" —
+// shared by the Vendors page cards AND the "+ Add New Vendor" option inside
+// every cooler/snack-wall item's vendor picker, so a vendor added from
+// either place shows up in both automatically.
+let customVendors=JSON.parse(localStorage.getItem('sm-custom-vendors')||'[]');
+function saveCustomVendors(){localStorage.setItem('sm-custom-vendors',JSON.stringify(customVendors));}
+let CUSTOM_VENDORS={};                 // name -> {hdr,bg,tx} color lookup, derived from customVendors
+function _cvRebuild(){CUSTOM_VENDORS={};customVendors.forEach(function(v){if(v.name)CUSTOM_VENDORS[v.name]={hdr:v.color,bg:v.color+'22',tx:v.color};});}
+_cvRebuild();
 let _vendorCb=null;
-function _cvLoad(){const s=localStorage.getItem('sm-custom-vendors');if(s)try{CUSTOM_VENDORS=JSON.parse(s);}catch(e){}}
-function _cvSave(){localStorage.setItem('sm-custom-vendors',JSON.stringify(CUSTOM_VENDORS));}
-function _cvSet(name,hdr){if(!name||!name.trim())return;const bg=hdr+'22';CUSTOM_VENDORS[name.trim()]={hdr,bg,tx:hdr};_cvSave();}
+function _cvSet(name,hdr){
+  name=(name||'').trim();if(!name)return;
+  // A name matching a built-in VENDOR_DATA vendor already has a real card and
+  // already wins every color lookup ahead of CUSTOM_VENDORS — don't shadow it
+  // with a duplicate customVendors entry.
+  if(typeof VENDOR_DATA!=='undefined'&&VENDOR_DATA.some(function(x){return x.name.toLowerCase()===name.toLowerCase();})){
+    CUSTOM_VENDORS[name]={hdr,bg:hdr+'22',tx:hdr};return;
+  }
+  let v=customVendors.find(function(x){return x.name.toLowerCase()===name.toLowerCase();});
+  if(v)v.color=hdr;
+  else{v={id:'cv'+Date.now(),name,color:hdr,rep:'',phone:'',email:'',terms:'',orderDay:'',deliveryDay:'',account:'',minOrder:'',notes:'',orderUrl:''};customVendors.push(v);}
+  saveCustomVendors();_cvRebuild();
+}
 function _cvColor(name,base){return base[name]||CUSTOM_VENDORS[name]||{hdr:'#9E9E9E',bg:'#F5F5F5',tx:'#616161'};}
 function _vendorSelChg(selId){
   const sel=document.getElementById(selId);
@@ -865,7 +883,6 @@ function _vendorAddSave(selId){
   document.getElementById(selId+'-nr').style.display='none';
   if(_vendorCb)_vendorCb(name);
 }
-_cvLoad();
 function _calcMarginStr(price,cost){
   const p=parseFloat((price||'').toString().replace(/[^0-9.]/g,''));
   const c=parseFloat((cost||'').toString().replace(/[^0-9.]/g,''));
@@ -1878,9 +1895,6 @@ Object.entries(VENDOR_DEFAULTS).forEach(([name,data])=>{
   else vendorContacts[name]={...data,...vendorContacts[name]};
 });
 function saveVendorContacts(){localStorage.setItem('sm-vendor-contacts',JSON.stringify(vendorContacts));}
-/* Vendors added manually from the Vendors page (not tied to any planogram brand). */
-let customVendors=JSON.parse(localStorage.getItem('sm-custom-vendors')||'[]');
-function saveCustomVendors(){localStorage.setItem('sm-custom-vendors',JSON.stringify(customVendors));}
 function escV(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
 /* Vendor names already referenced elsewhere (e.g. the snack wall's brand->vendor
    map) that don't have a contact card yet — offered as dropdown picks so a
@@ -1897,11 +1911,35 @@ function customVendorTypeName(id){
   v._typing=true;renderVendors();
   setTimeout(function(){var el=document.getElementById('cv-name-'+id);if(el)el.focus();},0);
 }
-/* Items on the snack wall tagged to this vendor name in CSW_BV — kept live
-   off the snack wall data instead of a hand-maintained list. */
-function vendorSnackItems(name){
+/* Every planogram item currently tagged to this vendor name — live off the
+   actual cooler/snack-wall data (not a hand-maintained list), so an item
+   added anywhere with this vendor shows up here automatically. */
+function vendorPlanogramItems(name){
   if(!name)return[];
-  return Object.keys(CSW_BV).filter(function(p){return CSW_BV[p]===name;}).sort();
+  const items=[];
+  [['c1',typeof c1data!=='undefined'?c1data:null],['c2',typeof c2data!=='undefined'?c2data:null],
+   ['c3',typeof c3data!=='undefined'?c3data:null],['c4',typeof c4data!=='undefined'?c4data:null],
+   ['c5',typeof c5data!=='undefined'?c5data:null]].forEach(function(pair){
+    const pfx=pair[0],data=pair[1];if(!data||!data.shelves)return;
+    data.shelves.forEach(function(sh){(sh.brands||[]).forEach(function(b){
+      if(_pfxCurrentVendor(b,pfx)!==name)return;
+      (b.flavors||[]).forEach(function(f){if(f.name&&f.name!=='new flavor')items.push((b.name+' '+f.name).trim());});
+    });});
+  });
+  try{
+    const csw=typeof cswdata!=='undefined'?cswdata:null;
+    (csw&&csw.shelves||[]).forEach(function(sh){
+      (sh.rows||[]).forEach(function(row){(row.products||[]).forEach(function(p){
+        if(!p.name||p.name==='New Item')return;
+        if((p.vendor||CSW_BV[p.name]||'Unknown')===name)items.push((p.name+(p.variety?' '+p.variety:'')).trim());
+      });});
+      ['leftHanger','rightHanger'].forEach(function(side){(sh[side]||[]).forEach(function(p){
+        if(!p.name)return;
+        if((p.vendor||CSW_BV[p.name]||'Unknown')===name)items.push((p.name+(p.variety?' '+p.variety:'')).trim());
+      });});
+    });
+  }catch(e){}
+  return Array.from(new Set(items)).sort();
 }
 function addCustomVendor(){
   const palette=['#607D8B','#5D4037','#00838F','#6D4C41','#455A64','#4527A0','#00695C'];
@@ -1919,13 +1957,13 @@ function updateCustomVendor(id,field,val){
     if(dup)return;
     v.name=name;
   }else v[field]=val;
-  saveCustomVendors();
+  saveCustomVendors();_cvRebuild();
 }
 function delCustomVendor(id){
   const v=customVendors.find(x=>x.id===id);
   if(!v||!confirm('Remove vendor "'+v.name+'"? This cannot be undone.'))return;
   customVendors=customVendors.filter(x=>x.id!==id);
-  saveCustomVendors();renderVendors();
+  saveCustomVendors();_cvRebuild();renderVendors();
 }
 function cvField(id,field,val,placeholder){
   const safe=escV(val);
@@ -2005,8 +2043,8 @@ function renderVendors(){
         <div class="vendor-info-row"><span class="vendor-info-label">Min Order</span>${cvField(v.id,'minOrder',v.minOrder,'e.g. $250')}</div>
         <div class="vendor-info-row"><span class="vendor-info-label">Notes</span>${cvField(v.id,'notes',v.notes,'Any notes...')}</div>
         ${managerUnlocked?`<div class="vendor-info-row"><span class="vendor-info-label">Order Site</span><div style="display:flex;flex-direction:column;gap:4px;flex:1">${v.orderUrl?`<a href="${escV(v.orderUrl)}" target="_blank" style="font-size:12px;color:var(--green-mid);text-decoration:none;font-weight:500">${escV(v.orderUrl)}</a>`:''}<input class="vendor-info-input" placeholder="https://..." value="${escV(v.orderUrl)}" onchange="updateCustomVendor('${v.id}','orderUrl',this.value);renderVendors()"/></div></div>`:''}
-        ${(function(){const items=vendorSnackItems(v.name);return items.length?`<div class="vendor-products">
-          <div class="vendor-products-label">Items Ordered <span style="text-transform:none;letter-spacing:0;color:var(--green-mid)">· from snack wall</span></div>
+        ${(function(){const items=vendorPlanogramItems(v.name);return items.length?`<div class="vendor-products">
+          <div class="vendor-products-label">Items Ordered <span style="text-transform:none;letter-spacing:0;color:var(--green-mid)">· synced from planograms</span></div>
           <div class="vendor-tag-list">${items.map(p=>`<span class="vendor-tag-pill">${escV(p)}</span>`).join('')}</div>
         </div>`:'';})()}
       </div>
