@@ -116,8 +116,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--black);disp
 .shelf-row{display:flex;width:100%;padding:4px 6px;gap:3px;align-items:flex-end}
 .brand-group{display:flex;flex-direction:column;min-width:0}
 body.manager-mode .brand-group{cursor:grab;-webkit-user-select:none;user-select:none;-webkit-user-drag:element}
-.brand-group.dragging{opacity:.35}
-.shelf-row.drag-over{outline:2px dashed var(--green);outline-offset:-4px;background:rgba(46,125,50,.06);border-radius:6px}
+.brand-group.dragging,.flavor-block.dragging{opacity:.35}
+.shelf-row.drag-over,.brand-group.drag-over,.brand-flavors.drag-over{outline:2px dashed var(--green);outline-offset:-4px;background:rgba(46,125,50,.06);border-radius:6px}
+body.manager-mode .flavor-block{cursor:grab;-webkit-user-select:none;user-select:none;-webkit-user-drag:element}
 .brand-header{font-size:8px;font-weight:600;padding:3px 4px;border-radius:4px 4px 0 0;text-align:center;overflow:hidden;color:#fff;line-height:1.3}
 .brand-name-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
 .brand-oz-line{font-size:7px;font-weight:400;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
@@ -1137,10 +1138,12 @@ function _pfxCurrentVendor(b,pfx){
   return 'Unknown';
 }
 
-// ── Drag-and-drop: drag a brand box to a new spot on any shelf, in any
-//    cooler. Vendor color-coding is baked onto the brand explicitly when it
-//    crosses coolers, since each cooler's default vendor map only covers its
-//    own brands. ──────────────────────────────────────────────────
+// ── Drag-and-drop: brand boxes AND individual flavors within them, across
+//    any shelf or cooler. Drop targets are attached directly to each
+//    box/flavor tile (not just the shelf-row container) so hovering over a
+//    neighbor always resolves to a real drop target. Vendor color-coding is
+//    baked onto the brand explicitly when a box crosses coolers, since each
+//    cooler's default vendor map only covers its own brands. ─────────────
 function _pfxData(pfx){return pfx==='c1'?c1data:pfx==='c2'?c2data:pfx==='c3'?c3data:pfx==='c4'?c4data:pfx==='c5'?c5data:null;}
 function _pfxResolvedVendor(pfx,b){
   if(pfx==='c1')return c1Vendor(b.name,b.vendor);
@@ -1153,40 +1156,52 @@ function _pfxResolvedVendor(pfx,b){
 var PFX_SAVE={c1:saveC1,c2:saveC2,c3:saveC3,c4:saveC4,c5:saveC5};
 var PFX_RENDER={c1:c1Render,c2:c2Render,c3:c3Render,c4:c4Render,c5:c5Render};
 var PFX_SNAP={c1:c1Snap,c2:c2Snap,c3:c3Snap,c4:c4Snap,c5:c5Snap};
-var _dragBrand=null;
+var _drag=null; // {level:'brand',pfx,shelfId,brandId} or {level:'flavor',pfx,shelfId,brandId,flavorId}
+function _clearDragUI(){
+  Array.prototype.forEach.call(document.querySelectorAll('.dragging'),function(el){el.classList.remove('dragging');});
+  Array.prototype.forEach.call(document.querySelectorAll('.drag-over'),function(el){el.classList.remove('drag-over');});
+}
+function dragEndCleanup(){_clearDragUI();}
+
+/* ---- brand-box level: drag source = .brand-group; drop targets = every
+   .brand-group (before/after it) + the .shelf-row itself (append to end) */
 function brandDragStart(e,pfx,shelfId,brandId){
   if(!managerUnlocked){e.preventDefault();requireManager(function(){});return;}
-  _dragBrand={pfx:pfx,shelfId:shelfId,brandId:brandId};
+  e.stopPropagation();
+  _drag={level:'brand',pfx:pfx,shelfId:shelfId,brandId:brandId};
   e.dataTransfer.effectAllowed='move';
-  try{e.dataTransfer.setData('text/plain',brandId);}catch(err){}
+  try{e.dataTransfer.setData('text/plain','brand:'+brandId);}catch(err){}
   e.currentTarget.classList.add('dragging');
 }
-function brandDragEnd(e){
-  e.currentTarget.classList.remove('dragging');
-  Array.prototype.forEach.call(document.querySelectorAll('.shelf-row.drag-over'),function(el){el.classList.remove('drag-over');});
+function brandDragOver(e){
+  if(!_drag||_drag.level!=='brand')return;
+  e.preventDefault();e.stopPropagation();
+  e.currentTarget.classList.add('drag-over');
+}
+function brandDragLeave(e){e.currentTarget.classList.remove('drag-over');}
+function brandDrop(e,toPfx,toShelfId,toBrandId){
+  if(!_drag||_drag.level!=='brand')return;
+  e.preventDefault();e.stopPropagation();
+  e.currentTarget.classList.remove('drag-over');
+  var drag=_drag;_drag=null;
+  var r=e.currentTarget.getBoundingClientRect();
+  moveBrandBox(drag.pfx,drag.shelfId,drag.brandId,toPfx,toShelfId,toBrandId,e.clientX<r.left+r.width/2);
 }
 function shelfRowDragOver(e){
-  if(!_dragBrand)return;
+  if(!_drag||_drag.level!=='brand')return;
   e.preventDefault();
   e.currentTarget.classList.add('drag-over');
 }
-function shelfRowDragLeave(e){
-  e.currentTarget.classList.remove('drag-over');
-}
+function shelfRowDragLeave(e){e.currentTarget.classList.remove('drag-over');}
 function shelfRowDrop(e,toPfx,toShelfId){
+  if(!_drag||_drag.level!=='brand')return;
   e.preventDefault();
   e.currentTarget.classList.remove('drag-over');
-  if(!_dragBrand)return;
-  var drag=_dragBrand;_dragBrand=null;
-  var groups=Array.prototype.filter.call(e.currentTarget.children,function(el){return el.classList.contains('brand-group');});
-  var insertIdx=groups.length;
-  for(var i=0;i<groups.length;i++){
-    var r=groups[i].getBoundingClientRect();
-    if(e.clientX<r.left+r.width/2){insertIdx=i;break;}
-  }
-  moveBrandBox(drag.pfx,drag.shelfId,drag.brandId,toPfx,toShelfId,insertIdx);
+  var drag=_drag;_drag=null;
+  moveBrandBox(drag.pfx,drag.shelfId,drag.brandId,toPfx,toShelfId,null,false);
 }
-function moveBrandBox(fromPfx,fromShelfId,brandId,toPfx,toShelfId,insertIdx){
+function moveBrandBox(fromPfx,fromShelfId,brandId,toPfx,toShelfId,targetBrandId,before){
+  if(brandId===targetBrandId)return;
   var fromData=_pfxData(fromPfx),toData=_pfxData(toPfx);
   if(!fromData||!toData)return;
   var fromShelf=fromData.shelves.find(function(s){return s.id===fromShelfId;});
@@ -1194,14 +1209,79 @@ function moveBrandBox(fromPfx,fromShelfId,brandId,toPfx,toShelfId,insertIdx){
   if(!fromShelf||!toShelf)return;
   var idx=fromShelf.brands.findIndex(function(x){return x.id===brandId;});
   if(idx===-1)return;
-  if(fromShelf===toShelf&&(insertIdx===idx||insertIdx===idx+1))return; // dropped back where it started
   if(PFX_SNAP[fromPfx])PFX_SNAP[fromPfx]();
   if(toPfx!==fromPfx&&PFX_SNAP[toPfx])PFX_SNAP[toPfx]();
   var b=fromShelf.brands.splice(idx,1)[0];
-  var ins=insertIdx;
-  if(fromShelf===toShelf&&idx<ins)ins--;
+  var insertIdx=toShelf.brands.length;
+  if(targetBrandId){
+    var ti=toShelf.brands.findIndex(function(x){return x.id===targetBrandId;});
+    insertIdx=ti===-1?toShelf.brands.length:(before?ti:ti+1);
+  }
   if(toPfx!==fromPfx)b.vendor=_pfxResolvedVendor(fromPfx,b);
-  toShelf.brands.splice(Math.max(0,Math.min(ins,toShelf.brands.length)),0,b);
+  toShelf.brands.splice(insertIdx,0,b);
+  PFX_SAVE[fromPfx]();PFX_RENDER[fromPfx]();
+  if(toPfx!==fromPfx){PFX_SAVE[toPfx]();PFX_RENDER[toPfx]();}
+}
+
+/* ---- flavor level: drag source = .flavor-block; drop targets = every
+   .flavor-block (before/after it, in any brand) + a brand's .brand-flavors
+   row itself (append to end of that brand) */
+function flavorDragStart(e,pfx,shelfId,brandId,flavorId){
+  if(!managerUnlocked){e.preventDefault();requireManager(function(){});return;}
+  e.stopPropagation();
+  _drag={level:'flavor',pfx:pfx,shelfId:shelfId,brandId:brandId,flavorId:flavorId};
+  e.dataTransfer.effectAllowed='move';
+  try{e.dataTransfer.setData('text/plain','flavor:'+flavorId);}catch(err){}
+  e.currentTarget.classList.add('dragging');
+}
+function flavorDragOver(e){
+  if(!_drag||_drag.level!=='flavor')return;
+  e.preventDefault();e.stopPropagation();
+  e.currentTarget.classList.add('drag-over');
+}
+function flavorDragLeave(e){e.currentTarget.classList.remove('drag-over');}
+function flavorDrop(e,toPfx,toShelfId,toBrandId,toFlavorId){
+  if(!_drag||_drag.level!=='flavor')return;
+  e.preventDefault();e.stopPropagation();
+  e.currentTarget.classList.remove('drag-over');
+  var drag=_drag;_drag=null;
+  var r=e.currentTarget.getBoundingClientRect();
+  moveFlavor(drag.pfx,drag.shelfId,drag.brandId,drag.flavorId,toPfx,toShelfId,toBrandId,toFlavorId,e.clientX<r.left+r.width/2);
+}
+function flavorRowDragOver(e){
+  if(!_drag||_drag.level!=='flavor')return;
+  e.preventDefault();
+  e.currentTarget.classList.add('drag-over');
+}
+function flavorRowDragLeave(e){e.currentTarget.classList.remove('drag-over');}
+function flavorRowDrop(e,toPfx,toShelfId,toBrandId){
+  if(!_drag||_drag.level!=='flavor')return;
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  var drag=_drag;_drag=null;
+  moveFlavor(drag.pfx,drag.shelfId,drag.brandId,drag.flavorId,toPfx,toShelfId,toBrandId,null,false);
+}
+function moveFlavor(fromPfx,fromShelfId,fromBrandId,flavorId,toPfx,toShelfId,toBrandId,targetFlavorId,before){
+  if(flavorId===targetFlavorId)return;
+  var fromData=_pfxData(fromPfx),toData=_pfxData(toPfx);
+  if(!fromData||!toData)return;
+  var fromShelf=fromData.shelves.find(function(s){return s.id===fromShelfId;});
+  var toShelf=toData.shelves.find(function(s){return s.id===toShelfId;});
+  if(!fromShelf||!toShelf)return;
+  var fromBrand=fromShelf.brands.find(function(x){return x.id===fromBrandId;});
+  var toBrand=toShelf.brands.find(function(x){return x.id===toBrandId;});
+  if(!fromBrand||!toBrand)return;
+  var idx=fromBrand.flavors.findIndex(function(x){return x.id===flavorId;});
+  if(idx===-1)return;
+  if(PFX_SNAP[fromPfx])PFX_SNAP[fromPfx]();
+  if(toPfx!==fromPfx&&PFX_SNAP[toPfx])PFX_SNAP[toPfx]();
+  var f=fromBrand.flavors.splice(idx,1)[0];
+  var insertIdx=toBrand.flavors.length;
+  if(targetFlavorId){
+    var ti=toBrand.flavors.findIndex(function(x){return x.id===targetFlavorId;});
+    insertIdx=ti===-1?toBrand.flavors.length:(before?ti:ti+1);
+  }
+  toBrand.flavors.splice(insertIdx,0,f);
   PFX_SAVE[fromPfx]();PFX_RENDER[fromPfx]();
   if(toPfx!==fromPfx){PFX_SAVE[toPfx]();PFX_RENDER[toPfx]();}
 }
@@ -1271,13 +1351,17 @@ function c1Render(){
       const c=c1Color(b.name,b.vendor);const vendor=c1Vendor(b.name,b.vendor);
       const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
       const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf||1;grp.style.minWidth=bf?'0':'120px';
-      grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c1',sh.id,b.id);grp.ondragend=brandDragEnd;
+      grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c1',sh.id,b.id);grp.ondragend=dragEndCleanup;
+      grp.ondragover=brandDragOver;grp.ondragleave=brandDragLeave;grp.ondrop=e=>brandDrop(e,'c1',sh.id,b.id);
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} faces</div><div class="brand-flavors" id="c1-fl-${b.id}"></div>`;
       row.appendChild(grp);
       const flRow=document.getElementById('c1-fl-'+b.id);
+      flRow.ondragover=flavorRowDragOver;flRow.ondragleave=flavorRowDragLeave;flRow.ondrop=e=>flavorRowDrop(e,'c1',sh.id,b.id);
       b.flavors.forEach(f=>{
         const h=C1_H[f.id]||52;const isSel=c1Sel===f.id;
         const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
+        fb.draggable=true;fb.ondragstart=e=>flavorDragStart(e,'c1',sh.id,b.id,f.id);fb.ondragend=dragEndCleanup;
+        fb.ondragover=flavorDragOver;fb.ondragleave=flavorDragLeave;fb.ondrop=e=>flavorDrop(e,'c1',sh.id,b.id,f.id);
         fb.onclick=(e)=>{e.stopPropagation();requireManager(()=>coolerOpenModal(f,b,sh.id,b.id,'c1'));};
         const pct=Math.round((f.facings/total)*100);
         const imgTag=f.img?`<img src="${f.img}" draggable="false" onerror="this.style.display='none'"/>`:'';
@@ -1345,13 +1429,17 @@ function c2Render(){
       const c=c2Color(b.name,b.vendor);const vendor=c2Vendor(b.name,b.vendor);
       const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
       const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf||1;grp.style.minWidth=bf?'0':'120px';
-      grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c2',sh.id,b.id);grp.ondragend=brandDragEnd;
+      grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c2',sh.id,b.id);grp.ondragend=dragEndCleanup;
+      grp.ondragover=brandDragOver;grp.ondragleave=brandDragLeave;grp.ondrop=e=>brandDrop(e,'c2',sh.id,b.id);
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} faces</div><div class="brand-flavors" id="c2-fl-${b.id}"></div>`;
       row.appendChild(grp);
       const flRow=document.getElementById('c2-fl-'+b.id);
+      flRow.ondragover=flavorRowDragOver;flRow.ondragleave=flavorRowDragLeave;flRow.ondrop=e=>flavorRowDrop(e,'c2',sh.id,b.id);
       b.flavors.forEach(f=>{
         const isSel=c2Sel===f.id;
         const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
+        fb.draggable=true;fb.ondragstart=e=>flavorDragStart(e,'c2',sh.id,b.id,f.id);fb.ondragend=dragEndCleanup;
+        fb.ondragover=flavorDragOver;fb.ondragleave=flavorDragLeave;fb.ondrop=e=>flavorDrop(e,'c2',sh.id,b.id,f.id);
         fb.onclick=(e)=>{e.stopPropagation();requireManager(()=>coolerOpenModal(f,b,sh.id,b.id,'c2'));};
         const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:56px">${b.name.split(' ')[0]}</div>`).join('');
         fb.innerHTML=`<div class="facings">${fDivs}</div>${mkFoot(f,c,vendor,sh.id,b.id,f.id,c2Sel)}<div class="dp${isSel?' open':''}">${mkFields(f,b,sh.id,b.id,'c2')}</div>`;
@@ -1419,13 +1507,17 @@ function c3Render(){
       const c=c3Color(b.vendor);const vendor=c3Vendor(b.vendor);
       const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
       const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf||1;grp.style.minWidth=bf?'0':'120px';
-      grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c3',sh.id,b.id);grp.ondragend=brandDragEnd;
+      grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c3',sh.id,b.id);grp.ondragend=dragEndCleanup;
+      grp.ondragover=brandDragOver;grp.ondragleave=brandDragLeave;grp.ondrop=e=>brandDrop(e,'c3',sh.id,b.id);
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} faces</div><div class="brand-flavors" id="c3-fl-${b.id}"></div>`;
       row.appendChild(grp);
       const flRow=document.getElementById('c3-fl-'+b.id);
+      flRow.ondragover=flavorRowDragOver;flRow.ondragleave=flavorRowDragLeave;flRow.ondrop=e=>flavorRowDrop(e,'c3',sh.id,b.id);
       b.flavors.forEach(f=>{
         const isSel=c3Sel===f.id;
         const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
+        fb.draggable=true;fb.ondragstart=e=>flavorDragStart(e,'c3',sh.id,b.id,f.id);fb.ondragend=dragEndCleanup;
+        fb.ondragover=flavorDragOver;fb.ondragleave=flavorDragLeave;fb.ondrop=e=>flavorDrop(e,'c3',sh.id,b.id,f.id);
         fb.onclick=(e)=>{e.stopPropagation();requireManager(()=>coolerOpenModal(f,b,sh.id,b.id,'c3'));};
         const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:56px">${b.name.split(' ')[0]}</div>`).join('');
         fb.innerHTML=`<div class="facings">${fDivs}</div>${mkFoot(f,c,vendor,sh.id,b.id,f.id,c3Sel)}<div class="dp${isSel?' open':''}">${mkFields(f,b,sh.id,b.id,'c3')}</div>`;
@@ -1499,13 +1591,17 @@ function c4Render(){
       const c=c4Color(b.name,b.vendor);const vendor=c4Vendor(b.name,b.vendor);
       const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
       const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf||1;grp.style.minWidth=bf?'0':'120px';
-      grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c4',sh.id,b.id);grp.ondragend=brandDragEnd;
+      grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c4',sh.id,b.id);grp.ondragend=dragEndCleanup;
+      grp.ondragover=brandDragOver;grp.ondragleave=brandDragLeave;grp.ondrop=e=>brandDrop(e,'c4',sh.id,b.id);
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} face${bf!==1?'s':''}</div><div class="brand-flavors" id="c4-fl-${b.id}"></div>`;
       row.appendChild(grp);
       const flRow=document.getElementById('c4-fl-'+b.id);
+      flRow.ondragover=flavorRowDragOver;flRow.ondragleave=flavorRowDragLeave;flRow.ondrop=e=>flavorRowDrop(e,'c4',sh.id,b.id);
       b.flavors.forEach(f=>{
         const isSel=c4Sel===f.id;
         const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
+        fb.draggable=true;fb.ondragstart=e=>flavorDragStart(e,'c4',sh.id,b.id,f.id);fb.ondragend=dragEndCleanup;
+        fb.ondragover=flavorDragOver;fb.ondragleave=flavorDragLeave;fb.ondrop=e=>flavorDrop(e,'c4',sh.id,b.id,f.id);
         fb.onclick=(e)=>{e.stopPropagation();requireManager(()=>coolerOpenModal(f,b,sh.id,b.id,'c4'));};
         const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:68px">${b.name.split(' ')[0]}</div>`).join('');
         fb.innerHTML=`<div class="facings">${fDivs}</div>${mkFoot(f,c,vendor,sh.id,b.id,f.id,c4Sel)}<div class="dp${isSel?' open':''}">${mkFields(f,b,sh.id,b.id,'c4')}</div>`;
@@ -1658,13 +1754,17 @@ function c5Render(){
       const c=c5Color(b.name,b.vendor);const vendor=c5Vendor(b.name,b.vendor);
       const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
       const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf||1;grp.style.minWidth=bf?'0':'120px';
-      grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c5',sh.id,b.id);grp.ondragend=brandDragEnd;
+      grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c5',sh.id,b.id);grp.ondragend=dragEndCleanup;
+      grp.ondragover=brandDragOver;grp.ondragleave=brandDragLeave;grp.ondrop=e=>brandDrop(e,'c5',sh.id,b.id);
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf}f</div><div class="brand-flavors" id="c5-fl-${b.id}"></div>`;
       row.appendChild(grp);
       const flRow=document.getElementById('c5-fl-'+b.id);
+      flRow.ondragover=flavorRowDragOver;flRow.ondragleave=flavorRowDragLeave;flRow.ondrop=e=>flavorRowDrop(e,'c5',sh.id,b.id);
       b.flavors.forEach(f=>{
         const isSel=c5Sel===f.id;
         const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
+        fb.draggable=true;fb.ondragstart=e=>flavorDragStart(e,'c5',sh.id,b.id,f.id);fb.ondragend=dragEndCleanup;
+        fb.ondragover=flavorDragOver;fb.ondragleave=flavorDragLeave;fb.ondrop=e=>flavorDrop(e,'c5',sh.id,b.id,f.id);
         fb.onclick=(e)=>{e.stopPropagation();requireManager(()=>coolerOpenModal(f,b,sh.id,b.id,'c5'));};
         const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:52px">${b.name.split(' ')[0]}</div>`).join('');
         fb.innerHTML=`<div class="facings">${fDivs}</div>${mkFoot(f,c,vendor,sh.id,b.id,f.id,c5Sel)}<div class="dp${isSel?' open':''}">${mkFields(f,b,sh.id,b.id,'c5')}</div>`;
