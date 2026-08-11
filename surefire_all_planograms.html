@@ -115,6 +115,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--black);disp
 .shelf-faces{font-size:10px;color:var(--gray-dark);font-family:var(--mono)}
 .shelf-row{display:flex;width:100%;padding:4px 6px;gap:3px;align-items:flex-end}
 .brand-group{display:flex;flex-direction:column;min-width:0}
+body.manager-mode .brand-group{cursor:grab;-webkit-user-select:none;user-select:none;-webkit-user-drag:element}
+.brand-group.dragging{opacity:.35}
+.shelf-row.drag-over{outline:2px dashed var(--green);outline-offset:-4px;background:rgba(46,125,50,.06);border-radius:6px}
 .brand-header{font-size:8px;font-weight:600;padding:3px 4px;border-radius:4px 4px 0 0;text-align:center;overflow:hidden;color:#fff;line-height:1.3}
 .brand-name-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
 .brand-oz-line{font-size:7px;font-weight:400;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
@@ -1134,6 +1137,75 @@ function _pfxCurrentVendor(b,pfx){
   return 'Unknown';
 }
 
+// ── Drag-and-drop: drag a brand box to a new spot on any shelf, in any
+//    cooler. Vendor color-coding is baked onto the brand explicitly when it
+//    crosses coolers, since each cooler's default vendor map only covers its
+//    own brands. ──────────────────────────────────────────────────
+function _pfxData(pfx){return pfx==='c1'?c1data:pfx==='c2'?c2data:pfx==='c3'?c3data:pfx==='c4'?c4data:pfx==='c5'?c5data:null;}
+function _pfxResolvedVendor(pfx,b){
+  if(pfx==='c1')return c1Vendor(b.name,b.vendor);
+  if(pfx==='c2')return c2Vendor(b.name,b.vendor);
+  if(pfx==='c3')return c3Vendor(b.vendor);
+  if(pfx==='c4')return c4Vendor(b.name,b.vendor);
+  if(pfx==='c5')return c5Vendor(b.name,b.vendor);
+  return b.vendor||'Unknown';
+}
+var PFX_SAVE={c1:saveC1,c2:saveC2,c3:saveC3,c4:saveC4,c5:saveC5};
+var PFX_RENDER={c1:c1Render,c2:c2Render,c3:c3Render,c4:c4Render,c5:c5Render};
+var PFX_SNAP={c1:c1Snap,c2:c2Snap,c3:c3Snap,c4:c4Snap,c5:c5Snap};
+var _dragBrand=null;
+function brandDragStart(e,pfx,shelfId,brandId){
+  if(!managerUnlocked){e.preventDefault();requireManager(function(){});return;}
+  _dragBrand={pfx:pfx,shelfId:shelfId,brandId:brandId};
+  e.dataTransfer.effectAllowed='move';
+  try{e.dataTransfer.setData('text/plain',brandId);}catch(err){}
+  e.currentTarget.classList.add('dragging');
+}
+function brandDragEnd(e){
+  e.currentTarget.classList.remove('dragging');
+  Array.prototype.forEach.call(document.querySelectorAll('.shelf-row.drag-over'),function(el){el.classList.remove('drag-over');});
+}
+function shelfRowDragOver(e){
+  if(!_dragBrand)return;
+  e.preventDefault();
+  e.currentTarget.classList.add('drag-over');
+}
+function shelfRowDragLeave(e){
+  e.currentTarget.classList.remove('drag-over');
+}
+function shelfRowDrop(e,toPfx,toShelfId){
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if(!_dragBrand)return;
+  var drag=_dragBrand;_dragBrand=null;
+  var groups=Array.prototype.filter.call(e.currentTarget.children,function(el){return el.classList.contains('brand-group');});
+  var insertIdx=groups.length;
+  for(var i=0;i<groups.length;i++){
+    var r=groups[i].getBoundingClientRect();
+    if(e.clientX<r.left+r.width/2){insertIdx=i;break;}
+  }
+  moveBrandBox(drag.pfx,drag.shelfId,drag.brandId,toPfx,toShelfId,insertIdx);
+}
+function moveBrandBox(fromPfx,fromShelfId,brandId,toPfx,toShelfId,insertIdx){
+  var fromData=_pfxData(fromPfx),toData=_pfxData(toPfx);
+  if(!fromData||!toData)return;
+  var fromShelf=fromData.shelves.find(function(s){return s.id===fromShelfId;});
+  var toShelf=toData.shelves.find(function(s){return s.id===toShelfId;});
+  if(!fromShelf||!toShelf)return;
+  var idx=fromShelf.brands.findIndex(function(x){return x.id===brandId;});
+  if(idx===-1)return;
+  if(fromShelf===toShelf&&(insertIdx===idx||insertIdx===idx+1))return; // dropped back where it started
+  if(PFX_SNAP[fromPfx])PFX_SNAP[fromPfx]();
+  if(toPfx!==fromPfx&&PFX_SNAP[toPfx])PFX_SNAP[toPfx]();
+  var b=fromShelf.brands.splice(idx,1)[0];
+  var ins=insertIdx;
+  if(fromShelf===toShelf&&idx<ins)ins--;
+  if(toPfx!==fromPfx)b.vendor=_pfxResolvedVendor(fromPfx,b);
+  toShelf.brands.splice(Math.max(0,Math.min(ins,toShelf.brands.length)),0,b);
+  PFX_SAVE[fromPfx]();PFX_RENDER[fromPfx]();
+  if(toPfx!==fromPfx){PFX_SAVE[toPfx]();PFX_RENDER[toPfx]();}
+}
+
 // ════════════════════════════════════════════════════════════════
 // COOLER 1 — TURBO AIR
 // ════════════════════════════════════════════════════════════════
@@ -1194,10 +1266,12 @@ function c1Render(){
     sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c1-row-${sh.id}"></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c1-row-'+sh.id);
+    row.ondragover=shelfRowDragOver;row.ondragleave=shelfRowDragLeave;row.ondrop=e=>shelfRowDrop(e,'c1',sh.id);
     sh.brands.forEach(b=>{
       const c=c1Color(b.name,b.vendor);const vendor=c1Vendor(b.name,b.vendor);
       const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
       const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf||1;grp.style.minWidth=bf?'0':'120px';
+      grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c1',sh.id,b.id);grp.ondragend=brandDragEnd;
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} faces</div><div class="brand-flavors" id="c1-fl-${b.id}"></div>`;
       row.appendChild(grp);
       const flRow=document.getElementById('c1-fl-'+b.id);
@@ -1206,7 +1280,7 @@ function c1Render(){
         const fb=document.createElement('div');fb.className='flavor-block'+(isSel?' sel':'');fb.style.flex=f.facings;
         fb.onclick=(e)=>{e.stopPropagation();requireManager(()=>coolerOpenModal(f,b,sh.id,b.id,'c1'));};
         const pct=Math.round((f.facings/total)*100);
-        const imgTag=f.img?`<img src="${f.img}" onerror="this.style.display='none'"/>`:'';
+        const imgTag=f.img?`<img src="${f.img}" draggable="false" onerror="this.style.display='none'"/>`:'';
         const fDivs=Array.from({length:f.facings},()=>`<div class="f" style="background:${c.bg};color:${c.tx};height:${h}px">${imgTag}<span>${f.img?'':b.name.split(' ')[0]}</span></div>`).join('');
         fb.innerHTML=`<div class="facings">${fDivs}</div>${mkFoot(f,c,vendor,sh.id,b.id,f.id,c1Sel)}<div class="dp${isSel?' open':''}">${mkFields(f,b,sh.id,b.id,'c1')}</div>`;
         flRow.appendChild(fb);
@@ -1266,10 +1340,12 @@ function c2Render(){
     sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c2-row-${sh.id}"></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c2-row-'+sh.id);
+    row.ondragover=shelfRowDragOver;row.ondragleave=shelfRowDragLeave;row.ondrop=e=>shelfRowDrop(e,'c2',sh.id);
     sh.brands.forEach(b=>{
       const c=c2Color(b.name,b.vendor);const vendor=c2Vendor(b.name,b.vendor);
       const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
       const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf||1;grp.style.minWidth=bf?'0':'120px';
+      grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c2',sh.id,b.id);grp.ondragend=brandDragEnd;
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} faces</div><div class="brand-flavors" id="c2-fl-${b.id}"></div>`;
       row.appendChild(grp);
       const flRow=document.getElementById('c2-fl-'+b.id);
@@ -1338,10 +1414,12 @@ function c3Render(){
     sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c3-row-${sh.id}"></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c3-row-'+sh.id);
+    row.ondragover=shelfRowDragOver;row.ondragleave=shelfRowDragLeave;row.ondrop=e=>shelfRowDrop(e,'c3',sh.id);
     sh.brands.forEach(b=>{
       const c=c3Color(b.vendor);const vendor=c3Vendor(b.vendor);
       const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
       const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf||1;grp.style.minWidth=bf?'0':'120px';
+      grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c3',sh.id,b.id);grp.ondragend=brandDragEnd;
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} faces</div><div class="brand-flavors" id="c3-fl-${b.id}"></div>`;
       row.appendChild(grp);
       const flRow=document.getElementById('c3-fl-'+b.id);
@@ -1408,6 +1486,7 @@ function c4Render(){
     sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c4-row-${sh.id}"></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c4-row-'+sh.id);
+    row.ondragover=shelfRowDragOver;row.ondragleave=shelfRowDragLeave;row.ondrop=e=>shelfRowDrop(e,'c4',sh.id);
     if(isS4){
       const es=document.createElement('div');
       es.className='empty-slot';
@@ -1420,6 +1499,7 @@ function c4Render(){
       const c=c4Color(b.name,b.vendor);const vendor=c4Vendor(b.name,b.vendor);
       const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
       const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf||1;grp.style.minWidth=bf?'0':'120px';
+      grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c4',sh.id,b.id);grp.ondragend=brandDragEnd;
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} face${bf!==1?'s':''}</div><div class="brand-flavors" id="c4-fl-${b.id}"></div>`;
       row.appendChild(grp);
       const flRow=document.getElementById('c4-fl-'+b.id);
@@ -1573,10 +1653,12 @@ function c5Render(){
     sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${pf+ef} faces</span></div><div class="shelf-row" id="c5-row-${sh.id}"></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c5-row-'+sh.id);
+    row.ondragover=shelfRowDragOver;row.ondragleave=shelfRowDragLeave;row.ondrop=e=>shelfRowDrop(e,'c5',sh.id);
     sh.brands.forEach(b=>{
       const c=c5Color(b.name,b.vendor);const vendor=c5Vendor(b.name,b.vendor);
       const bf=b.flavors.reduce((n,f)=>n+f.facings,0);
       const grp=document.createElement('div');grp.className='brand-group';grp.style.flex=bf||1;grp.style.minWidth=bf?'0':'120px';
+      grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c5',sh.id,b.id);grp.ondragend=brandDragEnd;
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf}f</div><div class="brand-flavors" id="c5-fl-${b.id}"></div>`;
       row.appendChild(grp);
       const flRow=document.getElementById('c5-fl-'+b.id);
