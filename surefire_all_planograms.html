@@ -123,6 +123,7 @@ body.manager-mode .brand-group{cursor:grab;-webkit-user-select:none;user-select:
 .shelf-row.drag-over,.brand-group.drag-over,.brand-flavors.drag-over,.flavor-block.drag-over{outline:2px dashed var(--green);outline-offset:-4px;background:rgba(46,125,50,.06);border-radius:6px}
 body.manager-mode .flavor-block{cursor:grab;-webkit-user-select:none;user-select:none;-webkit-user-drag:element}
 .brand-header{font-size:8px;font-weight:600;padding:3px 4px;border-radius:4px 4px 0 0;text-align:center;overflow:hidden;color:#fff;line-height:1.3}
+body.manager-mode .brand-header{cursor:pointer}
 .brand-name-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
 .brand-oz-line{font-size:7px;font-weight:400;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
 .brand-total{font-size:8px;color:var(--gray-dark);text-align:center;padding:1px 0;font-family:var(--mono)}
@@ -1084,6 +1085,13 @@ function _marginBadge(price,cost){
 function mkFoot(f,c,vendor,sid,bid,pid,selId){
   return `<div class="ffoot"><div class="fname" title="${f.name}">${f.name}</div><div class="fmeta"><span class="fprice">${f.price||'—'}</span><span class="ffaces">${f.facings} faces</span></div><span class="vendor-tag" style="background:${c.hdr}">${vendor}</span>${_marginBadge(f.price,f.cost)}</div>`;
 }
+function _confirmRemBrand(pfx,sid,bid,name){
+  requireManager(()=>{
+    if(confirm('Remove "'+name+'" and all its faces from this shelf?')){
+      window[pfx+'RemBrand'](sid,bid);
+    }
+  });
+}
 function coolerOpenModal(f,b,sid,bid,pfx){
   const vMap=_pfxVendorMap(pfx);
   const curV=_pfxCurrentVendor(b,pfx);
@@ -1330,6 +1338,7 @@ function c1UpdB(id,k,v){c1data.shelves.forEach(sh=>{const b=sh.brands.find(x=>x.
 function c1UpdImg(id,v){c1data.shelves.forEach(sh=>sh.brands.forEach(b=>{const f=b.flavors.find(x=>x.id===id);if(f)f.img=v;}));saveC1();c1Render();}
 function c1Done(){saveC1();c1Sel=null;c1Render();}
 function c1RemFlavor(sid,bid,fid){const sh=c1data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);if(!b.flavors.length)sh.brands=sh.brands.filter(x=>x.id!==bid);c1Sel=null;saveC1();c1Render();}
+function c1RemBrand(sid,bid){c1Snap();const sh=c1data.shelves.find(s=>s.id===sid);if(!sh)return;sh.brands=sh.brands.filter(x=>x.id!==bid);c1Sel=null;saveC1();c1Render();}
 function c1AddFlavor(sid){c1Snap();const sh=c1data.shelves.find(s=>s.id===sid);if(!sh||!sh.brands.length)return;const b=sh.brands[sh.brands.length-1];const id='p'+(c1Pid++);b.flavors.push({id,name:'new flavor',facings:2,price:'',img:''});c1Sel=id;saveC1();c1Render();}
 function c1AddBrand(sid){c1Snap();const sh=c1data.shelves.find(s=>s.id===sid);if(!sh)return;const bid='b'+(c1Pid++);const fid='p'+(c1Pid++);sh.brands.push({id:bid,name:'new brand',oz:'',flavors:[{id:fid,name:'new flavor',facings:2,price:'',img:''}]});c1Sel=fid;saveC1();c1Render();}
 function c1Export(){const blob=new Blob([JSON.stringify(c1data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cooler1-planogram.json';a.click();}
@@ -1350,6 +1359,7 @@ function c1Render(){
       grp.dataset.pfx='c1';grp.dataset.shelfId=sh.id;grp.dataset.brandId=b.id;
       grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c1',sh.id,b.id);grp.ondragend=dragEndCleanup;
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} faces</div><div class="brand-flavors" id="c1-fl-${b.id}"></div>`;
+      grp.querySelector('.brand-header').onclick=(e)=>{e.stopPropagation();_confirmRemBrand('c1',sh.id,b.id,b.name);};
       row.appendChild(grp);
       const flRow=document.getElementById('c1-fl-'+b.id);
       flRow.dataset.pfx='c1';flRow.dataset.shelfId=sh.id;flRow.dataset.brandId=b.id;
@@ -1408,6 +1418,7 @@ function c2UpdB(id,k,v){c2data.shelves.forEach(sh=>{const b=sh.brands.find(x=>x.
 function c2UpdImg(id,v){c2data.shelves.forEach(sh=>sh.brands.forEach(b=>{const f=b.flavors.find(x=>x.id===id);if(f)f.img=v;}));saveC2();c2Render();}
 function c2Done(){saveC2();c2Sel=null;c2Render();}
 function c2RemFlavor(sid,bid,fid){const sh=c2data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);if(!b.flavors.length)sh.brands=sh.brands.filter(x=>x.id!==bid);c2Sel=null;saveC2();c2Render();}
+function c2RemBrand(sid,bid){c2Snap();const sh=c2data.shelves.find(s=>s.id===sid);if(!sh)return;sh.brands=sh.brands.filter(x=>x.id!==bid);c2Sel=null;saveC2();c2Render();}
 function c2AddFlavor(sid){c2Snap();const sh=c2data.shelves.find(s=>s.id===sid);if(!sh||!sh.brands.length)return;const b=sh.brands[sh.brands.length-1];const id='f'+(c2Pid++);b.flavors.push({id,name:'new flavor',facings:2,price:'',img:''});c2Sel=id;saveC2();c2Render();}
 function c2AddBrand(sid){c2Snap();const sh=c2data.shelves.find(s=>s.id===sid);if(!sh)return;const bid='b'+(c2Pid++);const fid='f'+(c2Pid++);sh.brands.push({id:bid,name:'new brand',oz:'',flavors:[{id:fid,name:'new flavor',facings:2,price:'',img:''}]});c2Sel=fid;saveC2();c2Render();}
 function c2Export(){const blob=new Blob([JSON.stringify(c2data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cooler2-planogram.json';a.click();}
@@ -1428,6 +1439,7 @@ function c2Render(){
       grp.dataset.pfx='c2';grp.dataset.shelfId=sh.id;grp.dataset.brandId=b.id;
       grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c2',sh.id,b.id);grp.ondragend=dragEndCleanup;
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} faces</div><div class="brand-flavors" id="c2-fl-${b.id}"></div>`;
+      grp.querySelector('.brand-header').onclick=(e)=>{e.stopPropagation();_confirmRemBrand('c2',sh.id,b.id,b.name);};
       row.appendChild(grp);
       const flRow=document.getElementById('c2-fl-'+b.id);
       flRow.dataset.pfx='c2';flRow.dataset.shelfId=sh.id;flRow.dataset.brandId=b.id;
@@ -1486,6 +1498,7 @@ function c3UpdB(id,k,v){c3data.shelves.forEach(sh=>{const b=sh.brands.find(x=>x.
 function c3UpdImg(id,v){c3data.shelves.forEach(sh=>sh.brands.forEach(b=>{const f=b.flavors.find(x=>x.id===id);if(f)f.img=v;}));saveC3();c3Render();}
 function c3Done(){saveC3();c3Sel=null;c3Render();}
 function c3RemFlavor(sid,bid,fid){const sh=c3data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);if(!b.flavors.length)sh.brands=sh.brands.filter(x=>x.id!==bid);c3Sel=null;saveC3();c3Render();}
+function c3RemBrand(sid,bid){c3Snap();const sh=c3data.shelves.find(s=>s.id===sid);if(!sh)return;sh.brands=sh.brands.filter(x=>x.id!==bid);c3Sel=null;saveC3();c3Render();}
 function c3AddFlavor(sid){c3Snap();const sh=c3data.shelves.find(s=>s.id===sid);if(!sh||!sh.brands.length)return;const b=sh.brands[sh.brands.length-1];const id='f'+(c3Pid++);b.flavors.push({id,name:'new flavor',facings:2,price:'',img:''});c3Sel=id;saveC3();c3Render();}
 function c3AddBrand(sid){c3Snap();const sh=c3data.shelves.find(s=>s.id===sid);if(!sh)return;const bid='b'+(c3Pid++);const fid='f'+(c3Pid++);sh.brands.push({id:bid,name:'new brand',oz:'',flavors:[{id:fid,name:'new flavor',facings:2,price:'',img:''}]});c3Sel=fid;saveC3();c3Render();}
 function c3Export(){const blob=new Blob([JSON.stringify(c3data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cooler3-planogram.json';a.click();}
@@ -1506,6 +1519,7 @@ function c3Render(){
       grp.dataset.pfx='c3';grp.dataset.shelfId=sh.id;grp.dataset.brandId=b.id;
       grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c3',sh.id,b.id);grp.ondragend=dragEndCleanup;
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} faces</div><div class="brand-flavors" id="c3-fl-${b.id}"></div>`;
+      grp.querySelector('.brand-header').onclick=(e)=>{e.stopPropagation();_confirmRemBrand('c3',sh.id,b.id,b.name);};
       row.appendChild(grp);
       const flRow=document.getElementById('c3-fl-'+b.id);
       flRow.dataset.pfx='c3';flRow.dataset.shelfId=sh.id;flRow.dataset.brandId=b.id;
@@ -1561,6 +1575,7 @@ function c4OpenEmptyModal(){
   document.getElementById('csw-edit-modal').classList.add('open');
 }
 function c4RemFlavor(sid,bid,fid){const sh=c4data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);if(!b.flavors.length)sh.brands=sh.brands.filter(x=>x.id!==bid);c4Sel=null;saveC4();c4Render();}
+function c4RemBrand(sid,bid){c4Snap();const sh=c4data.shelves.find(s=>s.id===sid);if(!sh)return;sh.brands=sh.brands.filter(x=>x.id!==bid);c4Sel=null;saveC4();c4Render();}
 function c4AddBrand(sid){c4Snap();const sh=c4data.shelves.find(s=>s.id===sid);if(!sh)return;const bid='b'+(c4Pid++);const fid='f'+(c4Pid++);sh.brands.push({id:bid,name:'new brand',oz:'12pk',flavors:[{id:fid,name:'Original',facings:1,price:'',img:''}]});c4Sel=fid;saveC4();c4Render();}
 function c4Export(){const blob=new Blob([JSON.stringify(c4data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cooler4-planogram.json';a.click();}
 function c4Render(){
@@ -1590,6 +1605,7 @@ function c4Render(){
       grp.dataset.pfx='c4';grp.dataset.shelfId=sh.id;grp.dataset.brandId=b.id;
       grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c4',sh.id,b.id);grp.ondragend=dragEndCleanup;
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf} face${bf!==1?'s':''}</div><div class="brand-flavors" id="c4-fl-${b.id}"></div>`;
+      grp.querySelector('.brand-header').onclick=(e)=>{e.stopPropagation();_confirmRemBrand('c4',sh.id,b.id,b.name);};
       row.appendChild(grp);
       const flRow=document.getElementById('c4-fl-'+b.id);
       flRow.dataset.pfx='c4';flRow.dataset.shelfId=sh.id;flRow.dataset.brandId=b.id;
@@ -1711,6 +1727,7 @@ function c5DoorOpenModal(slot,slotType,label){
   _attachImgDrop('imgdrop-door-'+slot.id);
 }
 function c5RemFlavor(sid,bid,fid){const sh=c5data.shelves.find(s=>s.id===sid);if(!sh)return;const b=sh.brands.find(x=>x.id===bid);if(!b)return;b.flavors=b.flavors.filter(f=>f.id!==fid);if(!b.flavors.length)sh.brands=sh.brands.filter(x=>x.id!==bid);c5Sel=null;saveC5();c5Render();}
+function c5RemBrand(sid,bid){c5Snap();const sh=c5data.shelves.find(s=>s.id===sid);if(!sh)return;sh.brands=sh.brands.filter(x=>x.id!==bid);c5Sel=null;saveC5();c5Render();}
 function c5AddFlavor(sid){c5Snap();const sh=c5data.shelves.find(s=>s.id===sid);if(!sh||!sh.brands.length)return;const b=sh.brands[sh.brands.length-1];const id='f'+(c5Pid++);b.flavors.push({id,name:'new flavor',facings:1,price:'',img:''});c5Sel=id;saveC5();c5Render();}
 function c5AddBrand(sid){c5Snap();const sh=c5data.shelves.find(s=>s.id===sid);if(!sh)return;const bid='b'+(c5Pid++);const fid='f'+(c5Pid++);sh.brands.push({id:bid,name:'new brand',oz:'',flavors:[{id:fid,name:'Original',facings:1,price:'',img:''}]});c5Sel=fid;saveC5();c5Render();}
 function c5Export(){const blob=new Blob([JSON.stringify({c5data,c5S3Slot,buzzSlots,oasisSlots},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cooler5-planogram.json';a.click();}
@@ -1753,6 +1770,7 @@ function c5Render(){
       grp.dataset.pfx='c5';grp.dataset.shelfId=sh.id;grp.dataset.brandId=b.id;
       grp.draggable=true;grp.ondragstart=e=>brandDragStart(e,'c5',sh.id,b.id);grp.ondragend=dragEndCleanup;
       grp.innerHTML=`<div class="brand-header" style="background:${c.hdr}"><div class="brand-name-line">${b.name}</div><div class="brand-oz-line">${b.oz||''}</div></div><div class="brand-total">${bf}f</div><div class="brand-flavors" id="c5-fl-${b.id}"></div>`;
+      grp.querySelector('.brand-header').onclick=(e)=>{e.stopPropagation();_confirmRemBrand('c5',sh.id,b.id,b.name);};
       row.appendChild(grp);
       const flRow=document.getElementById('c5-fl-'+b.id);
       flRow.dataset.pfx='c5';flRow.dataset.shelfId=sh.id;flRow.dataset.brandId=b.id;
