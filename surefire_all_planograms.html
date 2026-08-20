@@ -128,12 +128,9 @@ body.manager-mode .brand-header{cursor:pointer}
 .brand-oz-line{font-size:7px;font-weight:400;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
 .brand-total{font-size:8px;color:var(--gray-dark);text-align:center;padding:1px 0;font-family:var(--mono)}
 .brand-flavors{display:flex;gap:2px}
-.flavor-block{display:flex;flex-direction:column;border-radius:0 0 4px 4px;overflow:hidden;border:0.5px solid var(--border);min-width:0;cursor:pointer;background:var(--white);position:relative}
+.flavor-block{display:flex;flex-direction:column;border-radius:0 0 4px 4px;overflow:hidden;border:0.5px solid var(--border);min-width:0;cursor:pointer;background:var(--white)}
 .flavor-block:hover{filter:brightness(.97)}
 .flavor-block.sel{outline:2px solid #222;outline-offset:1px}
-.stock-badge{position:absolute;bottom:2px;right:2px;font-size:7px;font-weight:700;padding:1px 5px;border-radius:8px;background:rgba(20,20,20,.78);color:#fff;z-index:3;pointer-events:none;white-space:nowrap;font-family:var(--mono)}
-.stock-badge.low{background:#E65100}
-.stock-badge.out{background:#C62828}
 .facings{display:flex;gap:1px;padding:2px}
 .f{flex:1;border-radius:3px;min-width:0;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:600;text-align:center;line-height:1.1;overflow:hidden;position:relative}
 .f img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:3px}
@@ -1091,19 +1088,7 @@ function _marginBadge(price,cost){
   return `<span style="display:block;background:#C62828;color:#fff;font-size:6px;font-weight:700;padding:1px 4px;border-radius:3px;margin-top:2px;text-align:center;letter-spacing:.03em">⚠ LOW MARGIN</span>`;
 }
 function mkFoot(f,c,vendor,sid,bid,pid,selId){
-  return `<div class="ffoot"><div class="fname" title="${f.name}">${f.name}</div><div class="fmeta"><span class="fprice">${f.price||'—'}</span><span class="ffaces">${f.facings} faces</span></div><span class="vendor-tag" style="background:${c.hdr}">${vendor}</span>${_marginBadge(f.price,f.cost)}</div>${_stockBadge(f)}`;
-}
-// Live on-hand count pulled from Toast (same /api/toast-stock the Ordering
-// worksheet uses), pinned to the tile's own corner via .flavor-block's
-// position:relative rather than sitting in the ffoot flex row — a corner
-// chip reads at a glance across a whole shelf in a way inline text doesn't.
-function _stockBadge(f){
-  if(!f.toastGuid)return '';
-  const qty=_toastStockMap[f.toastGuid];
-  if(qty==null)return '';
-  if(qty<=0)return '<span class="stock-badge out">OUT</span>';
-  const cls=qty<f.facings?' low':'';
-  return `<span class="stock-badge${cls}">${qty} in stock</span>`;
+  return `<div class="ffoot"><div class="fname" title="${f.name}">${f.name}</div><div class="fmeta"><span class="fprice">${f.price||'—'}</span><span class="ffaces">${f.facings} faces</span></div><span class="vendor-tag" style="background:${c.hdr}">${vendor}</span>${_marginBadge(f.price,f.cost)}</div>`;
 }
 function _confirmRemBrand(pfx,sid,bid,name){
   requireManager(()=>{
@@ -1197,7 +1182,6 @@ var PFX_SNAP={c1:c1Snap,c2:c2Snap,c3:c3Snap,c4:c4Snap,c5:c5Snap};
    code runs before OG's closure is defined.
    ============================================================ */
 var APP_SHARED_KEY='4ca6fbc41a08a7620afd979590e805a129eefe1e10f2e5b7';
-var _toastStockMap={};
 function _esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
 var _toastMsgT;
 function _toastMsg(msg){const t=document.getElementById('og-toast');if(!t)return;t.textContent=msg;t.classList.add('show');clearTimeout(_toastMsgT);_toastMsgT=setTimeout(function(){t.classList.remove('show');},2600);}
@@ -1341,30 +1325,6 @@ function syncPlanogramPricesFromToast(manual){
 }
 setTimeout(syncPlanogramPricesFromToast,1500);
 setInterval(syncPlanogramPricesFromToast,10*60*1000);
-/* Live on-hand counts for the stock-badge corner chip (see _stockBadge).
-   Same /api/toast-stock endpoint the Ordering worksheet already uses —
-   just a read here, no writes. Best-effort like the price sync: a Toast
-   hiccup leaves existing badges as last-known instead of erroring. */
-function syncPlanogramStockFromToast(manual){
-  const guids=new Set();
-  ['c1','c2','c3','c4','c5'].forEach(function(pfx){
-    const data=_pfxData(pfx);if(!data)return;
-    data.shelves.forEach(function(sh){sh.brands.forEach(function(b){b.flavors.forEach(function(f){
-      if(f.toastGuid)guids.add(f.toastGuid);
-    });});});
-  });
-  if(!guids.size){if(manual)_toastMsg('No Toast-linked items to check stock for.');return;}
-  fetch('/api/toast-stock?guids='+encodeURIComponent(Array.from(guids).join(',')),{headers:{'x-app-key':APP_SHARED_KEY}})
-    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
-    .then(function(map){
-      _toastStockMap=map||{};
-      ['c1','c2','c3','c4','c5'].forEach(function(pfx){if(_pfxData(pfx))PFX_RENDER[pfx]();});
-      if(manual)_toastMsg('Stock levels synced from Toast ✓');
-    })
-    .catch(function(){if(manual)_toastMsg('Could not reach Toast for stock levels.');});
-}
-setTimeout(syncPlanogramStockFromToast,2000);
-setInterval(syncPlanogramStockFromToast,10*60*1000);
 var _drag=null;      // {level:'brand',pfx,shelfId,brandId} or {level:'flavor',pfx,shelfId,brandId,flavorId}
 var _dragOverEl=null;
 function _clearDragUI(){
