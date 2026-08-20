@@ -5,6 +5,11 @@ module.exports = async (req, res) => {
   if (req.method !== 'GET') return res.status(405).json({ error: 'GET only' });
   if (!checkAppKey(req, res)) return;
 
+  if (req.query.debugenv) {
+    const v = process.env.TOAST_RESTAURANT_GUID;
+    return res.status(200).json({ raw: JSON.stringify(v), length: v ? v.length : 0 });
+  }
+
   try {
     const toastRes = await toastFetch('/config/v2/menuItems');
     if (!toastRes.ok) {
