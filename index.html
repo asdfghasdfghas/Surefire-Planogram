@@ -2752,7 +2752,7 @@ var OG=(function(){
     return names.map(function(vn){
       var sc=SCHED[vn]||GENERIC_SCHED;
       return {id:slug(vn),name:vn,color:VCOLOR[vn]||'#9E9E9E',cat:sc.cat,cutoffDay:sc.cutoffDay,cutoffTime:sc.cutoffTime,deliveryDay:sc.deliveryDay,deliveryFrom:sc.deliveryFrom,deliveryTo:sc.deliveryTo,minimum:sc.minimum,buffer:sc.buffer,byCase:sc.byCase,caseSize:sc.caseSize,
-        products:byV[vn].map(function(p){var st=PROD_STATS[p.name]||{};return{id:p.id,name:p.name,oz:p.oz||st.oz||'',cost:st.cost!=null?st.cost:1.25,sold:st.sold!=null?st.sold:0,inv:st.inv!=null?st.inv:0,parMin:null,parMax:null,toastGuid:''};})};
+        products:byV[vn].map(function(p){var st=PROD_STATS[p.name]||{};return{id:p.id,name:p.name,oz:p.oz||st.oz||'',cost:st.cost!=null?st.cost:1.25,sold:st.sold!=null?st.sold:0,inv:st.inv!=null?st.inv:0,parMin:null,parMax:null,packSize:null,toastGuid:''};})};
     });
   }
   /* Re-sync from the planograms (called whenever the Ordering tab opens). */
@@ -2767,7 +2767,7 @@ var OG=(function(){
       if(sv.products){var pById={};sv.products.forEach(function(sp){if(sp.id!=null)pById[sp.id]=sp;});
         v.products.forEach(function(p){var sp=pById[p.id];if(sp){
           if(sp.oz)p.oz=sp.oz;if(sp.cost!=null)p.cost=sp.cost;if(sp.sold!=null)p.sold=sp.sold;if(sp.inv!=null)p.inv=sp.inv;
-          if(sp.parMin!=null)p.parMin=sp.parMin;if(sp.parMax!=null)p.parMax=sp.parMax;if(sp.toastGuid)p.toastGuid=sp.toastGuid;
+          if(sp.parMin!=null)p.parMin=sp.parMin;if(sp.parMax!=null)p.parMax=sp.parMax;if(sp.packSize!=null)p.packSize=sp.packSize;if(sp.toastGuid)p.toastGuid=sp.toastGuid;
         }});}
     });
     return base;
@@ -2790,17 +2790,33 @@ var OG=(function(){
   function fmtDateTime(d){return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});}
   function fmtTime(hm){var t=parseHM(hm),ap=t.h>=12?'PM':'AM',hh=t.h%12||12;return hh+(t.m?':'+String(t.m).padStart(2,'0'):'')+ap;}
 
-  /* Par min/max drives the order quantity: order back up to par max once on-hand drops to/below par min.
-     dailyAvg/velocity is kept purely as display context (from Toast sales, when available) — it no
-     longer feeds the suggested quantity. */
+  /* Sales-velocity drives the order quantity: base need = expected demand
+     between now and the next delivery (dailyAvg × daysToDelivery) minus
+     what's on hand. Real Toast sales (OG_SALES, last 30 days) are used
+     whenever this product is Toast-linked; falls back to the old
+     order-history estimate (p.sold / days since last order) when it isn't.
+     Par min/max, when configured, act as a floor (force a restock up to
+     par max if on-hand has dropped to/below par min, even if the velocity
+     estimate is thin or wrong) and a cap (never suggest ordering past par
+     max — that's shelf/stockroom capacity, not a demand question). */
   function calcSuggest(v,p){
-    var since=daysSince(LASTORDER[v.id]),dailyAvg=p.sold/since,cutoff=nextCutoff(v),delivery=nextDelivery(v,cutoff),daysToDelivery=daysUntil(delivery)+1;
+    var since=daysSince(LASTORDER[v.id]);
+    var toastStat=p.toastGuid?OG_SALES[p.toastGuid]:null;
+    var dailyAvg=toastStat?toastStat.dailyAvg:(p.sold/since);
+    var sold30=toastStat?toastStat.sold:null;
+    var cutoff=nextCutoff(v),delivery=nextDelivery(v,cutoff),daysToDelivery=daysUntil(delivery)+1;
+    var demandBase=Math.max(0,dailyAvg*daysToDelivery-p.inv);
     var configured=p.parMin!=null&&p.parMax!=null;
-    var base=(configured&&p.inv<=p.parMin)?Math.max(0,p.parMax-p.inv):0;
-    return{dailyAvg:dailyAvg,daysToDelivery:daysToDelivery,base:base,delivery:delivery,cutoff:cutoff,configured:configured};
+    var base=demandBase;
+    if(configured){
+      var cap=Math.max(0,p.parMax-p.inv);
+      var floor=(p.inv<=p.parMin)?cap:0;
+      base=Math.min(Math.max(demandBase,floor),cap);
+    }
+    return{dailyAvg:dailyAvg,sold30:sold30,daysToDelivery:daysToDelivery,base:base,delivery:delivery,cutoff:cutoff,configured:configured};
   }
   function applyBuffer(v,p,base,bufferOn){if(!bufferOn)return base;var pct=FAST_MOVERS[p.name]!=null?FAST_MOVERS[p.name]:v.buffer;return Math.ceil(base*(1+pct));}
-  function roundToCase(v,qty){if(!v.byCase||v.caseSize<=1)return qty;return Math.ceil(qty/v.caseSize)*v.caseSize;}
+  function roundToCase(v,p,qty){var size=(p&&p.packSize)||v.caseSize;if(!v.byCase||size<=1)return qty;return Math.ceil(qty/size)*size;}
 
   function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
 
@@ -2815,7 +2831,7 @@ var OG=(function(){
     [1,2,3].forEach(function(i){var el=document.getElementById('s'+i);if(el)el.classList.toggle('og-hidden',i!==n);});
     Array.prototype.forEach.call(document.querySelectorAll('#stepBar .step'),function(s){var st=+s.dataset.step;s.classList.toggle('active',st===n);s.classList.toggle('done',st<n);});
     if(n===1){renderInvBar();renderVendors();}
-    if(n===2){renderWorksheet();pullToastStock();}
+    if(n===2){renderWorksheet();pullToastStock();pullToastSales();}
     if(n===3)renderSummary();
     window.scrollTo({top:0,behavior:'smooth'});
   }
@@ -2863,17 +2879,20 @@ var OG=(function(){
       if(!worksheetData[vid])worksheetData[vid]={buffer:false,lines:[]};
       var wd=worksheetData[vid];
       wd.lines=v.products.map(function(p){
-        var c=calcSuggest(v,p),suggest=roundToCase(v,applyBuffer(v,p,c.base,wd.buffer));
+        var c=calcSuggest(v,p),suggest=roundToCase(v,p,applyBuffer(v,p,c.base,wd.buffer));
         var existing=wd.lines.find(function(l){return l.name===p.name;});
-        return{name:p.name,oz:p.oz,cost:p.cost,base:c.base,suggest:suggest,qty:existing&&existing.override?existing.qty:suggest,override:existing?existing.override:false,note:existing?existing.note:'',dailyAvg:c.dailyAvg,daysToDelivery:Math.round(c.daysToDelivery),inv:p.inv,parMin:p.parMin,parMax:p.parMax,configured:c.configured,toastGuid:p.toastGuid};
+        return{name:p.name,oz:p.oz,cost:p.cost,base:c.base,suggest:suggest,qty:existing&&existing.override?existing.qty:suggest,override:existing?existing.override:false,note:existing?existing.note:'',dailyAvg:c.dailyAvg,sold30:c.sold30,daysToDelivery:Math.round(c.daysToDelivery),inv:p.inv,parMin:p.parMin,parMax:p.parMax,packSize:p.packSize,configured:c.configured,toastGuid:p.toastGuid};
       });
       var rows=wd.lines.map(function(l,i){
         var fast=FAST_MOVERS[l.name]!=null,hasVel=l.dailyAvg>0;
-        var vel=hasVel?l.dailyAvg.toFixed(1)+'/day':'<span class="ws-prod-oz">no history</span>';
-        var formula=!l.configured?'Par min/max not set for this product — set it in Vendor Setup. Suggested 0 until then.'
-          :('on hand '+l.inv+' ≤ par min '+l.parMin+' → order up to par max '+l.parMax+(wd.buffer?' + buffer':''));
+        var vel=hasVel
+          ?(l.dailyAvg.toFixed(1)+'/day'+(l.sold30!=null?'<div class="ws-prod-oz">'+l.sold30+' sold/30d</div>':''))
+          :'<span class="ws-prod-oz">no history</span>';
+        var formula='needed '+l.dailyAvg.toFixed(1)+'/day × '+l.daysToDelivery+'d to delivery − on hand '+l.inv
+          +(l.configured?' (par min '+l.parMin+' / max '+l.parMax+' as floor/cap)':' (no par min/max set — no floor/cap)')
+          +(wd.buffer?' + buffer':'');
         return '<tr>'
-          +'<td class="prodcell" data-label="Product"><span class="ws-prod">'+esc(l.name)+'</span>'+(fast?'<span class="fast-tag">fast</span>':'')+(l.toastGuid?'<span class="fast-tag" style="background:var(--gray);color:var(--gray-dark)">toast live</span>':'')+'<div class="ws-prod-oz">'+esc(l.oz)+'</div></td>'
+          +'<td class="prodcell" data-label="Product"><span class="ws-prod">'+esc(l.name)+'</span>'+(fast?'<span class="fast-tag">fast</span>':'')+(l.toastGuid?'<span class="fast-tag" style="background:var(--gray);color:var(--gray-dark)">toast live</span>':'')+'<div class="ws-prod-oz">'+esc(l.oz)+(l.packSize?' · pack '+l.packSize:'')+'</div></td>'
           +'<td class="num" data-label="On hand"><input class="oh-input" type="number" min="0" value="'+l.inv+'" onchange="OG.setOnHand(\''+vid+'\','+i+',this.value)" title="Editable — update as you count'+(l.toastGuid?'; syncs to Toast':'')+'"></td>'
           +'<td class="num" data-label="Velocity">'+vel+'</td>'
           +'<td class="num" data-label="Suggested"><span class="qty-suggest">'+l.suggest+(v.byCase?' u':'')+'</span> <span class="og-why" title="'+esc(formula)+'">?</span></td>'
@@ -2921,6 +2940,20 @@ var OG=(function(){
         if(changed){saveKey(LS_VENDORS,VENDORS);renderWorksheet();showToast('On-hand synced from Toast ✓');}
       })
       .catch(function(){showToast('Could not reach Toast for live counts — using last known.');});
+  }
+  /* Live Toast sales history (last 30 days), keyed by toastGuid — feeds the
+     velocity-driven part of calcSuggest. Same best-effort pattern as stock:
+     a Toast hiccup leaves whatever was last pulled in place instead of
+     blocking ordering. */
+  var OG_SALES={};
+  function pullToastSales(){
+    var vids=Array.from(selectedVendors),hasGuid=false;
+    vids.forEach(function(vid){var v=VENDORS.find(function(x){return x.id===vid;});if(!v)return;v.products.forEach(function(p){if(p.toastGuid)hasGuid=true;});});
+    if(!hasGuid)return;
+    fetch('/api/toast-sales?days=30',{headers:{'x-app-key':OG_APP_KEY}})
+      .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+      .then(function(map){OG_SALES=map||{};renderWorksheet();})
+      .catch(function(){showToast('Could not reach Toast for sales history — using last known.');});
   }
   function pushToastStock(guid,qty){
     fetch('/api/toast-stock-update',{method:'POST',headers:{'Content-Type':'application/json','x-app-key':OG_APP_KEY},body:JSON.stringify([{guid:guid,quantity:qty}])})
@@ -2997,18 +3030,19 @@ var OG=(function(){
             +'<input style="width:70px" type="number" step="0.01" value="'+p.cost+'" title="unit cost" onchange="OG.editProd('+vi+','+pi+',\'cost\',+this.value)">'
             +'<input style="width:55px" type="number" value="'+(p.parMin==null?'':p.parMin)+'" placeholder="par min" title="par min — reorder when on-hand drops to this" onchange="OG.editProd('+vi+','+pi+',\'parMin\',this.value===\'\'?null:+this.value)">'
             +'<input style="width:55px" type="number" value="'+(p.parMax==null?'':p.parMax)+'" placeholder="par max" title="par max — order back up to this" onchange="OG.editProd('+vi+','+pi+',\'parMax\',this.value===\'\'?null:+this.value)">'
+            +'<input style="width:55px" type="number" value="'+(p.packSize==null?'':p.packSize)+'" placeholder="'+v.caseSize+'" title="pack size (units per case) — overrides the vendor default of '+v.caseSize+' for this SKU" onchange="OG.editProd('+vi+','+pi+',\'packSize\',this.value===\'\'?null:+this.value)">'
             +'<input style="width:55px" type="number" value="'+p.inv+'" title="on hand" onchange="OG.editProd('+vi+','+pi+',\'inv\',+this.value)">'
             +'<button class="btn btn-sm '+(p.toastGuid?'btn-outline':'btn-ghost')+'" style="white-space:nowrap" onclick="OG.matchToggle('+vi+','+pi+')">'+esc(matchLabel)+'</button>'
             +'<div class="dp" id="og-match-'+vi+'-'+pi+'" style="flex-basis:100%"></div>'
             +'</div>';
         }).join('')
-        +'</div><div style="font-size:10px;color:var(--gray-dark);margin-top:6px;font-family:var(--mono)">size · unit cost · par min · par max · on hand — editable. "Match to Toast" links this SKU so on-hand syncs live. Add or remove products on the planograms.</div></div></div>';
+        +'</div><div style="font-size:10px;color:var(--gray-dark);margin-top:6px;font-family:var(--mono)">size · unit cost · par min · par max · pack size · on hand — editable. Pack size defaults to the vendor\'s case size above when left blank. "Match to Toast" links this SKU so on-hand and sales history sync live. Add or remove products on the planograms.</div></div></div>';
     }).join('');
   }
   function editVendor(vi,key,val){VENDORS[vi][key]=val;saveKey(LS_VENDORS,VENDORS);}
   function editProd(vi,pi,key,val){VENDORS[vi].products[pi][key]=val;saveKey(LS_VENDORS,VENDORS);}
   function delProd(vi,pi){VENDORS[vi].products.splice(pi,1);saveKey(LS_VENDORS,VENDORS);renderSetup();}
-  function addProd(vi){VENDORS[vi].products.push({name:'New Product',oz:'12oz',cost:1.00,sold:0,inv:0,parMin:null,parMax:null,toastGuid:''});saveKey(LS_VENDORS,VENDORS);renderSetup();}
+  function addProd(vi){VENDORS[vi].products.push({name:'New Product',oz:'12oz',cost:1.00,sold:0,inv:0,parMin:null,parMax:null,packSize:null,toastGuid:''});saveKey(LS_VENDORS,VENDORS);renderSetup();}
   function resetData(){if(confirm('Reset all vendors and products to match the planograms? Order history is kept.')){VENDORS=buildVendors();saveKey(LS_VENDORS,VENDORS);renderSetup();showToast('Reset to planogram vendors');}}
 
   /* Match-to-Toast picker — one lazy-loaded, session-cached list of Toast menu items,
