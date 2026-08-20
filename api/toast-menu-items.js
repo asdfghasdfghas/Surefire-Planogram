@@ -19,6 +19,13 @@ module.exports = async (req, res) => {
     if (req.query.debug) {
       return res.status(200).json(Array.isArray(items) ? items[0] || null : items);
     }
+    if (req.query.debugdetail) {
+      const first = (Array.isArray(items) ? items : []).find((it) => it.sku);
+      if (!first) return res.status(200).json(null);
+      const detailRes = await toastFetch('/config/v2/menuItems/' + first.guid);
+      const detail = await detailRes.json();
+      return res.status(200).json(detail);
+    }
     // Toast's menu items for this account mix ~789 food-menu/modifier items
     // ("The Ogden", "ADD SMACK SAUCE") in with the ~211 actual retail
     // products. Retail products are the only ones carrying a UPC in `sku`;
