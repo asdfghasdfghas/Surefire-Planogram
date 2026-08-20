@@ -26,14 +26,34 @@ module.exports = async (req, res) => {
     dates.push(businessDateStr(d));
   }
 
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  async function fetchDay(bd, attempt) {
+    const r = await toastFetch(`/orders/v2/ordersBulk?businessDate=${bd}&pageSize=100`);
+    if (r.status === 429 && attempt < 3) {
+      await sleep(500 * (attempt + 1));
+      return fetchDay(bd, attempt + 1);
+    }
+    if (!r.ok) throw new Error(`HTTP ${r.status} for ${bd}`);
+    return r.json();
+  }
+
   try {
-    const results = await Promise.all(
-      dates.map((bd) =>
-        toastFetch(`/orders/v2/ordersBulk?businessDate=${bd}&pageSize=100`)
-          .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status} for ${bd}`))))
-          .catch((err) => ({ __error: String(err && err.message || err), businessDate: bd }))
-      )
-    );
+    // ordersBulk is rate-limited much tighter than the config/menus/stock
+    // endpoints — firing all N days at once 429s partway through. A small
+    // concurrency pool (with retry-with-backoff on 429) keeps this well
+    // under that ceiling while still being faster than fully sequential.
+    const results = [];
+    const CONCURRENCY = 3;
+    for (let i = 0; i < dates.length; i += CONCURRENCY) {
+      const batch = dates.slice(i, i + CONCURRENCY);
+      const batchResults = await Promise.all(
+        batch.map((bd) =>
+          fetchDay(bd, 0).catch((err) => ({ __error: String(err && err.message || err), businessDate: bd }))
+        )
+      );
+      results.push(...batchResults);
+    }
 
     if (req.query.debug) {
       // First business day that actually returned data, raw and unmodified,
