@@ -493,7 +493,7 @@ body.manager-mode .mgr-only{display:flex!important}
           <div class="stats-row mgr-only" id="c1-sum"></div>
           <div class="toolbar mgr-only">
             <button class="tb-btn" id="c1-undo" onclick="requireManager(()=>c1Undo())" disabled>↩ undo</button>
-            <button class="tb-btn" onclick="requireManager(()=>syncPlanogramPricesFromToast(true))">🔄 sync Toast prices</button>
+            <button class="tb-btn" onclick="requireManager(()=>syncPlanogramPricesFromToast(true))">🔄 refresh Toast prices now</button>
             <button class="tb-btn" onclick="requireManager(()=>c1Export())">↗ export</button>
           </div>
           <div class="cooler has-photo"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Turbo Air — Surefire Market</span></div><small>width = shelf space · vendor color coded</small></div><div class="shelf-wrap" id="c1-sw"></div></div>
@@ -510,7 +510,7 @@ body.manager-mode .mgr-only{display:flex!important}
           <div class="stats-row mgr-only" id="c2-sum"></div>
           <div class="toolbar mgr-only">
             <button class="tb-btn" id="c2-undo" onclick="requireManager(()=>c2Undo())" disabled>↩ undo</button>
-            <button class="tb-btn" onclick="requireManager(()=>syncPlanogramPricesFromToast(true))">🔄 sync Toast prices</button>
+            <button class="tb-btn" onclick="requireManager(()=>syncPlanogramPricesFromToast(true))">🔄 refresh Toast prices now</button>
             <button class="tb-btn" onclick="requireManager(()=>c2Export())">↗ export</button>
           </div>
           <div class="cooler has-photo"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Glass Door Cooler 2 — Surefire Market</span></div><small>color = vendor · click flavor to edit</small></div><div class="shelf-wrap" id="c2-sw"></div></div>
@@ -527,7 +527,7 @@ body.manager-mode .mgr-only{display:flex!important}
           <div class="stats-row mgr-only" id="c3-sum"></div>
           <div class="toolbar mgr-only">
             <button class="tb-btn" id="c3-undo" onclick="requireManager(()=>c3Undo())" disabled>↩ undo</button>
-            <button class="tb-btn" onclick="requireManager(()=>syncPlanogramPricesFromToast(true))">🔄 sync Toast prices</button>
+            <button class="tb-btn" onclick="requireManager(()=>syncPlanogramPricesFromToast(true))">🔄 refresh Toast prices now</button>
             <button class="tb-btn" onclick="requireManager(()=>c3Export())">↗ export</button>
           </div>
           <div class="cooler has-photo"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Glass Door Cooler 3 — Surefire Market</span></div><small>vendor: Choice Beverage · click to edit</small></div><div class="shelf-wrap" id="c3-sw"></div></div>
@@ -544,7 +544,7 @@ body.manager-mode .mgr-only{display:flex!important}
           <div class="stats-row mgr-only" id="c4-sum"></div>
           <div class="toolbar mgr-only">
             <button class="tb-btn" id="c4-undo" onclick="requireManager(()=>c4Undo())" disabled>↩ undo</button>
-            <button class="tb-btn" onclick="requireManager(()=>syncPlanogramPricesFromToast(true))">🔄 sync Toast prices</button>
+            <button class="tb-btn" onclick="requireManager(()=>syncPlanogramPricesFromToast(true))">🔄 refresh Toast prices now</button>
             <button class="tb-btn" onclick="requireManager(()=>c4Export())">↗ export</button>
           </div>
           <div class="cooler has-photo"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Beer Cooler 4 — Surefire Market</span></div><small>organized by price tier · click to edit</small></div><div class="shelf-wrap" id="c4-sw"></div></div>
@@ -561,7 +561,7 @@ body.manager-mode .mgr-only{display:flex!important}
           <div class="stats-row mgr-only" id="c5-sum"></div>
           <div class="toolbar mgr-only">
             <button class="tb-btn" id="c5-undo" onclick="requireManager(()=>c5Undo())" disabled>↩ undo</button>
-            <button class="tb-btn" onclick="requireManager(()=>syncPlanogramPricesFromToast(true))">🔄 sync Toast prices</button>
+            <button class="tb-btn" onclick="requireManager(()=>syncPlanogramPricesFromToast(true))">🔄 refresh Toast prices now</button>
             <button class="tb-btn" onclick="requireManager(()=>c5Export())">↗ export</button>
           </div>
           <div class="cooler has-photo" id="c5-cooler"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Cooler 5 — Singles & Craft</span></div><small>color = vendor · click to edit</small></div>
@@ -1121,7 +1121,7 @@ function coolerOpenModal(f,b,sid,bid,pfx){
     </div>
     <div class="dfield"><label>Flavor</label><input value="${f.name}" oninput="${pfx}UpdF('${f.id}','name',this.value)"/></div>
     <div class="dfield"><label>Price</label><input id="price-${f.id}" value="${f.price||''}" placeholder="$0.00" oninput="${pfx}UpdF('${f.id}','price',this.value);_updMargin(this.value,document.getElementById('cost-${f.id}').value,'mgn-${f.id}')"/></div>
-    <div class="dfield"><label>Toast Item</label>${f.toastGuid?`<div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="color:var(--green)">✓ linked — price syncs from Toast</span><button class="tb-btn" style="padding:3px 8px;font-size:10px;height:auto" onclick="_toastMatchClear('${pfx}','${f.id}')">unlink</button></div>`:`<div id="toast-match-${f.id}"><button class="tb-btn" style="padding:3px 8px;font-size:10px;height:auto" onclick="_toastMatchOpen('${pfx}','${f.id}')">🔗 match to Toast for live pricing</button></div>`}</div>
+    <div class="dfield"><label>Toast Item</label>${f.toastGuid?`<div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="color:var(--green)">✓ auto-linked — price syncs from Toast</span><button class="tb-btn" style="padding:3px 8px;font-size:10px;height:auto" onclick="_toastMatchClear('${pfx}','${f.id}')">unlink</button></div>`:`<div id="toast-match-${f.id}"><div style="font-size:10px;color:var(--gray-dark);margin-bottom:4px">No confident auto-match by name yet — link one manually:</div><button class="tb-btn" style="padding:3px 8px;font-size:10px;height:auto" onclick="_toastMatchOpen('${pfx}','${f.id}')">🔗 search Toast items</button></div>`}</div>
     <div class="dfield"><label>Cost</label><input id="cost-${f.id}" value="${f.cost||''}" placeholder="$0.00" oninput="${pfx}UpdF('${f.id}','cost',this.value);_updMargin(document.getElementById('price-${f.id}').value,this.value,'mgn-${f.id}')"/></div>
     <div class="dfield"><label>Margin</label><div id="mgn-${f.id}" style="padding:4px 2px">${_calcMarginStr(f.price,f.cost)}</div></div>
     <div class="dfield"><label>Faces</label><input type="number" min="1" value="${f.facings}" oninput="${pfx}UpdF('${f.id}','facings',parseInt(this.value)||1);${pfx}Render()"/></div>
@@ -1218,6 +1218,7 @@ function _toastMatchRender(pfx,fid,q){
 }
 function _toastMatchPick(pfx,fid,guid,price){
   window[pfx+'UpdF'](fid,'toastGuid',guid);
+  window[pfx+'UpdF'](fid,'toastNoMatch',false);
   if(price!=null)window[pfx+'UpdF'](fid,'price','$'+Number(price).toFixed(2));
   window[pfx+'Render']();
   const loc=_pfxFindFlavor(pfx,fid);
@@ -1225,13 +1226,37 @@ function _toastMatchPick(pfx,fid,guid,price){
 }
 function _toastMatchClear(pfx,fid){
   window[pfx+'UpdF'](fid,'toastGuid','');
+  window[pfx+'UpdF'](fid,'toastNoMatch',true);
   window[pfx+'Render']();
   const loc=_pfxFindFlavor(pfx,fid);
   if(loc)coolerOpenModal(loc.f,loc.b,loc.sh.id,loc.b.id,pfx);
 }
-/* Pulls current Toast prices for every matched flavor across all coolers and
-   overwrites f.price when it's drifted. Best-effort: a Toast hiccup just
-   leaves prices as last-known, same fallback style as the Ordering sync. */
+function _normToastName(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();}
+/* Best-effort name match, no user click required. Tries an exact normalized
+   match first (brand+flavor, then brand alone), then falls back to a
+   containment match — but only ever auto-links when exactly one Toast item
+   qualifies, so an ambiguous name (e.g. many "White Claw" variants) is left
+   for a human to resolve via the manual search instead of guessing wrong. */
+function _findToastMatch(items,brandName,flavorName){
+  const qFull=_normToastName(brandName+' '+flavorName);
+  const qBrand=_normToastName(brandName);
+  let hit=items.filter(function(it){return _normToastName(it.name)===qFull;});
+  if(hit.length===1)return hit[0];
+  if(!hit.length){
+    hit=items.filter(function(it){return _normToastName(it.name)===qBrand;});
+    if(hit.length===1)return hit[0];
+  }
+  hit=items.filter(function(it){const n=_normToastName(it.name);return n&&(n.indexOf(qFull)!==-1||qFull.indexOf(n)!==-1);});
+  if(hit.length===1)return hit[0];
+  hit=items.filter(function(it){const n=_normToastName(it.name);return n&&(n.indexOf(qBrand)!==-1||qBrand.indexOf(n)!==-1);});
+  if(hit.length===1)return hit[0];
+  return null;
+}
+/* Auto-links any not-yet-matched (and not explicitly unlinked) flavor by
+   name, then pulls current Toast prices for every matched flavor across all
+   coolers and overwrites f.price when it's drifted. Best-effort: a Toast
+   hiccup just leaves things as last-known, same fallback style as the
+   Ordering sync. Runs on load and on a timer — no button required. */
 function syncPlanogramPricesFromToast(manual){
   _loadToastItems().then(function(items){
     const priceMap={};
@@ -1241,6 +1266,10 @@ function syncPlanogramPricesFromToast(manual){
       const data=_pfxData(pfx);if(!data)return;
       let changed=false;
       data.shelves.forEach(function(sh){sh.brands.forEach(function(b){b.flavors.forEach(function(f){
+        if(!f.toastGuid&&!f.toastNoMatch){
+          const m=_findToastMatch(items,b.name,f.name);
+          if(m){f.toastGuid=m.guid;changed=true;}
+        }
         if(f.toastGuid&&priceMap[f.toastGuid]!=null){
           const newPrice='$'+Number(priceMap[f.toastGuid]).toFixed(2);
           if(f.price!==newPrice){f.price=newPrice;changed=true;}
