@@ -1252,10 +1252,16 @@ function _toastTokens(s){
    minimum bar and isn't a near-tie with the runner-up, so an ambiguous name
    (many "White Claw" variants, say) is left for manual review instead of a
    guess. Deliberately loose: Toast item names rarely match planogram names
-   word-for-word, so a literal/exact match misses most real products. */
-function _findToastMatch(items,brandName,flavorName,sizeName){
+   word-for-word, so a literal/exact match misses most real products.
+   Vendor name is kept out of the base score's denominator on purpose —
+   Toast item names almost never literally contain the distributor name
+   (e.g. "Choice Beverage"), so requiring it to match would tank scores for
+   the common case. It only nudges ties toward the item that also shares a
+   vendor keyword, when one is present. */
+function _findToastMatch(items,brandName,flavorName,sizeName,vendorName){
   const qTokens=_toastTokens(brandName+' '+flavorName+' '+(sizeName||''));
   if(!qTokens.length)return null;
+  const vTokens=_toastTokens(vendorName||'');
   let best=null,bestScore=0,secondScore=0;
   items.forEach(function(it){
     const iTokens=_toastTokens(it.name);
@@ -1263,7 +1269,10 @@ function _findToastMatch(items,brandName,flavorName,sizeName){
     const iSet={};iTokens.forEach(function(t){iSet[t]=true;});
     let shared=0;
     qTokens.forEach(function(t){if(iSet[t])shared++;});
-    const score=shared/qTokens.length;
+    let score=shared/qTokens.length;
+    let vShared=0;
+    vTokens.forEach(function(t){if(iSet[t])vShared++;});
+    if(vShared)score+=Math.min(vShared*0.05,0.1);
     if(score>bestScore){secondScore=bestScore;bestScore=score;best=it;}
     else if(score>secondScore){secondScore=score;}
   });
@@ -1288,7 +1297,7 @@ function syncPlanogramPricesFromToast(manual){
       let changed=false;
       data.shelves.forEach(function(sh){sh.brands.forEach(function(b){b.flavors.forEach(function(f){
         if(!f.toastGuid&&!f.toastNoMatch){
-          const m=_findToastMatch(items,b.name,f.name,b.oz);
+          const m=_findToastMatch(items,b.name,f.name,b.oz,_pfxResolvedVendor(pfx,b));
           if(m){f.toastGuid=m.guid;changed=true;}
         }
         if(f.toastGuid&&priceMap[f.toastGuid]!=null){

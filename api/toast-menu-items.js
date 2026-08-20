@@ -19,19 +19,15 @@ module.exports = async (req, res) => {
     if (req.query.debug) {
       return res.status(200).json(Array.isArray(items) ? items[0] || null : items);
     }
-    if (req.query.debugall) {
-      const raw = (Array.isArray(items) ? items : []).map((it) => ({
-        name: it.name, sku: it.sku, plu: it.plu, visibility: it.visibility,
-        orderableOnline: it.orderableOnline, price: it.price, type: it.type,
-      }));
-      return res.status(200).json(raw);
-    }
-    if (req.query.debugsku) {
-      const found = (Array.isArray(items) ? items : []).find((it) => it.sku);
-      return res.status(200).json(found || null);
-    }
+    // Toast's menu items for this account mix ~789 food-menu/modifier items
+    // ("The Ogden", "ADD SMACK SAUCE") in with the ~211 actual retail
+    // products. Retail products are the only ones carrying a UPC in `sku`;
+    // food/modifier items never do — so that's the filter that keeps the
+    // "match to Toast" picker limited to items that could plausibly be on
+    // the planogram.
+    const retailItems = (Array.isArray(items) ? items : []).filter((it) => it.sku);
 
-    const list = (Array.isArray(items) ? items : []).map((it) => {
+    const list = retailItems.map((it) => {
       // Simple-priced items carry price directly; other pricing strategies
       // (e.g. size groups) nest it under pricingRules.basePrice instead.
       const price = typeof it.price === 'number'
