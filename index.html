@@ -493,6 +493,7 @@ body.manager-mode .mgr-only{display:flex!important}
           <div class="stats-row mgr-only" id="c1-sum"></div>
           <div class="toolbar mgr-only">
             <button class="tb-btn" id="c1-undo" onclick="requireManager(()=>c1Undo())" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="requireManager(()=>syncPlanogramPricesFromToast(true))">🔄 sync Toast prices</button>
             <button class="tb-btn" onclick="requireManager(()=>c1Export())">↗ export</button>
           </div>
           <div class="cooler has-photo"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Turbo Air — Surefire Market</span></div><small>width = shelf space · vendor color coded</small></div><div class="shelf-wrap" id="c1-sw"></div></div>
@@ -509,6 +510,7 @@ body.manager-mode .mgr-only{display:flex!important}
           <div class="stats-row mgr-only" id="c2-sum"></div>
           <div class="toolbar mgr-only">
             <button class="tb-btn" id="c2-undo" onclick="requireManager(()=>c2Undo())" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="requireManager(()=>syncPlanogramPricesFromToast(true))">🔄 sync Toast prices</button>
             <button class="tb-btn" onclick="requireManager(()=>c2Export())">↗ export</button>
           </div>
           <div class="cooler has-photo"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Glass Door Cooler 2 — Surefire Market</span></div><small>color = vendor · click flavor to edit</small></div><div class="shelf-wrap" id="c2-sw"></div></div>
@@ -525,6 +527,7 @@ body.manager-mode .mgr-only{display:flex!important}
           <div class="stats-row mgr-only" id="c3-sum"></div>
           <div class="toolbar mgr-only">
             <button class="tb-btn" id="c3-undo" onclick="requireManager(()=>c3Undo())" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="requireManager(()=>syncPlanogramPricesFromToast(true))">🔄 sync Toast prices</button>
             <button class="tb-btn" onclick="requireManager(()=>c3Export())">↗ export</button>
           </div>
           <div class="cooler has-photo"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Glass Door Cooler 3 — Surefire Market</span></div><small>vendor: Choice Beverage · click to edit</small></div><div class="shelf-wrap" id="c3-sw"></div></div>
@@ -541,6 +544,7 @@ body.manager-mode .mgr-only{display:flex!important}
           <div class="stats-row mgr-only" id="c4-sum"></div>
           <div class="toolbar mgr-only">
             <button class="tb-btn" id="c4-undo" onclick="requireManager(()=>c4Undo())" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="requireManager(()=>syncPlanogramPricesFromToast(true))">🔄 sync Toast prices</button>
             <button class="tb-btn" onclick="requireManager(()=>c4Export())">↗ export</button>
           </div>
           <div class="cooler has-photo"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Beer Cooler 4 — Surefire Market</span></div><small>organized by price tier · click to edit</small></div><div class="shelf-wrap" id="c4-sw"></div></div>
@@ -557,6 +561,7 @@ body.manager-mode .mgr-only{display:flex!important}
           <div class="stats-row mgr-only" id="c5-sum"></div>
           <div class="toolbar mgr-only">
             <button class="tb-btn" id="c5-undo" onclick="requireManager(()=>c5Undo())" disabled>↩ undo</button>
+            <button class="tb-btn" onclick="requireManager(()=>syncPlanogramPricesFromToast(true))">🔄 sync Toast prices</button>
             <button class="tb-btn" onclick="requireManager(()=>c5Export())">↗ export</button>
           </div>
           <div class="cooler has-photo" id="c5-cooler"><div class="cooler-head"><div class="cooler-head-left"><div class="cooler-head-icon"></div><span>Cooler 5 — Singles & Craft</span></div><small>color = vendor · click to edit</small></div>
@@ -1116,6 +1121,7 @@ function coolerOpenModal(f,b,sid,bid,pfx){
     </div>
     <div class="dfield"><label>Flavor</label><input value="${f.name}" oninput="${pfx}UpdF('${f.id}','name',this.value)"/></div>
     <div class="dfield"><label>Price</label><input id="price-${f.id}" value="${f.price||''}" placeholder="$0.00" oninput="${pfx}UpdF('${f.id}','price',this.value);_updMargin(this.value,document.getElementById('cost-${f.id}').value,'mgn-${f.id}')"/></div>
+    <div class="dfield"><label>Toast Item</label>${f.toastGuid?`<div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="color:var(--green)">✓ linked — price syncs from Toast</span><button class="tb-btn" style="padding:3px 8px;font-size:10px;height:auto" onclick="_toastMatchClear('${pfx}','${f.id}')">unlink</button></div>`:`<div id="toast-match-${f.id}"><button class="tb-btn" style="padding:3px 8px;font-size:10px;height:auto" onclick="_toastMatchOpen('${pfx}','${f.id}')">🔗 match to Toast for live pricing</button></div>`}</div>
     <div class="dfield"><label>Cost</label><input id="cost-${f.id}" value="${f.cost||''}" placeholder="$0.00" oninput="${pfx}UpdF('${f.id}','cost',this.value);_updMargin(document.getElementById('price-${f.id}').value,this.value,'mgn-${f.id}')"/></div>
     <div class="dfield"><label>Margin</label><div id="mgn-${f.id}" style="padding:4px 2px">${_calcMarginStr(f.price,f.cost)}</div></div>
     <div class="dfield"><label>Faces</label><input type="number" min="1" value="${f.facings}" oninput="${pfx}UpdF('${f.id}','facings',parseInt(this.value)||1);${pfx}Render()"/></div>
@@ -1167,6 +1173,86 @@ function _pfxResolvedVendor(pfx,b){
 var PFX_SAVE={c1:saveC1,c2:saveC2,c3:saveC3,c4:saveC4,c5:saveC5};
 var PFX_RENDER={c1:c1Render,c2:c2Render,c3:c3Render,c4:c4Render,c5:c5Render};
 var PFX_SNAP={c1:c1Snap,c2:c2Snap,c3:c3Snap,c4:c4Snap,c5:c5Snap};
+
+/* ============================================================
+   TOAST PRICE SYNC — match a shelf flavor to a Toast menu item
+   (guid stored as f.toastGuid) so its price auto-updates from
+   Toast instead of being typed in by hand. Same shared secret as
+   the Ordering module's Toast calls; duplicated here since this
+   code runs before OG's closure is defined.
+   ============================================================ */
+var APP_SHARED_KEY='4ca6fbc41a08a7620afd979590e805a129eefe1e10f2e5b7';
+function _esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+var _toastMsgT;
+function _toastMsg(msg){const t=document.getElementById('og-toast');if(!t)return;t.textContent=msg;t.classList.add('show');clearTimeout(_toastMsgT);_toastMsgT=setTimeout(function(){t.classList.remove('show');},2600);}
+function _pfxFindFlavor(pfx,fid){
+  const data=_pfxData(pfx);if(!data)return null;
+  for(const sh of data.shelves){for(const b of sh.brands){const f=b.flavors.find(x=>x.id===fid);if(f)return{sh:sh,b:b,f:f};}}
+  return null;
+}
+var _toastItemsCache=null,_toastItemsLoading=null;
+function _loadToastItems(){
+  if(_toastItemsCache)return Promise.resolve(_toastItemsCache);
+  if(_toastItemsLoading)return _toastItemsLoading;
+  _toastItemsLoading=fetch('/api/toast-menu-items',{headers:{'x-app-key':APP_SHARED_KEY}})
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(items){_toastItemsCache=items;_toastItemsLoading=null;return items;})
+    .catch(function(err){_toastItemsLoading=null;throw err;});
+  return _toastItemsLoading;
+}
+function _toastMatchOpen(pfx,fid){
+  const host=document.getElementById('toast-match-'+fid);if(!host)return;
+  host.innerHTML='<div style="font-size:11px;color:var(--gray-dark)">Loading Toast items…</div>';
+  _loadToastItems().then(function(){_toastMatchRender(pfx,fid,'');}).catch(function(){
+    host.innerHTML='<div style="font-size:11px;color:var(--red)">Could not load Toast items — check /api/toast-menu-items is deployed with Toast credentials set.</div>';
+  });
+}
+function _toastMatchFilter(pfx,fid,q){_toastMatchRender(pfx,fid,q);}
+function _toastMatchRender(pfx,fid,q){
+  const host=document.getElementById('toast-match-'+fid);if(!host)return;
+  const query=(q||'').toLowerCase();
+  const items=(_toastItemsCache||[]).filter(function(it){return !query||String(it.name||'').toLowerCase().indexOf(query)!==-1;}).slice(0,8);
+  host.innerHTML='<input placeholder="Search Toast items…" style="width:100%;margin-bottom:6px;font-size:11px;padding:5px 8px;border-radius:7px;border:1px solid var(--border);background:var(--white);color:var(--black)" value="'+_esc(q)+'" oninput="_toastMatchFilter(\''+pfx+'\',\''+fid+'\',this.value)">'
+    +items.map(function(it){return'<div style="padding:5px 6px;border-radius:6px;cursor:pointer;font-size:11px;display:flex;justify-content:space-between;gap:6px" onmouseover="this.style.background=\'var(--gray)\'" onmouseout="this.style.background=\'\'" onclick="_toastMatchPick(\''+pfx+'\',\''+fid+'\',\''+it.guid+'\','+(it.price==null?'null':it.price)+')"><span>'+_esc(it.name)+'</span>'+(it.price!=null?'<span style="color:var(--gray-dark)">$'+Number(it.price).toFixed(2)+'</span>':'<span style="color:var(--gray-dark)">no price set</span>')+'</div>';}).join('')
+    +(items.length===0?'<div style="font-size:11px;color:var(--gray-dark)">No matches</div>':'');
+}
+function _toastMatchPick(pfx,fid,guid,price){
+  window[pfx+'UpdF'](fid,'toastGuid',guid);
+  if(price!=null)window[pfx+'UpdF'](fid,'price','$'+Number(price).toFixed(2));
+  window[pfx+'Render']();
+  const loc=_pfxFindFlavor(pfx,fid);
+  if(loc)coolerOpenModal(loc.f,loc.b,loc.sh.id,loc.b.id,pfx);
+}
+function _toastMatchClear(pfx,fid){
+  window[pfx+'UpdF'](fid,'toastGuid','');
+  window[pfx+'Render']();
+  const loc=_pfxFindFlavor(pfx,fid);
+  if(loc)coolerOpenModal(loc.f,loc.b,loc.sh.id,loc.b.id,pfx);
+}
+/* Pulls current Toast prices for every matched flavor across all coolers and
+   overwrites f.price when it's drifted. Best-effort: a Toast hiccup just
+   leaves prices as last-known, same fallback style as the Ordering sync. */
+function syncPlanogramPricesFromToast(manual){
+  _loadToastItems().then(function(items){
+    const priceMap={};
+    items.forEach(function(it){if(it.price!=null)priceMap[it.guid]=it.price;});
+    let anyChanged=false;
+    ['c1','c2','c3','c4','c5'].forEach(function(pfx){
+      const data=_pfxData(pfx);if(!data)return;
+      let changed=false;
+      data.shelves.forEach(function(sh){sh.brands.forEach(function(b){b.flavors.forEach(function(f){
+        if(f.toastGuid&&priceMap[f.toastGuid]!=null){
+          const newPrice='$'+Number(priceMap[f.toastGuid]).toFixed(2);
+          if(f.price!==newPrice){f.price=newPrice;changed=true;}
+        }
+      });});});
+      if(changed){anyChanged=true;PFX_SAVE[pfx]();PFX_RENDER[pfx]();}
+    });
+    if(manual)_toastMsg(anyChanged?'Prices synced from Toast ✓':'Prices already up to date with Toast ✓');
+  }).catch(function(){if(manual)_toastMsg('Could not reach Toast — prices unchanged.');});
+}
+setTimeout(syncPlanogramPricesFromToast,1500);
+setInterval(syncPlanogramPricesFromToast,10*60*1000);
 var _drag=null;      // {level:'brand',pfx,shelfId,brandId} or {level:'flavor',pfx,shelfId,brandId,flavorId}
 var _dragOverEl=null;
 function _clearDragUI(){
