@@ -2867,7 +2867,7 @@ var OG=(function(){
         +(v.minimum>0?'<div class="vc-row"><span class="vc-row-label">Minimum</span><span class="vc-row-val">$'+v.minimum+'</span></div>':'')
         +'<div class="vc-countdowns"><div class="countdown '+cdClass(cutoffMs)+'" data-cutoff="'+cutoff.toISOString()+'"><span class="countdown-label">Order cutoff</span><span class="countdown-time">'+fmtCountdown(cutoffMs)+'</span></div>'
         +'<div class="countdown cd-gray"><span class="countdown-label">Est. delivery</span><span class="countdown-time">'+fmtDate(delivery)+'</span></div></div>'
-        +'<button class="btn btn-sm btn-primary" style="width:100%;margin-top:10px" onclick="event.stopPropagation();OG.quickGenerate(\''+v.id+'\')" title="Pulls live Toast stock + sales for just this vendor and jumps straight to a ready-to-review order">⚡ Auto-generate order</button></div>';
+        +'<button class="btn btn-sm btn-primary" id="qg-btn-'+v.id+'" style="width:100%;margin-top:10px" onclick="event.stopPropagation();OG.quickGenerate(\''+v.id+'\')" title="Pulls live Toast stock + sales for just this vendor and jumps straight to a ready-to-review order">⚡ Auto-generate order</button></div>';
     }).join('');
     document.getElementById('toStep2').disabled=selectedVendors.size===0;
   }
@@ -2883,13 +2883,15 @@ var OG=(function(){
     selectedVendors=new Set([vid]);
     worksheetData={};
     renderVendors();
+    var btn=document.getElementById('qg-btn-'+vid);
+    if(btn){btn.disabled=true;btn.textContent='⏳ Pulling live Toast data…';}
     renderWorksheet();
-    var v=VENDORS.find(function(x){return x.id===vid;});
-    showToast('Generating order for '+(v?v.name:'vendor')+'…');
     Promise.all([pullToastStock(),pullToastSales()]).then(function(){
       renderWorksheet();
       gotoStep(3);
       showToast('Order generated ✓ review and confirm below');
+    }).finally(function(){
+      if(btn){btn.disabled=false;btn.textContent='⚡ Auto-generate order';}
     });
   }
 
@@ -2989,9 +2991,30 @@ var OG=(function(){
   function clearDraft(){try{localStorage.removeItem(LS_DRAFT);}catch(e){}}
 
   function renderSummary(){
-    var host=document.getElementById('summary');document.getElementById('printDate').textContent='Generated '+fmtDateTime(new Date());
-    var grand=0,vids=Array.from(selectedVendors).filter(function(vid){var wd=worksheetData[vid];return wd&&wd.lines.some(function(l){return l.qty>0;});});
-    if(vids.length===0){host.innerHTML='<div class="empty"><div class="empty-icon">📋</div>No quantities entered. Go back and set order amounts.</div>';document.getElementById('grandTotal').textContent='$0.00';return;}
+    var host=document.getElementById('summary'),now=new Date();
+    document.getElementById('printDate').textContent='Generated '+fmtDateTime(now);
+    var grand=0,allSel=Array.from(selectedVendors),vids=allSel.filter(function(vid){var wd=worksheetData[vid];return wd&&wd.lines.some(function(l){return l.qty>0;});});
+    if(vids.length===0){
+      // Diagnostic empty state — explains WHY nothing needs ordering (today's
+      // date/cutoff/delivery context + a Toast-link/par breakdown) instead of
+      // a generic "no quantities" message that reads like a bug when it's
+      // actually a legitimate "you don't need to order this yet" result.
+      var todayLine='Today is '+now.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'})+'.';
+      var detail=allSel.map(function(vid){
+        var v=VENDORS.find(function(x){return x.id===vid;});if(!v)return'';
+        var wd=worksheetData[vid],lines=(wd&&wd.lines)||[];
+        var linked=lines.filter(function(l){return l.toastGuid;}).length;
+        var withVel=lines.filter(function(l){return l.dailyAvg>0;}).length;
+        var withPar=lines.filter(function(l){return l.configured;}).length;
+        var cutoff=nextCutoff(v),delivery=nextDelivery(v,cutoff);
+        return '<div class="sum-vendor"><div class="sum-vendor-head" style="background:'+v.color+'"><div><div class="ws-vendor-name">'+esc(v.name)+'</div><div class="ws-vendor-meta">Next cutoff '+fmtDateTime(cutoff)+' · delivery '+fmtDate(delivery)+'</div></div></div>'
+          +'<div class="sum-line"><span>'+lines.length+' product'+(lines.length===1?'':'s')+' checked — '+linked+' Toast-linked, '+withVel+' with sales history, '+withPar+' with par min/max set. On-hand already covers expected demand through the next delivery for all of them, so nothing is suggested right now.'
+          +(linked<lines.length?' Products without a Toast link fall back to a rough estimate — match more items to Toast (on the planogram, or in Ordering → Setup) for better numbers.':'')
+          +'</span></div></div>';
+      }).join('');
+      host.innerHTML='<div class="empty"><div class="empty-icon">📋</div>'+todayLine+' Nothing needs ordering yet for the selected vendor(s).</div>'+detail;
+      document.getElementById('grandTotal').textContent='$0.00';return;
+    }
     host.innerHTML=vids.map(function(vid){
       var v=VENDORS.find(function(x){return x.id===vid;}),wd=worksheetData[vid],lines=wd.lines.filter(function(l){return l.qty>0;}),vtotal=lines.reduce(function(s,l){return s+l.qty*l.cost;},0);grand+=vtotal;
       var cutoff=nextCutoff(v),delivery=nextDelivery(v,cutoff),minWarn=v.minimum>0&&vtotal<v.minimum;
