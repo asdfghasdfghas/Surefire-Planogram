@@ -2721,7 +2721,7 @@ var OG=(function(){
         var vn='Unknown';try{vn=normVendor(_pfxCurrentVendor(b,pfx));}catch(e){}
         (b.flavors||[]).forEach(function(f){
           if(!f.name||f.name==='new flavor')return;
-          out.push({id:f.id,name:(b.name+' '+f.name).trim(),oz:b.oz||'',vendor:vn});
+          out.push({id:f.id,name:(b.name+' '+f.name).trim(),oz:b.oz||'',vendor:vn,toastGuid:f.toastGuid||''});
         });
       });});
     });
@@ -2752,7 +2752,7 @@ var OG=(function(){
     return names.map(function(vn){
       var sc=SCHED[vn]||GENERIC_SCHED;
       return {id:slug(vn),name:vn,color:VCOLOR[vn]||'#9E9E9E',cat:sc.cat,cutoffDay:sc.cutoffDay,cutoffTime:sc.cutoffTime,deliveryDay:sc.deliveryDay,deliveryFrom:sc.deliveryFrom,deliveryTo:sc.deliveryTo,minimum:sc.minimum,buffer:sc.buffer,byCase:sc.byCase,caseSize:sc.caseSize,
-        products:byV[vn].map(function(p){var st=PROD_STATS[p.name]||{};return{id:p.id,name:p.name,oz:p.oz||st.oz||'',cost:st.cost!=null?st.cost:1.25,sold:st.sold!=null?st.sold:0,inv:st.inv!=null?st.inv:0,parMin:null,parMax:null,packSize:null,toastGuid:''};})};
+        products:byV[vn].map(function(p){var st=PROD_STATS[p.name]||{};return{id:p.id,name:p.name,oz:p.oz||st.oz||'',cost:st.cost!=null?st.cost:1.25,sold:st.sold!=null?st.sold:0,inv:st.inv!=null?st.inv:0,parMin:null,parMax:null,packSize:null,toastGuid:p.toastGuid||''};})};
     });
   }
   /* Re-sync from the planograms (called whenever the Ordering tab opens). */
