@@ -26,6 +26,12 @@ module.exports = async (req, res) => {
       const detail = await detailRes.json();
       return res.status(200).json(detail);
     }
+    if (req.query.debugmenus) {
+      const menusRes = await toastFetch('/menus/v2/menus');
+      if (!menusRes.ok) return res.status(menusRes.status).json({ error: await menusRes.text() });
+      const menus = await menusRes.json();
+      return res.status(200).json(menus);
+    }
     // Toast's menu items for this account mix ~789 food-menu/modifier items
     // ("The Ogden", "ADD SMACK SAUCE") in with the ~211 actual retail
     // products. Retail products are the only ones carrying a UPC in `sku`;
