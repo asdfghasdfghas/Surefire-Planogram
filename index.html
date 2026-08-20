@@ -113,6 +113,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--black);disp
 .shelf-label{font-size:10px;font-weight:600;color:var(--black);flex:1;letter-spacing:.01em}
 .shelf-note{font-size:9px;color:var(--gray-dark);font-style:italic}
 .shelf-faces{font-size:10px;color:var(--gray-dark);font-family:var(--mono)}
+.shelf-add-btn{font-size:9px;font-weight:600;padding:3px 9px;border-radius:5px;border:1px solid var(--green);background:var(--green);color:#fff;cursor:pointer;font-family:var(--font);white-space:nowrap;display:none;align-items:center}
+body.manager-mode .shelf-add-btn{display:flex}
+.shelf-add-btn:hover{background:var(--green-mid)}
 .shelf-row{display:flex;width:100%;padding:4px 6px;gap:3px;align-items:flex-end}
 .brand-group{display:flex;flex-direction:column;min-width:0}
 body.manager-mode .brand-group{cursor:grab;-webkit-user-select:none;user-select:none;-webkit-user-drag:element}
@@ -488,7 +491,6 @@ body.manager-mode .mgr-only{display:flex!important}
           <div class="legend-box mgr-only" id="c1-legend"></div>
           <div class="stats-row mgr-only" id="c1-sum"></div>
           <div class="toolbar mgr-only">
-            <button class="tb-btn pri" onclick="requireManager(()=>c1AddBrand(c1data.shelves[0].id))">+ add brand</button>
             <button class="tb-btn" id="c1-undo" onclick="requireManager(()=>c1Undo())" disabled>↩ undo</button>
             <button class="tb-btn" onclick="requireManager(()=>c1Export())">↗ export</button>
           </div>
@@ -505,7 +507,6 @@ body.manager-mode .mgr-only{display:flex!important}
           <div class="legend-box mgr-only" id="c2-legend"></div>
           <div class="stats-row mgr-only" id="c2-sum"></div>
           <div class="toolbar mgr-only">
-            <button class="tb-btn pri" onclick="requireManager(()=>c2AddBrand(c2data.shelves[0].id))">+ add brand</button>
             <button class="tb-btn" id="c2-undo" onclick="requireManager(()=>c2Undo())" disabled>↩ undo</button>
             <button class="tb-btn" onclick="requireManager(()=>c2Export())">↗ export</button>
           </div>
@@ -522,7 +523,6 @@ body.manager-mode .mgr-only{display:flex!important}
           <div class="legend-box mgr-only" id="c3-legend"></div>
           <div class="stats-row mgr-only" id="c3-sum"></div>
           <div class="toolbar mgr-only">
-            <button class="tb-btn pri" onclick="requireManager(()=>c3AddBrand(c3data.shelves[0].id))">+ add brand</button>
             <button class="tb-btn" id="c3-undo" onclick="requireManager(()=>c3Undo())" disabled>↩ undo</button>
             <button class="tb-btn" onclick="requireManager(()=>c3Export())">↗ export</button>
           </div>
@@ -539,7 +539,6 @@ body.manager-mode .mgr-only{display:flex!important}
           <div class="legend-box mgr-only" id="c4-legend"></div>
           <div class="stats-row mgr-only" id="c4-sum"></div>
           <div class="toolbar mgr-only">
-            <button class="tb-btn pri" onclick="requireManager(()=>c4AddBrand(c4data.shelves[0].id))">+ add brand</button>
             <button class="tb-btn" id="c4-undo" onclick="requireManager(()=>c4Undo())" disabled>↩ undo</button>
             <button class="tb-btn" onclick="requireManager(()=>c4Export())">↗ export</button>
           </div>
@@ -556,7 +555,6 @@ body.manager-mode .mgr-only{display:flex!important}
           <div class="legend-box mgr-only" id="c5-legend"></div>
           <div class="stats-row mgr-only" id="c5-sum"></div>
           <div class="toolbar mgr-only">
-            <button class="tb-btn pri" onclick="requireManager(()=>c5AddBrand(c5data.shelves[0].id))">+ add brand</button>
             <button class="tb-btn" id="c5-undo" onclick="requireManager(()=>c5Undo())" disabled>↩ undo</button>
             <button class="tb-btn" onclick="requireManager(()=>c5Export())">↗ export</button>
           </div>
@@ -1341,7 +1339,7 @@ function c1Render(){
   c1data.shelves.forEach(sh=>{
     const total=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
     const sd=document.createElement('div');sd.className='shelf';
-    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c1-row-${sh.id}"></div>`;
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span><button class="shelf-add-btn" onclick="requireManager(()=>c1AddBrand('${sh.id}'))">+ add new face</button></div><div class="shelf-row" id="c1-row-${sh.id}"></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c1-row-'+sh.id);
     row.dataset.pfx='c1';row.dataset.shelfId=sh.id;
@@ -1419,7 +1417,7 @@ function c2Render(){
   c2data.shelves.forEach(sh=>{
     const total=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
     const sd=document.createElement('div');sd.className='shelf';
-    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c2-row-${sh.id}"></div>`;
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span><button class="shelf-add-btn" onclick="requireManager(()=>c2AddBrand('${sh.id}'))">+ add new face</button></div><div class="shelf-row" id="c2-row-${sh.id}"></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c2-row-'+sh.id);
     row.dataset.pfx='c2';row.dataset.shelfId=sh.id;
@@ -1497,7 +1495,7 @@ function c3Render(){
   c3data.shelves.forEach(sh=>{
     const total=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
     const sd=document.createElement('div');sd.className='shelf';
-    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c3-row-${sh.id}"></div>`;
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span><button class="shelf-add-btn" onclick="requireManager(()=>c3AddBrand('${sh.id}'))">+ add new face</button></div><div class="shelf-row" id="c3-row-${sh.id}"></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c3-row-'+sh.id);
     row.dataset.pfx='c3';row.dataset.shelfId=sh.id;
@@ -1573,7 +1571,7 @@ function c4Render(){
     const pf=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
     const total=pf+(isS4?1:0);
     const sd=document.createElement('div');sd.className='shelf';
-    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span></div><div class="shelf-row" id="c4-row-${sh.id}"></div>`;
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${total} faces</span><button class="shelf-add-btn" onclick="requireManager(()=>c4AddBrand('${sh.id}'))">+ add new face</button></div><div class="shelf-row" id="c4-row-${sh.id}"></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c4-row-'+sh.id);
     row.dataset.pfx='c4';row.dataset.shelfId=sh.id;
@@ -1744,7 +1742,7 @@ function c5Render(){
     const pf=sh.brands.reduce((n,b)=>n+b.flavors.reduce((m,f)=>m+f.facings,0),0);
     const ef=sh.id==='s3'?1:0;
     const sd=document.createElement('div');sd.className='shelf';
-    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${pf+ef} faces</span></div><div class="shelf-row" id="c5-row-${sh.id}"></div>`;
+    sd.innerHTML=`<div class="shelf-bar"><span class="shelf-label">${sh.label}</span><span class="shelf-note">${sh.note}</span><span class="shelf-faces">${pf+ef} faces</span><button class="shelf-add-btn" onclick="requireManager(()=>c5AddBrand('${sh.id}'))">+ add new face</button></div><div class="shelf-row" id="c5-row-${sh.id}"></div>`;
     sw.appendChild(sd);
     const row=document.getElementById('c5-row-'+sh.id);
     row.dataset.pfx='c5';row.dataset.shelfId=sh.id;
