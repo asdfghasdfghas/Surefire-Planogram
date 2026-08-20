@@ -26,6 +26,10 @@ module.exports = async (req, res) => {
       }));
       return res.status(200).json(raw);
     }
+    if (req.query.debugsku) {
+      const found = (Array.isArray(items) ? items : []).find((it) => it.sku);
+      return res.status(200).json(found || null);
+    }
 
     const list = (Array.isArray(items) ? items : []).map((it) => {
       // Simple-priced items carry price directly; other pricing strategies
