@@ -72,9 +72,11 @@ module.exports = async (req, res) => {
     results.forEach((orders) => {
       if (!Array.isArray(orders)) return;
       orders.forEach((order) => {
+        if (order.voided) return;
         (order.checks || []).forEach((check) => {
+          if (check.voided) return;
           (check.selections || []).forEach((sel) => {
-            if (sel.voided || sel.refundStatus === 'REFUNDED') return;
+            if (sel.voided || sel.refundDetails) return;
             const guid = sel.item && sel.item.guid;
             if (!guid) return;
             const qty = typeof sel.quantity === 'number' ? sel.quantity : 1;
