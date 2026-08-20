@@ -1212,9 +1212,18 @@ function _toastMatchRender(pfx,fid,q){
   const host=document.getElementById('toast-match-'+fid);if(!host)return;
   const query=(q||'').toLowerCase();
   const items=(_toastItemsCache||[]).filter(function(it){return !query||String(it.name||'').toLowerCase().indexOf(query)!==-1;}).slice(0,8);
-  host.innerHTML='<input placeholder="Search Toast items…" style="width:100%;margin-bottom:6px;font-size:11px;padding:5px 8px;border-radius:7px;border:1px solid var(--border);background:var(--white);color:var(--black)" value="'+_esc(q)+'" oninput="_toastMatchFilter(\''+pfx+'\',\''+fid+'\',this.value)">'
+  const inputId='toast-match-input-'+fid;
+  const wasFocused=document.activeElement&&document.activeElement.id===inputId;
+  host.innerHTML='<input id="'+inputId+'" placeholder="Search Toast items…" style="width:100%;margin-bottom:6px;font-size:11px;padding:5px 8px;border-radius:7px;border:1px solid var(--border);background:var(--white);color:var(--black)" value="'+_esc(q)+'" oninput="_toastMatchFilter(\''+pfx+'\',\''+fid+'\',this.value)">'
     +items.map(function(it){return'<div style="padding:5px 6px;border-radius:6px;cursor:pointer;font-size:11px;display:flex;justify-content:space-between;gap:6px" onmouseover="this.style.background=\'var(--gray)\'" onmouseout="this.style.background=\'\'" onclick="_toastMatchPick(\''+pfx+'\',\''+fid+'\',\''+it.guid+'\','+(it.price==null?'null':it.price)+','+(it.cost==null?'null':it.cost)+')"><span>'+_esc(it.name)+'</span>'+(it.price!=null?'<span style="color:var(--gray-dark)">$'+Number(it.price).toFixed(2)+'</span>':'<span style="color:var(--gray-dark)">no price set</span>')+'</div>';}).join('')
     +(items.length===0?'<div style="font-size:11px;color:var(--gray-dark)">No matches</div>':'');
+  // Rebuilding via innerHTML replaces the <input> node on every keystroke,
+  // which silently drops focus — restore it (and the cursor position) so
+  // typing more than one character in a row actually works.
+  if(wasFocused){
+    const inp=document.getElementById(inputId);
+    if(inp){inp.focus();const pos=q.length;inp.setSelectionRange(pos,pos);}
+  }
 }
 function _toastMatchPick(pfx,fid,guid,price,cost){
   window[pfx+'UpdF'](fid,'toastGuid',guid);
