@@ -1121,7 +1121,7 @@ function coolerOpenModal(f,b,sid,bid,pfx){
     </div>
     <div class="dfield"><label>Flavor</label><input value="${f.name}" oninput="${pfx}UpdF('${f.id}','name',this.value)"/></div>
     <div class="dfield"><label>Price</label><input id="price-${f.id}" value="${f.price||''}" placeholder="$0.00" oninput="${pfx}UpdF('${f.id}','price',this.value);_updMargin(this.value,document.getElementById('cost-${f.id}').value,'mgn-${f.id}')"/></div>
-    <div class="dfield"><label>Toast Item</label>${f.toastGuid?`<div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="color:var(--green)">✓ auto-linked — price syncs from Toast</span><button class="tb-btn" style="padding:3px 8px;font-size:10px;height:auto" onclick="_toastMatchClear('${pfx}','${f.id}')">unlink</button></div>`:`<div id="toast-match-${f.id}"><div style="font-size:10px;color:var(--gray-dark);margin-bottom:4px">No confident auto-match by name yet — link one manually:</div><button class="tb-btn" style="padding:3px 8px;font-size:10px;height:auto" onclick="_toastMatchOpen('${pfx}','${f.id}')">🔗 search Toast items</button></div>`}</div>
+    <div class="dfield"><label>Toast Item</label>${f.toastGuid?`<div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="color:var(--green)">✓ auto-linked — price/cost sync from Toast</span><button class="tb-btn" style="padding:3px 8px;font-size:10px;height:auto" onclick="_toastMatchClear('${pfx}','${f.id}')">unlink</button></div>`:`<div id="toast-match-${f.id}"><div style="font-size:10px;color:var(--gray-dark);margin-bottom:4px">No confident auto-match by name yet — link one manually:</div><button class="tb-btn" style="padding:3px 8px;font-size:10px;height:auto" onclick="_toastMatchOpen('${pfx}','${f.id}')">🔗 search Toast items</button></div>`}</div>
     <div class="dfield"><label>Cost</label><input id="cost-${f.id}" value="${f.cost||''}" placeholder="$0.00" oninput="${pfx}UpdF('${f.id}','cost',this.value);_updMargin(document.getElementById('price-${f.id}').value,this.value,'mgn-${f.id}')"/></div>
     <div class="dfield"><label>Margin</label><div id="mgn-${f.id}" style="padding:4px 2px">${_calcMarginStr(f.price,f.cost)}</div></div>
     <div class="dfield"><label>Faces</label><input type="number" min="1" value="${f.facings}" oninput="${pfx}UpdF('${f.id}','facings',parseInt(this.value)||1);${pfx}Render()"/></div>
@@ -1213,13 +1213,14 @@ function _toastMatchRender(pfx,fid,q){
   const query=(q||'').toLowerCase();
   const items=(_toastItemsCache||[]).filter(function(it){return !query||String(it.name||'').toLowerCase().indexOf(query)!==-1;}).slice(0,8);
   host.innerHTML='<input placeholder="Search Toast items…" style="width:100%;margin-bottom:6px;font-size:11px;padding:5px 8px;border-radius:7px;border:1px solid var(--border);background:var(--white);color:var(--black)" value="'+_esc(q)+'" oninput="_toastMatchFilter(\''+pfx+'\',\''+fid+'\',this.value)">'
-    +items.map(function(it){return'<div style="padding:5px 6px;border-radius:6px;cursor:pointer;font-size:11px;display:flex;justify-content:space-between;gap:6px" onmouseover="this.style.background=\'var(--gray)\'" onmouseout="this.style.background=\'\'" onclick="_toastMatchPick(\''+pfx+'\',\''+fid+'\',\''+it.guid+'\','+(it.price==null?'null':it.price)+')"><span>'+_esc(it.name)+'</span>'+(it.price!=null?'<span style="color:var(--gray-dark)">$'+Number(it.price).toFixed(2)+'</span>':'<span style="color:var(--gray-dark)">no price set</span>')+'</div>';}).join('')
+    +items.map(function(it){return'<div style="padding:5px 6px;border-radius:6px;cursor:pointer;font-size:11px;display:flex;justify-content:space-between;gap:6px" onmouseover="this.style.background=\'var(--gray)\'" onmouseout="this.style.background=\'\'" onclick="_toastMatchPick(\''+pfx+'\',\''+fid+'\',\''+it.guid+'\','+(it.price==null?'null':it.price)+','+(it.cost==null?'null':it.cost)+')"><span>'+_esc(it.name)+'</span>'+(it.price!=null?'<span style="color:var(--gray-dark)">$'+Number(it.price).toFixed(2)+'</span>':'<span style="color:var(--gray-dark)">no price set</span>')+'</div>';}).join('')
     +(items.length===0?'<div style="font-size:11px;color:var(--gray-dark)">No matches</div>':'');
 }
-function _toastMatchPick(pfx,fid,guid,price){
+function _toastMatchPick(pfx,fid,guid,price,cost){
   window[pfx+'UpdF'](fid,'toastGuid',guid);
   window[pfx+'UpdF'](fid,'toastNoMatch',false);
   if(price!=null)window[pfx+'UpdF'](fid,'price','$'+Number(price).toFixed(2));
+  if(cost!=null)window[pfx+'UpdF'](fid,'cost','$'+Number(cost).toFixed(2));
   window[pfx+'Render']();
   const loc=_pfxFindFlavor(pfx,fid);
   if(loc)coolerOpenModal(loc.f,loc.b,loc.sh.id,loc.b.id,pfx);
@@ -1231,25 +1232,42 @@ function _toastMatchClear(pfx,fid){
   const loc=_pfxFindFlavor(pfx,fid);
   if(loc)coolerOpenModal(loc.f,loc.b,loc.sh.id,loc.b.id,pfx);
 }
-function _normToastName(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();}
-/* Best-effort name match, no user click required. Tries an exact normalized
-   match first (brand+flavor, then brand alone), then falls back to a
-   containment match — but only ever auto-links when exactly one Toast item
-   qualifies, so an ambiguous name (e.g. many "White Claw" variants) is left
-   for a human to resolve via the manual search instead of guessing wrong. */
-function _findToastMatch(items,brandName,flavorName){
-  const qFull=_normToastName(brandName+' '+flavorName);
-  const qBrand=_normToastName(brandName);
-  let hit=items.filter(function(it){return _normToastName(it.name)===qFull;});
-  if(hit.length===1)return hit[0];
-  if(!hit.length){
-    hit=items.filter(function(it){return _normToastName(it.name)===qBrand;});
-    if(hit.length===1)return hit[0];
-  }
-  hit=items.filter(function(it){const n=_normToastName(it.name);return n&&(n.indexOf(qFull)!==-1||qFull.indexOf(n)!==-1);});
-  if(hit.length===1)return hit[0];
-  hit=items.filter(function(it){const n=_normToastName(it.name);return n&&(n.indexOf(qBrand)!==-1||qBrand.indexOf(n)!==-1);});
-  if(hit.length===1)return hit[0];
+function _normToastName(s){
+  return String(s||'').toLowerCase()
+    .replace(/([0-9])([a-z])/g,'$1 $2').replace(/([a-z])([0-9])/g,'$1 $2')
+    .replace(/[^a-z0-9]+/g,' ').trim();
+}
+var _TOAST_STOPWORDS={the:1,a:1,an:1,of:1,and:1,in:1,with:1,'for':1};
+var _TOAST_TOKEN_SYNONYMS={pack:'pk',packs:'pk',pk:'pk',btl:'bottle',bottles:'bottle',cans:'can',cn:'can',count:'ct',ounce:'oz',ounces:'oz'};
+function _toastTokens(s){
+  return _normToastName(s).split(' ').filter(Boolean).map(function(t){
+    if(_TOAST_TOKEN_SYNONYMS[t])return _TOAST_TOKEN_SYNONYMS[t];
+    return t.length>3&&t.charAt(t.length-1)==='s'?t.slice(0,-1):t;
+  }).filter(function(t){return t&&!_TOAST_STOPWORDS[t];});
+}
+/* Keyword-overlap match, no user click required: scores every Toast item by
+   how many of the shelf face's brand/flavor/size keywords it contains
+   (pack-size synonyms like "12pk"/"12 pack"/"12-count" normalized to the
+   same token), and auto-links the best scorer — as long as it clears a
+   minimum bar and isn't a near-tie with the runner-up, so an ambiguous name
+   (many "White Claw" variants, say) is left for manual review instead of a
+   guess. Deliberately loose: Toast item names rarely match planogram names
+   word-for-word, so a literal/exact match misses most real products. */
+function _findToastMatch(items,brandName,flavorName,sizeName){
+  const qTokens=_toastTokens(brandName+' '+flavorName+' '+(sizeName||''));
+  if(!qTokens.length)return null;
+  let best=null,bestScore=0,secondScore=0;
+  items.forEach(function(it){
+    const iTokens=_toastTokens(it.name);
+    if(!iTokens.length)return;
+    const iSet={};iTokens.forEach(function(t){iSet[t]=true;});
+    let shared=0;
+    qTokens.forEach(function(t){if(iSet[t])shared++;});
+    const score=shared/qTokens.length;
+    if(score>bestScore){secondScore=bestScore;bestScore=score;best=it;}
+    else if(score>secondScore){secondScore=score;}
+  });
+  if(best&&bestScore>=0.5&&(bestScore-secondScore)>=0.12)return best;
   return null;
 }
 /* Auto-links any not-yet-matched (and not explicitly unlinked) flavor by
@@ -1259,20 +1277,27 @@ function _findToastMatch(items,brandName,flavorName){
    Ordering sync. Runs on load and on a timer — no button required. */
 function syncPlanogramPricesFromToast(manual){
   _loadToastItems().then(function(items){
-    const priceMap={};
-    items.forEach(function(it){if(it.price!=null)priceMap[it.guid]=it.price;});
+    const priceMap={},costMap={};
+    items.forEach(function(it){
+      if(it.price!=null)priceMap[it.guid]=it.price;
+      if(it.cost!=null)costMap[it.guid]=it.cost;
+    });
     let anyChanged=false;
     ['c1','c2','c3','c4','c5'].forEach(function(pfx){
       const data=_pfxData(pfx);if(!data)return;
       let changed=false;
       data.shelves.forEach(function(sh){sh.brands.forEach(function(b){b.flavors.forEach(function(f){
         if(!f.toastGuid&&!f.toastNoMatch){
-          const m=_findToastMatch(items,b.name,f.name);
+          const m=_findToastMatch(items,b.name,f.name,b.oz);
           if(m){f.toastGuid=m.guid;changed=true;}
         }
         if(f.toastGuid&&priceMap[f.toastGuid]!=null){
           const newPrice='$'+Number(priceMap[f.toastGuid]).toFixed(2);
           if(f.price!==newPrice){f.price=newPrice;changed=true;}
+        }
+        if(f.toastGuid&&costMap[f.toastGuid]!=null){
+          const newCost='$'+Number(costMap[f.toastGuid]).toFixed(2);
+          if(f.cost!==newCost){f.cost=newCost;changed=true;}
         }
       });});});
       if(changed){anyChanged=true;PFX_SAVE[pfx]();PFX_RENDER[pfx]();}

@@ -11,13 +11,30 @@ module.exports = async (req, res) => {
       return res.status(toastRes.status).json({ error: await toastRes.text() });
     }
     const items = await toastRes.json();
+
+    // Debug escape hatch: GET /api/toast-menu-items?debug=1 returns one raw,
+    // unmodified item so the real field names for this account (pricing
+    // strategy and any cost field both vary by Toast config) can be checked
+    // instead of guessed at. Still gated by the same shared-secret check.
+    if (req.query.debug) {
+      return res.status(200).json(Array.isArray(items) ? items[0] || null : items);
+    }
+
     const list = (Array.isArray(items) ? items : []).map((it) => {
       // Simple-priced items carry price directly; other pricing strategies
       // (e.g. size groups) nest it under pricingRules.basePrice instead.
       const price = typeof it.price === 'number'
         ? it.price
         : (it.pricingRules && typeof it.pricingRules.basePrice === 'number' ? it.pricingRules.basePrice : null);
-      return { guid: it.guid, name: it.name, price };
+      // Cost (COGS) isn't part of Toast's documented menu config schema, but
+      // some accounts (food-cost/inventory add-ons) do populate a cost field
+      // on the item — try the plausible names defensively; stays null if
+      // none of them exist for this account, which is harmless.
+      const cost = typeof it.cost === 'number' ? it.cost
+        : (typeof it.unitCost === 'number' ? it.unitCost
+        : (typeof it.averageCost === 'number' ? it.averageCost
+        : (it.pricingRules && typeof it.pricingRules.cost === 'number' ? it.pricingRules.cost : null)));
+      return { guid: it.guid, name: it.name, price, cost };
     });
     res.status(200).json(list);
   } catch (err) {
