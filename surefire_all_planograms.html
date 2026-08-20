@@ -2866,11 +2866,32 @@ var OG=(function(){
         +'<div class="vc-row"><span class="vc-row-label">Products</span><span class="vc-row-val">'+v.products.length+' items</span></div>'
         +(v.minimum>0?'<div class="vc-row"><span class="vc-row-label">Minimum</span><span class="vc-row-val">$'+v.minimum+'</span></div>':'')
         +'<div class="vc-countdowns"><div class="countdown '+cdClass(cutoffMs)+'" data-cutoff="'+cutoff.toISOString()+'"><span class="countdown-label">Order cutoff</span><span class="countdown-time">'+fmtCountdown(cutoffMs)+'</span></div>'
-        +'<div class="countdown cd-gray"><span class="countdown-label">Est. delivery</span><span class="countdown-time">'+fmtDate(delivery)+'</span></div></div></div>';
+        +'<div class="countdown cd-gray"><span class="countdown-label">Est. delivery</span><span class="countdown-time">'+fmtDate(delivery)+'</span></div></div>'
+        +'<button class="btn btn-sm btn-primary" style="width:100%;margin-top:10px" onclick="event.stopPropagation();OG.quickGenerate(\''+v.id+'\')" title="Pulls live Toast stock + sales for just this vendor and jumps straight to a ready-to-review order">⚡ Auto-generate order</button></div>';
     }).join('');
     document.getElementById('toStep2').disabled=selectedVendors.size===0;
   }
   function toggleVendor(id){if(selectedVendors.has(id))selectedVendors.delete(id);else selectedVendors.add(id);var c=document.querySelector('.vendor-card[data-vid="'+id+'"]');if(c)c.classList.toggle('selected');document.getElementById('toStep2').disabled=selectedVendors.size===0;saveDraft();}
+
+  /* One-click order for a single vendor: select it, pull the freshest Toast
+     stock + sales data, let calcSuggest (velocity, par min/max floor/cap,
+     pack-size rounding) do the math, then jump straight to the finished
+     order instead of making someone walk the manual 3-step flow. Nothing
+     is placed automatically — this only pre-fills the review/finalize
+     screen, which still requires an explicit confirm before it's logged. */
+  function quickGenerate(vid){
+    selectedVendors=new Set([vid]);
+    worksheetData={};
+    renderVendors();
+    renderWorksheet();
+    var v=VENDORS.find(function(x){return x.id===vid;});
+    showToast('Generating order for '+(v?v.name:'vendor')+'…');
+    Promise.all([pullToastStock(),pullToastSales()]).then(function(){
+      renderWorksheet();
+      gotoStep(3);
+      showToast('Order generated ✓ review and confirm below');
+    });
+  }
 
   function renderWorksheet(){
     var host=document.getElementById('worksheet'),vids=Array.from(selectedVendors);
@@ -2929,8 +2950,8 @@ var OG=(function(){
     var vids=Array.from(selectedVendors),guids=[];
     vids.forEach(function(vid){var v=VENDORS.find(function(x){return x.id===vid;});if(!v)return;v.products.forEach(function(p){if(p.toastGuid)guids.push(p.toastGuid);});});
     guids=Array.from(new Set(guids));
-    if(!guids.length)return;
-    fetch('/api/toast-stock?guids='+encodeURIComponent(guids.join(',')),{headers:{'x-app-key':OG_APP_KEY}})
+    if(!guids.length)return Promise.resolve();
+    return fetch('/api/toast-stock?guids='+encodeURIComponent(guids.join(',')),{headers:{'x-app-key':OG_APP_KEY}})
       .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
       .then(function(map){
         var changed=false;
@@ -2949,8 +2970,8 @@ var OG=(function(){
   function pullToastSales(){
     var vids=Array.from(selectedVendors),hasGuid=false;
     vids.forEach(function(vid){var v=VENDORS.find(function(x){return x.id===vid;});if(!v)return;v.products.forEach(function(p){if(p.toastGuid)hasGuid=true;});});
-    if(!hasGuid)return;
-    fetch('/api/toast-sales?days=30',{headers:{'x-app-key':OG_APP_KEY}})
+    if(!hasGuid)return Promise.resolve();
+    return fetch('/api/toast-sales?days=30',{headers:{'x-app-key':OG_APP_KEY}})
       .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
       .then(function(map){OG_SALES=map||{};renderWorksheet();})
       .catch(function(){showToast('Could not reach Toast for sales history — using last known.');});
@@ -3103,7 +3124,7 @@ var OG=(function(){
     if(!started){started=true;tickTimer=setInterval(function(){Array.prototype.forEach.call(document.querySelectorAll('#page-ordering .countdown[data-cutoff]'),function(el){var ms=new Date(el.dataset.cutoff)-new Date();el.querySelector('.countdown-time').textContent=fmtCountdown(ms);el.className='countdown '+cdClass(ms);});},30000);}
   }
 
-  return{init:init,saveNow:saveNow,showView:showView,gotoStep:gotoStep,toggleVendor:toggleVendor,toggleBuffer:toggleBuffer,overrideQty:overrideQty,bumpQty:bumpQty,overrideNote:overrideNote,setOnHand:setOnHand,markCounted:markCounted,finalizeOrder:finalizeOrder,exportCSV:exportCSV,print:doPrint,resetData:resetData,editVendor:editVendor,editProd:editProd,delProd:delProd,addProd:addProd,matchToggle:matchToggle,matchFilter:matchFilter,matchPick:matchPick,matchClear:matchClear};
+  return{init:init,saveNow:saveNow,showView:showView,gotoStep:gotoStep,toggleVendor:toggleVendor,quickGenerate:quickGenerate,toggleBuffer:toggleBuffer,overrideQty:overrideQty,bumpQty:bumpQty,overrideNote:overrideNote,setOnHand:setOnHand,markCounted:markCounted,finalizeOrder:finalizeOrder,exportCSV:exportCSV,print:doPrint,resetData:resetData,editVendor:editVendor,editProd:editProd,delProd:delProd,addProd:addProd,matchToggle:matchToggle,matchFilter:matchFilter,matchPick:matchPick,matchClear:matchClear};
 })();
 
 // ══════════════════════════════════════════════════════════════════
