@@ -19,6 +19,13 @@ module.exports = async (req, res) => {
     if (req.query.debug) {
       return res.status(200).json(Array.isArray(items) ? items[0] || null : items);
     }
+    if (req.query.debugall) {
+      const raw = (Array.isArray(items) ? items : []).map((it) => ({
+        name: it.name, sku: it.sku, plu: it.plu, visibility: it.visibility,
+        orderableOnline: it.orderableOnline, price: it.price, type: it.type,
+      }));
+      return res.status(200).json(raw);
+    }
 
     const list = (Array.isArray(items) ? items : []).map((it) => {
       // Simple-priced items carry price directly; other pricing strategies
