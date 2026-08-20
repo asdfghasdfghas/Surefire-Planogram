@@ -33,15 +33,18 @@ module.exports = async (req, res) => {
     const all = [];
     (menus.menus || []).forEach((m) => collectItems(m.menuGroups, all));
 
+    // `salesCategory` ("Retail"/"Retail-Alcoholic") looks like a clean
+    // filter but isn't: this account also tags counter items with no
+    // planogram presence — shakes, bagged ice, fountain drinks — as
+    // "Retail". Only packaged products carry a real UPC in `sku`, so that
+    // stays the actual retail-vs-not signal; the Menus API is only needed
+    // here for the price data /config/v2/menuItems didn't have.
     // Same item can appear under multiple menus/groups (e.g. both a
     // "Drinks" placement and the "Retail" menu) — dedupe by guid, keeping
     // the first (highest-priority) placement's data.
     const byGuid = {};
     all
-      .filter((it) => {
-        const cat = it.salesCategory && it.salesCategory.name;
-        return cat === 'Retail' || cat === 'Retail-Alcoholic';
-      })
+      .filter((it) => it.sku)
       .forEach((it) => {
         if (!byGuid[it.guid]) byGuid[it.guid] = it;
       });
